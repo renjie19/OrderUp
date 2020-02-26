@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/add"
+        android:icon="@mipmap/ic_launcher"
+        app:showAsAction="always"
+        android:title="@string/add">
+    </item>
+    <item
+        android:id="@+id/remove"
+        android:icon="@mipmap/ic_launcher"
+        app:showAsAction="always"
+        android:title="remove">
+    </item>
+    <item
+        android:id="@+id/updated"
+        android:icon="@mipmap/ic_launcher"
+        app:showAsAction="always"
+        android:title="update">
+    </item>
+</menu>
