@@ -7,12 +7,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.testapplication.R;
 
-public class Login extends AppCompatActivity {
+public class Login extends BaseActivity{
     private TextView passwordField;
     private TextView usernameField;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sContext = this;
         setContentView(R.layout.login);
         initializeComponents();
     }
