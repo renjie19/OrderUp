@@ -6,7 +6,10 @@ import android.os.Parcelable;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@Data
 public class Consumer extends RealmObject implements Parcelable {
 
     @PrimaryKey
@@ -18,38 +21,6 @@ public class Consumer extends RealmObject implements Parcelable {
     private String status;
     private double total;
 
-    public long getId() {
-        return this.id;
-    }
-
-    public void setId(long id2) {
-        this.id = id2;
-    }
-
-    public long getDate() {
-        return date;
-    }
-
-    public void setDate(long date) {
-        this.date = date;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name2) {
-        this.name = name2;
-    }
-
-    public RealmList<Item> getOrders() {
-        return this.orders;
-    }
-
-    public void setOrders(RealmList<Item> orders2) {
-        this.orders = orders2;
-    }
-
     public double getTotal() {
         double total = 0;
         if (orders != null) {
@@ -60,34 +31,14 @@ public class Consumer extends RealmObject implements Parcelable {
         return total;
     }
 
-    public void setTotal(double total2) {
-        this.total = total2;
+    @Override
+    public String toString() {
+        String consumer = String.format("%s\n%s\n%s\n%s\n%s\n",date,name,location,status,total);
+        if(orders != null){
+            for(Item item : orders) consumer += item.toString();
+        }
+        return consumer;
     }
-
-    public String getStatus() {
-        return this.status;
-    }
-
-    public void setStatus(String status2) {
-        this.status = status2;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-//
-//    @Override
-//    public String toString() {
-//        String consumer = String.format("%s\n%s\n%s\n%s\n%s",date,name,location,status,total);
-//        if(orders != null){
-//            for(Item item : orders) consumer += item.toString();
-//        }
-//        return consumer;
-//    }
 
     @Override
     public int describeContents() {

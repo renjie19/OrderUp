@@ -16,19 +16,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.testapplication.adapter.MainPageOrderListAdapter;
 import com.example.testapplication.R;
 import com.example.testapplication.pojo.Consumer;
+import com.example.testapplication.presenter.MainPagePresenter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainPage extends AppCompatActivity {
+public class MainPage extends BaseActivity {
     private MainPageOrderListAdapter adapter;
     private RecyclerView rv;
     private List<Consumer> list;
+    private MainPagePresenter presenter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_page);
+        presenter = new MainPagePresenter();
         initializeComponents();
         initializeAdapter();
     }
@@ -57,13 +60,16 @@ public class MainPage extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
+    }
+
     private void initializeComponents() {
+        list = presenter.getAll();
         if(list == null) {
             list = new ArrayList<>();
-        }
-        Consumer consumer = getIntent().getParcelableExtra("consumer");
-        if(consumer != null){
-            list.add(consumer);
         }
         this.rv = findViewById(R.id.orderRv);
         this.rv.setLayoutManager(new LinearLayoutManager(this));

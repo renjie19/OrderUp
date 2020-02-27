@@ -5,24 +5,32 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.testapplication.R;
 import com.example.testapplication.adapter.ItemListAdapter;
 import com.example.testapplication.pojo.Consumer;
 import com.example.testapplication.pojo.Item;
 import com.example.testapplication.util.DateUtil;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 
 import io.realm.RealmList;
 
-public class ConsumerOrderList extends AppCompatActivity {
+public class ConsumerOrderList extends BaseActivity {
 
     private TextView date, total;
     private EditText consumerField, location;
@@ -37,7 +45,7 @@ public class ConsumerOrderList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consumer_order_list);
         consumer = getIntent().getParcelableExtra("consumer");
-        if(consumer == null) {
+        if (consumer == null) {
             consumer = new Consumer();
             consumer.setOrders(new RealmList<Item>());
         }
@@ -110,9 +118,21 @@ public class ConsumerOrderList extends AppCompatActivity {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setMessage("Are you sure with your orders?\n");
             alert.setPositiveButton("YES", (dialog, which) -> {
-                Intent intent = new Intent(this, MainPage.class);
-                intent.putExtra("consumer", consumer);
-                startActivity(intent);
+                PendingIntent sent = PendingIntent.getBroadcast(this, 0, new Intent("SENT"),0);
+                registerReceiver(new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        switch (getResultCode()) {
+                            case Activity.RESULT_OK: {
+                                finish();
+                            }
+                        }
+                    }
+                }, new IntentFilter("SENT"));
+                SmsManager smsManager = SmsManager.getDefault();
+                smsManager.sendTextMessage("+639486324067", null,
+                        new GsonBuilder().create().toJson(consumer),
+                        sent, null);
             });
             alert.setNegativeButton("NO", null);
             alert.show();

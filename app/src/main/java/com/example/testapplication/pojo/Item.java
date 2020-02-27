@@ -5,7 +5,9 @@ import android.os.Parcelable;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import lombok.Data;
 
+@Data
 public class Item extends RealmObject implements Parcelable {
     @PrimaryKey
     private long id;
@@ -13,46 +15,6 @@ public class Item extends RealmObject implements Parcelable {
     private double price;
     private int quantity;
     private String packaging;
-
-    public long getId() {
-        return this.id;
-    }
-
-    public void setId(long id2) {
-        this.id = id2;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name2) {
-        this.name = name2;
-    }
-
-    public int getQuantity() {
-        return this.quantity;
-    }
-
-    public void setQuantity(int quantity2) {
-        this.quantity = quantity2;
-    }
-
-    public double getPrice() {
-        return this.price;
-    }
-
-    public void setPrice(double price2) {
-        this.price = price2;
-    }
-
-    public String getPackaging() {
-        return this.packaging;
-    }
-
-    public void setPackaging(String classification2) {
-        this.packaging = classification2;
-    }
 
     @Override
     public int describeContents() {
@@ -90,9 +52,9 @@ public class Item extends RealmObject implements Parcelable {
             return new Item[size];
         }
     };
-//
-//    @Override
-//    public String toString() {
-//       return String.format("%s - %s %s = %.2f",name,quantity,packaging,price);
-//    }
+
+    @Override
+    public String toString() {
+       return String.format("%s - %s %s = %.2f",name,quantity,packaging,price);
+    }
 }
