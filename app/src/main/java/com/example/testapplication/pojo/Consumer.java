@@ -9,6 +9,7 @@ import io.realm.annotations.PrimaryKey;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class Consumer extends RealmObject implements Parcelable {
 

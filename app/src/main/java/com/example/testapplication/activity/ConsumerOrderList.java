@@ -1,7 +1,6 @@
 package com.example.testapplication.activity;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,7 +16,6 @@ import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.testapplication.R;
 import com.example.testapplication.adapter.ItemListAdapter;
@@ -118,21 +116,7 @@ public class ConsumerOrderList extends BaseActivity {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setMessage("Are you sure with your orders?\n");
             alert.setPositiveButton("YES", (dialog, which) -> {
-                PendingIntent sent = PendingIntent.getBroadcast(this, 0, new Intent("SENT"),0);
-                registerReceiver(new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        switch (getResultCode()) {
-                            case Activity.RESULT_OK: {
-                                finish();
-                            }
-                        }
-                    }
-                }, new IntentFilter("SENT"));
-                SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage("+639486324067", null,
-                        new GsonBuilder().create().toJson(consumer),
-                        sent, null);
+                new Thread(this::sendLongTextMessage).run();
             });
             alert.setNegativeButton("NO", null);
             alert.show();
@@ -162,5 +146,26 @@ public class ConsumerOrderList extends BaseActivity {
             total.setText(String.valueOf(consumer.getTotal()));
             adapter.notifyDataSetChanged();
         };
+    }
+
+    private void sendLongTextMessage() {
+        PendingIntent sent = PendingIntent.getBroadcast(this, 0, new Intent("SENT"), 0);
+        ArrayList<PendingIntent> sPi = new ArrayList<>();
+        sPi.add(sent);
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                switch (getResultCode()) {
+                    case Activity.RESULT_OK: {
+                        finish();
+                    }
+                }
+            }
+        }, new IntentFilter("SENT"));
+        SmsManager smsManager = SmsManager.getDefault();
+        ArrayList<String> completeMessage = smsManager.divideMessage(new GsonBuilder().create().toJson(consumer));
+        //TODO externalize setting of receipient
+        smsManager.sendMultipartTextMessage("+639486324067", null,
+                completeMessage, sPi, null);
     }
 }

@@ -6,11 +6,11 @@ import android.os.Parcelable;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class Item extends RealmObject implements Parcelable {
-    @PrimaryKey
-    private long id;
     private String name;
     private double price;
     private int quantity;
@@ -24,7 +24,6 @@ public class Item extends RealmObject implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.packaging);
-        dest.writeLong(this.id);
         dest.writeString(this.name);
         dest.writeDouble(this.price);
         dest.writeInt(this.quantity);
@@ -35,7 +34,6 @@ public class Item extends RealmObject implements Parcelable {
 
     protected Item(Parcel in) {
         this.packaging = in.readString();
-        this.id = in.readLong();
         this.name = in.readString();
         this.price = in.readDouble();
         this.quantity = in.readInt();

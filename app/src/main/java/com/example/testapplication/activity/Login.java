@@ -1,6 +1,7 @@
 package com.example.testapplication.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -10,10 +11,12 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.testapplication.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Login extends BaseActivity{
     private TextView passwordField;
     private TextView usernameField;
-    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 1;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,21 +26,26 @@ public class Login extends BaseActivity{
     }
 
     private void checkForPermissions() {
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.SEND_SMS) !=
-                PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.SEND_SMS},
-                    MY_PERMISSIONS_REQUEST_SEND_SMS);
+        int PERMISSION_ALL = 1;
+        ArrayList<String> permissions = new ArrayList<>();
+        if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED){
+            permissions.add(Manifest.permission.RECEIVE_SMS);
+        }
+        if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED){
+            permissions.add(Manifest.permission.SEND_SMS);
+        }
+        if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED){
+            permissions.add(Manifest.permission.READ_SMS);
+        }
+        if(permissions.size() != 0){
+            String[] permissionsForRequest = new String[permissions.size()];
+            permissionsForRequest = permissions.toArray(permissionsForRequest);
+            ActivityCompat.requestPermissions(this, permissionsForRequest, PERMISSION_ALL);
         }
 
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.RECEIVE_SMS) !=
-                PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.RECEIVE_SMS},
-                    MY_PERMISSIONS_REQUEST_SEND_SMS);
-        }
+
+
+
     }
 
     private void initializeComponents() {
