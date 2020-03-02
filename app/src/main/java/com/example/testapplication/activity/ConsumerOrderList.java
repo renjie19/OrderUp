@@ -16,12 +16,16 @@ import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.testapplication.R;
 import com.example.testapplication.adapter.ItemListAdapter;
 import com.example.testapplication.pojo.Consumer;
 import com.example.testapplication.pojo.Item;
+import com.example.testapplication.presenter.OrderListPresenter;
 import com.example.testapplication.util.DateUtil;
+import com.example.testapplication.util.TokenGenerator;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
@@ -37,15 +41,21 @@ public class ConsumerOrderList extends BaseActivity {
     private ItemListAdapter adapter;
 
     private EditText itemName, quantity, price, pckg;
+    private OrderListPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consumer_order_list);
+
+        if(presenter == null) {
+            presenter = new OrderListPresenter();
+        }
+
         consumer = getIntent().getParcelableExtra("consumer");
         if (consumer == null) {
             consumer = new Consumer();
-            consumer.setOrders(new RealmList<Item>());
+            consumer.setOrders(new RealmList<>());
         }
         String action = getIntent().getStringExtra("ACTION");
         initializeComponents(action != null && action.equalsIgnoreCase("CREATE"));
@@ -115,9 +125,7 @@ public class ConsumerOrderList extends BaseActivity {
             buildConsumerOrder(consumer);
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setMessage("Are you sure with your orders?\n");
-            alert.setPositiveButton("YES", (dialog, which) -> {
-                new Thread(this::sendLongTextMessage).run();
-            });
+            alert.setPositiveButton("YES", (dialog, which) -> new Thread(this::sendNotification).run());
             alert.setNegativeButton("NO", null);
             alert.show();
         });
@@ -128,6 +136,7 @@ public class ConsumerOrderList extends BaseActivity {
         consumer.setDate(System.currentTimeMillis());
         consumer.setLocation(location.getText().toString());
         consumer.setStatus(consumer.getTotal() == 0 ? "PENDING" : "FOR DELIVERY");
+        consumer.setToken(FirebaseInstanceId.getInstance().getToken());
     }
 
     private DialogInterface.OnClickListener createItemAndAddToOrder(Item item) {
@@ -150,15 +159,15 @@ public class ConsumerOrderList extends BaseActivity {
 
     private void sendLongTextMessage() {
         PendingIntent sent = PendingIntent.getBroadcast(this, 0, new Intent("SENT"), 0);
-        ArrayList<PendingIntent> sPi = new ArrayList<>();
-        sPi.add(sent);
+        ArrayList<PendingIntent> sentPendingIntent = new ArrayList<>();
+        sentPendingIntent.add(sent);
         registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                switch (getResultCode()) {
-                    case Activity.RESULT_OK: {
-                        finish();
-                    }
+                if (getResultCode() == Activity.RESULT_OK) {
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
                 }
             }
         }, new IntentFilter("SENT"));
@@ -166,6 +175,10 @@ public class ConsumerOrderList extends BaseActivity {
         ArrayList<String> completeMessage = smsManager.divideMessage(new GsonBuilder().create().toJson(consumer));
         //TODO externalize setting of receipient
         smsManager.sendMultipartTextMessage("+639486324067", null,
-                completeMessage, sPi, null);
+                completeMessage, sentPendingIntent, null);
+    }
+
+    private void sendNotification(){
+        presenter.sendNotification(consumer);
     }
 }

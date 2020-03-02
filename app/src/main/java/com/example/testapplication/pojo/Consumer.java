@@ -21,6 +21,7 @@ public class Consumer extends RealmObject implements Parcelable {
     private RealmList<Item> orders;
     private String status;
     private double total;
+    private String token;
 
     public double getTotal() {
         double total = 0;
