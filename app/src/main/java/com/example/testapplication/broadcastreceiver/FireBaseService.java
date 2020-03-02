@@ -1,10 +1,11 @@
-package com.example.testapplication;
+package com.example.testapplication.broadcastreceiver;
 
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.testapplication.OrderUp;
 import com.example.testapplication.activity.BaseActivity;
 import com.example.testapplication.pojo.Consumer;
 import com.example.testapplication.repository.ConsumerRepository;
@@ -15,7 +16,6 @@ import com.google.gson.GsonBuilder;
 
 public class FireBaseService extends FirebaseMessagingService {
     private final String TAG = "FIREBASE";
-    private final ConsumerRepository repository = ConsumerRepository.getInstance();
     String message;
 
     @Override
@@ -25,11 +25,16 @@ public class FireBaseService extends FirebaseMessagingService {
         try{
             Consumer consumer = new GsonBuilder().create().fromJson(remoteMessage.getData().get("message"), Consumer.class);
             if(consumer != null) {
-                repository.save(consumer);
+                ConsumerRepository.getInstance().save(consumer);
                 Log.d(TAG, "Save Successful");
             }
         } catch (Exception e){
             Log.d(TAG, "Could not parse message");
         }
+    }
+
+    @Override
+    public void onNewToken(@NonNull String s) {
+        super.onNewToken(s);
     }
 }

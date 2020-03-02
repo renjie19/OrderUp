@@ -17,6 +17,7 @@ import io.realm.RealmConfiguration;
 public class OrderUp extends Application {
 
     private static  Context sContext;
+    private static Realm realm;
 
     public static Context getContext() {
         return sContext;
@@ -30,6 +31,13 @@ public class OrderUp extends Application {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfiguration);
         TokenGenerator.getToken();
+        realm = Realm.getDefaultInstance();
+    }
 
+    public static Realm getRealmInstance() {
+        if(realm == null) {
+            realm = Realm.getDefaultInstance();
+        }
+        return realm;
     }
 }

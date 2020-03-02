@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 public class Consumer extends RealmObject implements Parcelable {
 
     @PrimaryKey
-    private long id;
+    private String id;
     private long date;
     private String name;
     private String location;
@@ -49,7 +49,7 @@ public class Consumer extends RealmObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(this.id);
+        dest.writeString(this.id);
         dest.writeLong(this.date);
         dest.writeString(this.name);
         dest.writeString(this.location);
@@ -62,7 +62,7 @@ public class Consumer extends RealmObject implements Parcelable {
     }
 
     protected Consumer(Parcel in) {
-        this.id = in.readLong();
+        this.id = in.readString();
         this.date = in.readLong();
         this.name = in.readString();
         this.location = in.readString();

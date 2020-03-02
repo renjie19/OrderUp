@@ -136,7 +136,7 @@ public class ConsumerOrderList extends BaseActivity {
         consumer.setDate(System.currentTimeMillis());
         consumer.setLocation(location.getText().toString());
         consumer.setStatus(consumer.getTotal() == 0 ? "PENDING" : "FOR DELIVERY");
-        consumer.setToken(FirebaseInstanceId.getInstance().getToken());
+        consumer.setToken(TokenGenerator.getToken());
     }
 
     private DialogInterface.OnClickListener createItemAndAddToOrder(Item item) {

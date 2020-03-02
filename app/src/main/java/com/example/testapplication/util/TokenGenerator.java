@@ -6,10 +6,12 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 public enum TokenGenerator {
     INSTANCE;
+    private static String token;
 
-    public static void getToken() {
+    public static String getToken() {
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
-            Log.d("TOKEN", "getToken: "+task.getResult().getToken());
+            token = task.getResult().getToken();
         });
+        return token;
     }
 }

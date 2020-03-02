@@ -19,7 +19,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <service
-            android:name=".FireBaseService"
+            android:name=".broadcastreceiver.FireBaseService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
