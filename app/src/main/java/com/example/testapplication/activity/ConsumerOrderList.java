@@ -125,7 +125,7 @@ public class ConsumerOrderList extends BaseActivity {
             buildConsumerOrder(consumer);
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setMessage("Are you sure with your orders?\n");
-            alert.setPositiveButton("YES", (dialog, which) -> new Thread(this::sendNotification).run());
+            alert.setPositiveButton("YES", (dialog, which) ->sendNotification());
             alert.setNegativeButton("NO", null);
             alert.show();
         });
@@ -179,6 +179,11 @@ public class ConsumerOrderList extends BaseActivity {
     }
 
     private void sendNotification(){
-        presenter.sendNotification(consumer);
+        showProgressBar("Sending Request...");
+        new Thread(()->{
+            presenter.sendNotification(consumer);
+            hideProgressBar();
+            finish();
+        }).run();
     }
 }

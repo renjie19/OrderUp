@@ -1,9 +1,13 @@
 package com.example.testapplication.repository;
 
+import android.util.Log;
+
 import com.example.testapplication.OrderUp;
 import com.example.testapplication.pojo.Consumer;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import io.realm.Realm;
 
@@ -12,29 +16,24 @@ class ConsumerRepositoryImpl extends ConsumerRepository {
 
     @Override
     public Consumer save(Consumer consumer) {
-//        Realm.getDefaultInstance().executeTransactionAsync(
-//                realm -> {
-//                    Number id = realm.where(Consumer.class).max("id");
-//                    if(id == null){
-//                        id = -1;
-//                    }
-//                    consumer.setId(id.longValue()+1);
-//                    realm.insert(consumer);},
-//                () -> Log.d(TAG, "SAVING SUCCESS..."),
-//                error -> Log.d(TAG, "ERROR SAVING...." + error.getMessage()));
-//        return consumer;
+        consumer.setId(UUID.randomUUID().toString());
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.insert(consumer);
-        realm.where(Consumer.class).findAll();
+        realm.copyToRealmOrUpdate(consumer);
+        realm.commitTransaction();
         realm.close();
         return null;
     }
 
     @Override
     public List<Consumer> getAll() {
-        Realm.getDefaultInstance().refresh();
-
-        return Realm.getDefaultInstance().where(Consumer.class).findAll();
+        try (Realm realm = Realm.getDefaultInstance()) {
+            realm.refresh();
+            List<Consumer> list = realm.where(Consumer.class).findAll();
+            return realm.copyFromRealm(list);
+        } catch (Exception e) {
+            Log.d(TAG, "getAll: Error Occurred");
+        }
+        return new ArrayList<>();
     }
 }
