@@ -28,7 +28,7 @@ public class OrderUp extends Application {
         super.onCreate();
         sContext = getApplicationContext();
         Realm.init(this);
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
         Realm.setDefaultConfiguration(realmConfiguration);
         TokenGenerator.getToken();
         realm = Realm.getDefaultInstance();

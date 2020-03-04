@@ -30,7 +30,7 @@
         app:layout_constraintVertical_bias="0.788">
 
         <EditText
-            android:id="@+id/firstNameField"
+            android:id="@+id/userNameField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
@@ -86,7 +86,7 @@
             android:background="@drawable/oval_line_no_fill"
             android:ems="10"
             android:hint="Contact No."
-            android:inputType="textPersonName|textPhonetic"
+            android:inputType="numberSigned"
             android:paddingLeft="15dp"
             android:paddingTop="10dp"
             android:paddingRight="15dp"

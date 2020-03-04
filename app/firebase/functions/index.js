@@ -16,8 +16,10 @@ exports.sendRequest = functions.https.onRequest(async (req, res) => {
     admin.messaging().send(notif)
         .then((response => {
             console.log("Sent Successful", response);
+            console.log("Sending response");
+        res.status(200).send(response);
         })).catch((error) => {
         console.log("Error Sending Message", error);
     });
-    res.response
+        
 });

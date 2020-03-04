@@ -18,5 +18,6 @@ public class Management extends AppCompatActivity {
 
     private void initializeComponents() {
         findViewById(R.id.accountBtn).setOnClickListener(v -> startActivity(new Intent(this, AccountManagement.class)));
+        findViewById(R.id.consumersBtn).setOnClickListener(v -> startActivity(new Intent(this, MainPage.class)));
     }
 }

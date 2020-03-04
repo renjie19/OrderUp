@@ -5,16 +5,22 @@ import android.os.Parcelable;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 import lombok.Data;
 
 @Data
 public class Account extends RealmObject implements Parcelable {
+    @PrimaryKey
+    private int id;
     private String firstName;
     private String lastName;
     private String location;
     private String contactNumber;
     private String token;
     private RealmList<Consumer> consumers;
+
+    public Account() {
+    }
 
     @Override
     public int describeContents() {
@@ -23,6 +29,7 @@ public class Account extends RealmObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
         dest.writeString(this.firstName);
         dest.writeString(this.lastName);
         dest.writeString(this.location);
@@ -32,6 +39,7 @@ public class Account extends RealmObject implements Parcelable {
     }
 
     protected Account(Parcel in) {
+        this.id = in.readInt();
         this.firstName = in.readString();
         this.lastName = in.readString();
         this.location = in.readString();
@@ -52,7 +60,4 @@ public class Account extends RealmObject implements Parcelable {
             return new Account[size];
         }
     };
-
-    public Account() {
-    }
 }
