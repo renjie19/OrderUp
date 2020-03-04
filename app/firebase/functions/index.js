@@ -17,9 +17,9 @@ exports.sendRequest = functions.https.onRequest(async (req, res) => {
         .then((response => {
             console.log("Sent Successful", response);
             console.log("Sending response");
-        res.status(200).send(response);
+            res.sendStatus(200);
         })).catch((error) => {
         console.log("Error Sending Message", error);
     });
-        
+
 });

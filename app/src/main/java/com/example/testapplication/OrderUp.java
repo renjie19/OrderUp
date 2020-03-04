@@ -33,11 +33,4 @@ public class OrderUp extends Application {
         TokenGenerator.getToken();
         realm = Realm.getDefaultInstance();
     }
-
-    public static Realm getRealmInstance() {
-        if(realm == null) {
-            realm = Realm.getDefaultInstance();
-        }
-        return realm;
-    }
 }

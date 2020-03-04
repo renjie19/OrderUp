@@ -16,7 +16,6 @@ import com.google.gson.GsonBuilder;
 
 public class FireBaseService extends FirebaseMessagingService {
     private final String TAG = "FIREBASE";
-    String message;
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
