@@ -32,6 +32,11 @@ public class MainPage extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_page);
         presenter = new MainPagePresenter();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initializeComponents();
         initializeAdapter();
     }
@@ -60,17 +65,8 @@ public class MainPage extends BaseActivity {
         return true;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        adapter.notifyDataSetChanged();
-    }
-
     private void initializeComponents() {
         list = presenter.getAll();
-        if(list == null) {
-            list = new ArrayList<>();
-        }
         this.rv = findViewById(R.id.orderRv);
         this.rv.setLayoutManager(new LinearLayoutManager(this));
     }

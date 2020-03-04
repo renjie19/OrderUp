@@ -25,6 +25,7 @@ import com.example.testapplication.pojo.Item;
 import com.example.testapplication.presenter.OrderListPresenter;
 import com.example.testapplication.util.DateUtil;
 import com.example.testapplication.util.TokenGenerator;
+import com.example.testapplication.views.ConsumerOrderListView;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.GsonBuilder;
 
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 
 import io.realm.RealmList;
 
-public class ConsumerOrderList extends BaseActivity {
+public class ConsumerOrderList extends BaseActivity implements ConsumerOrderListView {
 
     private TextView date, total;
     private EditText consumerField, location;
@@ -48,9 +49,7 @@ public class ConsumerOrderList extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consumer_order_list);
 
-        if(presenter == null) {
-            presenter = new OrderListPresenter();
-        }
+        presenter = new OrderListPresenter(this);
 
         consumer = getIntent().getParcelableExtra("consumer");
         if (consumer == null) {
@@ -125,7 +124,10 @@ public class ConsumerOrderList extends BaseActivity {
             buildConsumerOrder(consumer);
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setMessage("Are you sure with your orders?\n");
-            alert.setPositiveButton("YES", (dialog, which) ->sendNotification());
+            alert.setPositiveButton("YES", (dialog, which) -> {
+                showProgressBar("Sending Request... Please Wait...");
+                sendNotification();
+            });
             alert.setNegativeButton("NO", null);
             alert.show();
         });
@@ -178,9 +180,24 @@ public class ConsumerOrderList extends BaseActivity {
                 completeMessage, sentPendingIntent, null);
     }
 
-    private void sendNotification(){
-        new Thread(()->{
-            presenter.sendNotification(consumer);
-        }).run();
+    private void sendNotification() {
+        new Thread(() -> presenter.sendNotification(consumer)).run();
+    }
+
+    @Override
+    public void onSuccess(String message) {
+        runOnUiThread(() -> {
+            hideProgressBar();
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            finish();
+        });
+    }
+
+    @Override
+    public void onFailure(String message) {
+        runOnUiThread(() -> {
+            hideProgressBar();
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        });
     }
 }
