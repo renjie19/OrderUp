@@ -179,11 +179,8 @@ public class ConsumerOrderList extends BaseActivity {
     }
 
     private void sendNotification(){
-        showProgressBar("Sending Request...");
         new Thread(()->{
             presenter.sendNotification(consumer);
-            hideProgressBar();
-            finish();
         }).run();
     }
 }

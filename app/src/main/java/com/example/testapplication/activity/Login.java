@@ -55,6 +55,6 @@ public class Login extends BaseActivity{
     }
 
     private void verifyLogin() {
-        startActivity(new Intent(this, MainPage.class));
+        startActivity(new Intent(this, Management.class));
     }
 }
