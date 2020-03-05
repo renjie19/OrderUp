@@ -1,6 +1,8 @@
 package com.example.testapplication.repository;
 
 import com.example.testapplication.pojo.Account;
+import com.example.testapplication.pojo.Client;
+import com.example.testapplication.pojo.Consumer;
 
 public abstract class AccountRepository {
     private static AccountRepository repository;
@@ -15,7 +17,7 @@ public abstract class AccountRepository {
         return repository;
     }
 
-    public abstract Account save(Account account);
+    public abstract void save(Account account);
 
     public abstract Account getAccount();
 }

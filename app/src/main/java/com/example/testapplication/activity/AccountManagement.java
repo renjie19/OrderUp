@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.example.testapplication.R;
 import com.example.testapplication.pojo.Account;
 import com.example.testapplication.presenter.AccountManagementPresenter;
+import com.example.testapplication.util.FirebaseToken;
 import com.example.testapplication.views.AccountManagementViews;
 
 public class AccountManagement extends BaseActivity implements AccountManagementViews {
@@ -20,7 +21,7 @@ public class AccountManagement extends BaseActivity implements AccountManagement
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_account);
+        setContentView(R.layout.account_management);
         initializeComponents();
     }
 
@@ -49,13 +50,11 @@ public class AccountManagement extends BaseActivity implements AccountManagement
 
     private Account buildAccount() throws Exception {
         if(!fieldsAreInvalid()) {
-            if(account == null) {
-                account = new Account();
-            }
             account.setFirstName(userName.getText().toString());
             account.setLastName(lastName.getText().toString());
             account.setLocation(location.getText().toString());
             account.setContactNumber(phoneNumber.getText().toString());
+            account.setToken(FirebaseToken.INSTANCE.getToken());
             return account;
         }
         throw new Exception("Fill In All Fields...");

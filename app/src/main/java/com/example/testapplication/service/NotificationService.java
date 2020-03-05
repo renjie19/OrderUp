@@ -1,7 +1,7 @@
 package com.example.testapplication.service;
 
-import com.example.testapplication.pojo.Consumer;
+import com.example.testapplication.pojo.Order;
 
 public interface NotificationService {
-    void sendNotification(Consumer consumer);
+    void sendNotification(Order order);
 }

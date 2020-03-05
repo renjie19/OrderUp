@@ -10,7 +10,8 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.example.testapplication.pojo.Consumer;
-import com.example.testapplication.repository.ConsumerRepository;
+import com.example.testapplication.pojo.Order;
+import com.example.testapplication.repository.OrderRepository;
 import com.google.gson.GsonBuilder;
 
 import java.util.HashMap;
@@ -20,7 +21,7 @@ import static java.lang.Thread.sleep;
 
 public class SmsReceiver extends BroadcastReceiver {
     private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
-    private final ConsumerRepository consumerRepository = ConsumerRepository.getInstance();
+    private final OrderRepository orderRepository = OrderRepository.getInstance();
     Map<Long, String> messageDetails = new HashMap<>();
     String address;
 
@@ -40,8 +41,8 @@ public class SmsReceiver extends BroadcastReceiver {
                     for (SmsMessage message : messages) {
                         completeMessage += message.getMessageBody();
                     }
-                    Consumer consumer = new GsonBuilder().create().fromJson(completeMessage, Consumer.class);
-                    consumerRepository.save(consumer);
+                    Order order = new GsonBuilder().create().fromJson(completeMessage, Order.class);
+                    orderRepository.save(order);
                     //TODO fix deleting of parsed message
                     deleteReceivedParsedMessage(context, completeMessage);
                 } catch (Exception e) {

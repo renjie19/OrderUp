@@ -20,13 +20,14 @@ import android.widget.Toast;
 
 import com.example.testapplication.R;
 import com.example.testapplication.adapter.ItemListAdapter;
+import com.example.testapplication.pojo.Client;
 import com.example.testapplication.pojo.Consumer;
 import com.example.testapplication.pojo.Item;
+import com.example.testapplication.pojo.Order;
 import com.example.testapplication.presenter.OrderListPresenter;
 import com.example.testapplication.util.DateUtil;
-import com.example.testapplication.util.TokenGenerator;
+import com.example.testapplication.util.FirebaseToken;
 import com.example.testapplication.views.ConsumerOrderListView;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class ConsumerOrderList extends BaseActivity implements ConsumerOrderList
 
     private TextView date, total;
     private EditText consumerField, location;
-    private Consumer consumer;
+    private Order order;
     private RecyclerView rv;
     private ItemListAdapter adapter;
 
@@ -51,10 +52,11 @@ public class ConsumerOrderList extends BaseActivity implements ConsumerOrderList
 
         presenter = new OrderListPresenter(this);
 
-        consumer = getIntent().getParcelableExtra("consumer");
-        if (consumer == null) {
-            consumer = new Consumer();
-            consumer.setOrders(new RealmList<>());
+        order = getIntent().getParcelableExtra("consumer");
+        if (order == null) {
+            order = new Order();
+            order.setItems(new RealmList<>());
+            order.setClient(new Client());
         }
         String action = getIntent().getStringExtra("ACTION");
         initializeComponents(action != null && action.equalsIgnoreCase("CREATE"));
@@ -62,7 +64,7 @@ public class ConsumerOrderList extends BaseActivity implements ConsumerOrderList
     }
 
     private void setAdapter() {
-        adapter = new ItemListAdapter(consumer.getOrders(), getOnClickListener());
+        adapter = new ItemListAdapter(order.getItems(), getOnClickListener());
         rv.setAdapter(adapter);
     }
 
@@ -96,21 +98,21 @@ public class ConsumerOrderList extends BaseActivity implements ConsumerOrderList
 
     private void initializeComponents(boolean enabled) {
         this.consumerField = findViewById(R.id.consumerName);
-        this.consumerField.setText(consumer.getName());
+        this.consumerField.setText(order.getClient().getName());
         this.consumerField.setEnabled(enabled);
 
         this.location = findViewById(R.id.consumerLocation);
-        this.location.setText(consumer.getLocation());
+        this.location.setText(order.getClient().getLocation());
         this.location.setEnabled(enabled);
 
         this.date = findViewById(R.id.orderDate);
-        this.date.setText(consumer.getDate() != 0
-                ? DateUtil.getStringDate(consumer.getDate())
+        this.date.setText(order.getDate() != 0
+                ? DateUtil.getStringDate(order.getDate())
                 : DateUtil.getStringDate(System.currentTimeMillis()));
         this.date.setEnabled(false);
 
         this.total = findViewById(R.id.totalField);
-        this.total.setText(String.valueOf(consumer.getTotal()));
+        this.total.setText(String.valueOf(order.getTotal()));
 
         this.rv = findViewById(R.id.itemListRv);
         this.rv.setLayoutManager(new LinearLayoutManager(this));
@@ -121,9 +123,9 @@ public class ConsumerOrderList extends BaseActivity implements ConsumerOrderList
         });
 
         findViewById(R.id.done).setOnClickListener(view -> {
-            buildConsumerOrder(consumer);
+            buildConsumerOrder(order);
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.setMessage("Are you sure with your orders?\n");
+            alert.setMessage("Are you sure with your items?\n");
             alert.setPositiveButton("YES", (dialog, which) -> {
                 showProgressBar("Sending Request... Please Wait...");
                 sendNotification();
@@ -133,12 +135,11 @@ public class ConsumerOrderList extends BaseActivity implements ConsumerOrderList
         });
     }
 
-    private void buildConsumerOrder(Consumer consumer) {
-        consumer.setName(consumerField.getText().toString());
-        consumer.setDate(System.currentTimeMillis());
-        consumer.setLocation(location.getText().toString());
-        consumer.setStatus(consumer.getTotal() == 0 ? "PENDING" : "FOR DELIVERY");
-        consumer.setToken(TokenGenerator.getToken());
+    private void buildConsumerOrder(Order order) {
+        order.getClient().setName(consumerField.getText().toString());
+        order.setDate(System.currentTimeMillis());
+        order.getClient().setLocation(location.getText().toString());
+        order.setStatus(order.getTotal() == 0 ? "PENDING" : "FOR DELIVERY");
     }
 
     private DialogInterface.OnClickListener createItemAndAddToOrder(Item item) {
@@ -146,7 +147,7 @@ public class ConsumerOrderList extends BaseActivity implements ConsumerOrderList
             item.setName(itemName.getText().toString());
             item.setQuantity(Integer.parseInt(quantity.getText().toString()));
             item.setPackaging(pckg.getText().toString());
-            consumer.getOrders().add(item);
+            order.getItems().add(item);
             adapter.notifyDataSetChanged();
         };
     }
@@ -154,7 +155,7 @@ public class ConsumerOrderList extends BaseActivity implements ConsumerOrderList
     private DialogInterface.OnClickListener updatePrice(Item item) {
         return (dialog, which) -> {
             item.setPrice(Double.parseDouble(price.getText().toString()));
-            total.setText(String.valueOf(consumer.getTotal()));
+            total.setText(String.valueOf(order.getTotal()));
             adapter.notifyDataSetChanged();
         };
     }
@@ -174,14 +175,17 @@ public class ConsumerOrderList extends BaseActivity implements ConsumerOrderList
             }
         }, new IntentFilter("SENT"));
         SmsManager smsManager = SmsManager.getDefault();
-        ArrayList<String> completeMessage = smsManager.divideMessage(new GsonBuilder().create().toJson(consumer));
+        ArrayList<String> completeMessage = smsManager.divideMessage(new GsonBuilder().create().toJson(order));
         //TODO externalize setting of receipient
         smsManager.sendMultipartTextMessage("+639486324067", null,
                 completeMessage, sentPendingIntent, null);
     }
 
     private void sendNotification() {
-        new Thread(() -> presenter.sendNotification(consumer)).run();
+        new Thread(() -> {
+            order.getClient().setToken(FirebaseToken.INSTANCE.getToken());
+            presenter.sendNotification(order);
+        }).run();
     }
 
     @Override

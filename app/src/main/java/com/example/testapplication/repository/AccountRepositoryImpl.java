@@ -10,19 +10,19 @@ class AccountRepositoryImpl extends AccountRepository {
     private final String TAG = "AccountRepositoryImpl";
 
     @Override
-    public Account save(Account account) {
+    public void save(Account account) {
         Realm realm = Realm.getDefaultInstance();
         try {
             realm.refresh();
-            realm.executeTransaction(realm1 -> realm1.copyToRealmOrUpdate(account));
+            realm.beginTransaction();
+            realm.copyToRealmOrUpdate(account);
+            realm.commitTransaction();
             Log.d(TAG, "SAVE SUCCESSFUL");
-            return realm.where(Account.class).findFirst();
         } catch (Exception e) {
             Log.d(TAG, "save: " + e.getMessage());
         } finally {
             realm.close();
         }
-        return account;
     }
 
     @Override

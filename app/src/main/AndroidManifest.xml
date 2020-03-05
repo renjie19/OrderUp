@@ -18,8 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.AccountManagement"></activity>
-        <activity android:name=".activity.Management" />
+        <activity android:name=".activity.ClientList"></activity>
+        <activity android:name=".activity.AccountManagement" />
+        <activity android:name=".activity.MainPage" />
 
         <service
             android:name=".broadcastreceiver.FireBaseService"
@@ -45,7 +46,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainPage" />
+        <activity android:name=".activity.OrderPage" />
 
         <receiver android:name=".broadcastreceiver.SmsReceiver">
             <intent-filter android:priority="999">

@@ -7,17 +7,18 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class Account extends RealmObject implements Parcelable {
     @PrimaryKey
-    private int id;
+    private String token;
     private String firstName;
     private String lastName;
     private String location;
     private String contactNumber;
-    private String token;
-    private RealmList<Consumer> consumers;
+    private RealmList<Client> clients;
 
     public Account() {
     }
@@ -29,24 +30,22 @@ public class Account extends RealmObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
         dest.writeString(this.firstName);
         dest.writeString(this.lastName);
         dest.writeString(this.location);
         dest.writeString(this.contactNumber);
         dest.writeString(this.token);
-        dest.writeTypedList(this.consumers);
+        dest.writeTypedList(this.clients);
     }
 
     protected Account(Parcel in) {
-        this.id = in.readInt();
         this.firstName = in.readString();
         this.lastName = in.readString();
         this.location = in.readString();
         this.contactNumber = in.readString();
         this.token = in.readString();
-        this.consumers = new RealmList<>();
-        this.consumers.addAll(in.createTypedArrayList(Consumer.CREATOR));
+        this.clients = new RealmList<>();
+        this.clients.addAll(in.createTypedArrayList(Client.CREATOR));
     }
 
     public static final Parcelable.Creator<Account> CREATOR = new Parcelable.Creator<Account>() {

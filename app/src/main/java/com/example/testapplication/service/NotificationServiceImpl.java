@@ -3,8 +3,9 @@ package com.example.testapplication.service;
 import android.util.Log;
 
 import com.example.testapplication.activity.ConsumerOrderList;
-import com.example.testapplication.pojo.Consumer;
+import com.example.testapplication.pojo.Order;
 import com.example.testapplication.rest.FirebaseRestApi;
+import com.example.testapplication.util.FirebaseToken;
 import com.example.testapplication.views.ConsumerOrderListView;
 import com.google.gson.GsonBuilder;
 
@@ -30,8 +31,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void sendNotification(Consumer consumer) {
-        restApi.sendNotification(new GsonBuilder().create().toJson(consumer), consumer.getToken(),
+    public void sendNotification(Order order) {
+        restApi.sendNotification(new GsonBuilder().create().toJson(order), order.getClient().getToken(),
                 "Bearer " + serverKey).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

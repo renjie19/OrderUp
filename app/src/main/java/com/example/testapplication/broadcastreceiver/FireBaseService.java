@@ -1,17 +1,18 @@
 package com.example.testapplication.broadcastreceiver;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.example.testapplication.OrderUp;
-import com.example.testapplication.activity.BaseActivity;
-import com.example.testapplication.pojo.Consumer;
-import com.example.testapplication.repository.ConsumerRepository;
+import com.example.testapplication.pojo.Account;
+import com.example.testapplication.pojo.Order;
+import com.example.testapplication.repository.AccountRepository;
+import com.example.testapplication.repository.OrderRepository;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.GsonBuilder;
+
+import io.realm.RealmList;
 
 
 public class FireBaseService extends FirebaseMessagingService {
@@ -22,9 +23,12 @@ public class FireBaseService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         Log.d(TAG, "Message Received");
         try{
-            Consumer consumer = new GsonBuilder().create().fromJson(remoteMessage.getData().get("message"), Consumer.class);
-            if(consumer != null) {
-                ConsumerRepository.getInstance().save(consumer);
+            Order order = new GsonBuilder().create().fromJson(remoteMessage.getData().get("message"), Order.class);
+            if(order != null) {
+                Account account = AccountRepository.getInstance().getAccount();
+                account.getClients().add(order.getClient());
+                AccountRepository.getInstance().save(account);
+                OrderRepository.getInstance().save(order);
                 Log.d(TAG, "Save Successful");
             }
         } catch (Exception e){

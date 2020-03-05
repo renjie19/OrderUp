@@ -4,11 +4,11 @@ import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 
-public enum TokenGenerator {
+public enum FirebaseToken {
     INSTANCE;
-    private static String token;
+    private String token;
 
-    public static String getToken() {
+    public String getToken() {
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
             token = task.getResult().getToken();
         });

@@ -15,7 +15,9 @@ public abstract class AccountService {
         return service;
     }
 
-    public abstract Account save(Account account);
+    public abstract void save(Account account);
 
     public abstract Account getAccount();
+
+    public abstract Account update(Account account);
 }

@@ -13,20 +13,19 @@ import lombok.EqualsAndHashCode;
 @Data
 public class Consumer extends RealmObject implements Parcelable {
 
-    @PrimaryKey
-    private String id;
-    private long date;
+    private String token;
     private String name;
     private String location;
-    private RealmList<Item> orders;
+    private long date;
+    private RealmList<Item> items;
     private String status;
     private double total;
-    private String token;
+    private boolean sent;
 
     public double getTotal() {
         double total = 0;
-        if (orders != null) {
-            for (Item item : orders) {
+        if (items != null) {
+            for (Item item : items) {
                 total += item.getPrice();
             }
         }
@@ -36,10 +35,13 @@ public class Consumer extends RealmObject implements Parcelable {
     @Override
     public String toString() {
         String consumer = String.format("%s\n%s\n%s\n%s\n%s\n",date,name,location,status,total);
-        if(orders != null){
-            for(Item item : orders) consumer += item.toString();
+        if(items != null){
+            for(Item item : items) consumer += item.toString();
         }
         return consumer;
+    }
+
+    public Consumer() {
     }
 
     @Override
@@ -49,30 +51,29 @@ public class Consumer extends RealmObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
-        dest.writeLong(this.date);
+        dest.writeString(this.token);
         dest.writeString(this.name);
         dest.writeString(this.location);
-        dest.writeTypedList(this.orders);
+        dest.writeLong(this.date);
+        dest.writeTypedList(this.items);
         dest.writeString(this.status);
         dest.writeDouble(this.total);
-    }
-
-    public Consumer() {
+        dest.writeByte(this.sent ? (byte) 1 : (byte) 0);
     }
 
     protected Consumer(Parcel in) {
-        this.id = in.readString();
-        this.date = in.readLong();
+        this.token = in.readString();
         this.name = in.readString();
         this.location = in.readString();
-        this.orders = new RealmList<>();
-        this.orders.addAll(in.createTypedArrayList(Item.CREATOR));
+        this.date = in.readLong();
+        this.items = new RealmList<>();
+        this.items.addAll(in.createTypedArrayList(Item.CREATOR));
         this.status = in.readString();
         this.total = in.readDouble();
+        this.sent = in.readByte() != 0;
     }
 
-    public static final Parcelable.Creator<Consumer> CREATOR = new Parcelable.Creator<Consumer>() {
+    public static final Creator<Consumer> CREATOR = new Creator<Consumer>() {
         @Override
         public Consumer createFromParcel(Parcel source) {
             return new Consumer(source);

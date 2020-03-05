@@ -1,18 +1,16 @@
 package com.example.testapplication.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.core.app.ActivityCompat;
 
 import com.example.testapplication.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Login extends BaseActivity{
     private TextView passwordField;
@@ -55,6 +53,6 @@ public class Login extends BaseActivity{
     }
 
     private void verifyLogin() {
-        startActivity(new Intent(this, Management.class));
+        startActivity(new Intent(this, MainPage.class));
     }
 }
