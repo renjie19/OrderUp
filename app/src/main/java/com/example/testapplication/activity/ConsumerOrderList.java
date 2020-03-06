@@ -52,7 +52,7 @@ public class ConsumerOrderList extends BaseActivity implements ConsumerOrderList
 
         presenter = new OrderListPresenter(this);
 
-        order = getIntent().getParcelableExtra("consumer");
+        order = getIntent().getParcelableExtra("data");
         if (order == null) {
             order = new Order();
             order.setItems(new RealmList<>());

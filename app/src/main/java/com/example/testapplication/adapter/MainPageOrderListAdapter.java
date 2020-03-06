@@ -11,16 +11,17 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import com.example.testapplication.R;
 import com.example.testapplication.pojo.Consumer;
+import com.example.testapplication.pojo.Order;
 import com.example.testapplication.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainPageOrderListAdapter extends Adapter<MainPageOrderListAdapter.MainPageViewHolder> {
-    private List<Consumer> list;
+    private List<Order> list;
     private OnClickListener onClickListener;
 
-    public MainPageOrderListAdapter(List<Consumer> list, OnClickListener onClickListener2) {
+    public MainPageOrderListAdapter(List<Order> list, OnClickListener onClickListener2) {
         this.list = list;
         if(this.list == null){
             this.list = new ArrayList<>();
@@ -34,12 +35,12 @@ public class MainPageOrderListAdapter extends Adapter<MainPageOrderListAdapter.M
     }
 
     public void onBindViewHolder(MainPageViewHolder holder, int position) {
-        Consumer consumer = this.list.get(position);
-        holder.dateTv.setText(DateUtil.getStringDate(consumer.getDate()));
-        holder.consumerTv.setText(consumer.getName());
-        holder.statusTv.setText(consumer.getStatus());
+        Order order = this.list.get(position);
+        holder.dateTv.setText(DateUtil.getStringDate(order.getDate()));
+        holder.consumerTv.setText(order.getClient().getName());
+        holder.statusTv.setText(order.getStatus());
         holder.parentView.setOnClickListener(this.onClickListener);
-        holder.parentView.setTag(consumer);
+        holder.parentView.setTag(order);
     }
 
     public int getItemCount() {

@@ -17,6 +17,7 @@ import com.example.testapplication.adapter.MainPageOrderListAdapter;
 import com.example.testapplication.R;
 import com.example.testapplication.pojo.Client;
 import com.example.testapplication.pojo.Consumer;
+import com.example.testapplication.pojo.Order;
 import com.example.testapplication.presenter.OrderPagePresenter;
 
 import java.util.List;
@@ -28,13 +29,12 @@ public class OrderPage extends BaseActivity {
     private Client client;
     private TextView clientName;
     private TextView clientAddress;
-    private List<Consumer> list;
+    private List<Order> list;
     private OrderPagePresenter presenter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_page);
-        client = getIntent().getParcelableExtra("data");
         presenter = new OrderPagePresenter();
     }
 
@@ -70,9 +70,19 @@ public class OrderPage extends BaseActivity {
     }
 
     private void initializeComponents() {
-        list = presenter.getOrders(client);
+        list = presenter.getOrders(getIntent().getParcelableExtra("data"));
         this.rv = findViewById(R.id.orderRv);
+        this.clientName = findViewById(R.id.clientName);
+        this.clientAddress = findViewById(R.id.clientAddress);
         this.rv.setLayoutManager(new LinearLayoutManager(this));
+        if(list != null && list.size() > 0){
+            if(client == null) {
+                client = list.get(0).getClient();
+                this.clientName.setText(client.getName());
+                this.clientAddress.setText(client.getLocation());
+            }
+        }
+
     }
 
     private void initializeAdapter() {
@@ -82,10 +92,10 @@ public class OrderPage extends BaseActivity {
 
     private OnClickListener getOnClickListener() {
         return view -> {
-            Consumer consumer = (Consumer) view.getTag();
+            Order order = (Order) view.getTag();
             Intent intent = new Intent(this, ConsumerOrderList.class);
             intent.putExtra("ACTION","VIEW");
-            intent.putExtra("consumer", consumer);
+            intent.putExtra("data", order);
             startActivity(intent);
         };
     }

@@ -17,7 +17,7 @@ public abstract class AccountRepository {
         return repository;
     }
 
-    public abstract void save(Account account);
+    public abstract Account save(Account account);
 
     public abstract Account getAccount();
 }

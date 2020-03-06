@@ -5,12 +5,15 @@ import android.os.Parcelable;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Order extends RealmObject implements Parcelable {
+    @PrimaryKey
+    private String id;
     private Client client;
     private long date;
     private String status;

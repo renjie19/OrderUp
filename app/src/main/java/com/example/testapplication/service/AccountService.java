@@ -1,6 +1,7 @@
 package com.example.testapplication.service;
 
 import com.example.testapplication.pojo.Account;
+import com.example.testapplication.pojo.Client;
 
 public abstract class AccountService {
     private static AccountService service;
@@ -20,4 +21,6 @@ public abstract class AccountService {
     public abstract Account getAccount();
 
     public abstract Account update(Account account);
+
+    public abstract Account addClient(Client client);
 }

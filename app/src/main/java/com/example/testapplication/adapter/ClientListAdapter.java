@@ -27,7 +27,8 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Cl
     @NonNull
     @Override
     public ClientListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ClientListViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.client_entry_layout, parent, false));
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.client_entry_layout, parent, false);
+        return new ClientListViewHolder(view);
     }
 
     @Override
@@ -40,7 +41,7 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Cl
 
     @Override
     public int getItemCount() {
-        return 0;
+        return clients.size();
     }
 
     public class ClientListViewHolder extends RecyclerView.ViewHolder {

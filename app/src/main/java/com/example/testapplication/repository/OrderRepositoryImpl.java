@@ -8,6 +8,7 @@ import com.example.testapplication.pojo.Order;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import io.realm.Realm;
 
@@ -16,6 +17,7 @@ class OrderRepositoryImpl extends OrderRepository {
 
     @Override
     public Consumer save(Order order) {
+        order.setId(UUID.randomUUID().toString());
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(order);
@@ -25,13 +27,10 @@ class OrderRepositoryImpl extends OrderRepository {
     }
 
     @Override
-    public List<Consumer> getOrders(Client client) {
+    public List<Order> getOrders(Client client) {
         try (Realm realm = Realm.getDefaultInstance()) {
             realm.refresh();
-            List<Consumer> list = realm.where(Consumer.class)
-                    .equalTo("name",client.getName())
-                    .equalTo("location", client.getLocation())
-                    .findAll();
+            List<Order> list = realm.where(Order.class).equalTo("client.token",client.getToken()).findAll();
             return realm.copyFromRealm(list);
         } catch (Exception e) {
             Log.d(TAG, "getOrders: Error Occurred");

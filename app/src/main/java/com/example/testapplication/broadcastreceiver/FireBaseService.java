@@ -8,6 +8,7 @@ import com.example.testapplication.pojo.Account;
 import com.example.testapplication.pojo.Order;
 import com.example.testapplication.repository.AccountRepository;
 import com.example.testapplication.repository.OrderRepository;
+import com.example.testapplication.service.AccountService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.GsonBuilder;
@@ -25,9 +26,7 @@ public class FireBaseService extends FirebaseMessagingService {
         try{
             Order order = new GsonBuilder().create().fromJson(remoteMessage.getData().get("message"), Order.class);
             if(order != null) {
-                Account account = AccountRepository.getInstance().getAccount();
-                account.getClients().add(order.getClient());
-                AccountRepository.getInstance().save(account);
+                AccountService.getInstance().addClient(order.getClient());
                 OrderRepository.getInstance().save(order);
                 Log.d(TAG, "Save Successful");
             }

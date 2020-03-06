@@ -19,5 +19,5 @@ public abstract class OrderRepository {
     }
 
     public abstract Consumer save(Order order);
-    public abstract List<Consumer> getOrders(Client client);
+    public abstract List<Order> getOrders(Client client);
 }

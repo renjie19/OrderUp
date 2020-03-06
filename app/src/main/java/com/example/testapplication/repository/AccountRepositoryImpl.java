@@ -3,6 +3,7 @@ package com.example.testapplication.repository;
 import android.util.Log;
 
 import com.example.testapplication.pojo.Account;
+import com.example.testapplication.pojo.Client;
 
 import io.realm.Realm;
 
@@ -10,7 +11,7 @@ class AccountRepositoryImpl extends AccountRepository {
     private final String TAG = "AccountRepositoryImpl";
 
     @Override
-    public void save(Account account) {
+    public Account save(Account account) {
         Realm realm = Realm.getDefaultInstance();
         try {
             realm.refresh();
@@ -23,6 +24,7 @@ class AccountRepositoryImpl extends AccountRepository {
         } finally {
             realm.close();
         }
+        return account;
     }
 
     @Override
