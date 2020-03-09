@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.ClientList">
+    tools:context=".ui.activity.ClientList">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/clientRv"
@@ -19,11 +19,12 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton3"
+        android:id="@+id/addClientBtn"
         android:layout_width="61dp"
         android:layout_height="67dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
+        android:foreground="@android:drawable/ic_input_add"
         app:layout_constraintBottom_toBottomOf="@+id/clientRv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.921"

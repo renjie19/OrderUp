@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.testapplication">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.WRITE_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
@@ -18,27 +24,32 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.ClientList"></activity>
-        <activity android:name=".activity.AccountManagement" />
-        <activity android:name=".activity.MainPage" />
+        <activity android:name=".ui.activity.BarCodeScanner"/>
+        <activity android:name=".ui.activity.ClientList" />
+        <activity android:name=".ui.activity.AccountManagement" />
+        <activity android:name=".ui.activity.MainPage" />
+
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode" />
 
         <service
-            android:name=".broadcastreceiver.FireBaseService"
+            android:name=".core.broadcastreceiver.FireBaseService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".util.FirebaseIDService">
+        <service android:name=".shared.util.FirebaseIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
-        <activity android:name=".activity.ConsumerOrderList" />
+        <activity android:name=".ui.activity.ConsumerOrderList" />
         <activity
-            android:name=".activity.Login"
+            android:name=".ui.activity.Login"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,9 +57,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.OrderPage" />
+        <activity android:name=".ui.activity.OrderPage" />
 
-        <receiver android:name=".broadcastreceiver.SmsReceiver">
+        <receiver android:name=".core.broadcastreceiver.SmsReceiver">
             <intent-filter android:priority="999">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>

@@ -2,9 +2,8 @@ package com.example.testapplication;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 
-import com.example.testapplication.util.FirebaseToken;
+import com.example.testapplication.shared.util.FirebaseToken;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
