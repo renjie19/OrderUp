@@ -21,6 +21,13 @@ public class Order extends RealmObject implements Parcelable {
     private double total;
     private RealmList<Item> items;
 
+    public double getTotal() {
+        for (Item item : items) {
+            total += item.getPrice();
+        }
+        return total;
+    }
+
     public Order() {
     }
 
@@ -31,6 +38,7 @@ public class Order extends RealmObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
         dest.writeParcelable(this.client, flags);
         dest.writeLong(this.date);
         dest.writeString(this.status);
@@ -40,6 +48,7 @@ public class Order extends RealmObject implements Parcelable {
     }
 
     protected Order(Parcel in) {
+        this.id = in.readString();
         this.client = in.readParcelable(Client.class.getClassLoader());
         this.date = in.readLong();
         this.status = in.readString();
@@ -49,7 +58,7 @@ public class Order extends RealmObject implements Parcelable {
         this.items.addAll(in.createTypedArrayList(Item.CREATOR));
     }
 
-    public static final Creator<Order> CREATOR = new Creator<Order>() {
+    public static final Parcelable.Creator<Order> CREATOR = new Parcelable.Creator<Order>() {
         @Override
         public Order createFromParcel(Parcel source) {
             return new Order(source);

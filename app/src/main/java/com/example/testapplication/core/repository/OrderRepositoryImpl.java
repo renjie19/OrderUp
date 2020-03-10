@@ -16,14 +16,16 @@ class OrderRepositoryImpl extends OrderRepository {
     private final String TAG = this.getClass().getSimpleName();
 
     @Override
-    public Consumer save(Order order) {
-        order.setId(UUID.randomUUID().toString());
+    public Order save(Order order) {
+        if(order.getId() == null) {
+            order.setId(UUID.randomUUID().toString());
+        }
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(order);
         realm.commitTransaction();
         realm.close();
-        return null;
+        return order;
     }
 
     @Override
@@ -36,5 +38,29 @@ class OrderRepositoryImpl extends OrderRepository {
             Log.d(TAG, "getOrders: Error Occurred");
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public Order getOrder(String id) {
+        try(Realm realm = Realm.getDefaultInstance()) {
+            realm.refresh();
+            Order order = realm.where(Order.class)
+                    .equalTo("id", id).findFirst();
+            return realm.copyFromRealm(order);
+        } catch (Exception e) {
+            Log.d(TAG, "getOrder: "+e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public Order update(Order order) {
+        try(Realm realm = Realm.getDefaultInstance()) {
+            realm.refresh();
+            return realm.copyToRealmOrUpdate(order);
+        } catch (Exception e) {
+            Log.d(TAG, "update: "+e.getMessage());
+        }
+        return order;
     }
 }

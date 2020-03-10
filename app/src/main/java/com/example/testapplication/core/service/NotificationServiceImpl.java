@@ -3,6 +3,7 @@ package com.example.testapplication.core.service;
 import android.util.Log;
 
 import com.example.testapplication.core.repository.AccountRepository;
+import com.example.testapplication.core.repository.OrderRepository;
 import com.example.testapplication.shared.util.AccountMapper;
 import com.example.testapplication.ui.activity.OrderPage;
 import com.example.testapplication.shared.pojo.Order;
@@ -49,11 +50,23 @@ public class NotificationServiceImpl implements NotificationService {
                     view.onSuccess("Order Sent");
                 }
             }
+
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.d(TAG, "onFailure: " + t.getMessage());
                 view.onFailure(t.getMessage());
             }
         });
+    }
+
+    @Override
+    public void manageReceivedOrder(final Order order) {
+        AccountService.getInstance().addClient(order.getClient());
+        Order orderFromDb = OrderRepository.getInstance().getOrder(order.getId());
+        if(orderFromDb == null) {
+            OrderRepository.getInstance().save(order);
+        } else {
+            OrderRepository.getInstance().update(order);
+        }
     }
 }

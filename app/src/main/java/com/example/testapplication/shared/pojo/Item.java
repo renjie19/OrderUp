@@ -49,9 +49,4 @@ public class Item extends RealmObject implements Parcelable {
             return new Item[size];
         }
     };
-
-    @Override
-    public String toString() {
-       return String.format("%s - %s %s = %.2f",name,quantity,packaging,price);
-    }
 }

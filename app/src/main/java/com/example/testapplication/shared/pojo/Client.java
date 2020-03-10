@@ -51,9 +51,4 @@ public class Client extends RealmObject implements Parcelable {
 
     public Client() {
     }
-
-    @Override
-    public String toString() {
-        return String.format("Name: %s\nLocation: %s\nContact No: %s",this.name,this.location,this.contactNo);
-    }
 }

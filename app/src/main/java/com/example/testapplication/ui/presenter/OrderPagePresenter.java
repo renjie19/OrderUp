@@ -1,26 +1,42 @@
 package com.example.testapplication.ui.presenter;
 
-import com.example.testapplication.ui.activity.OrderPage;
+import android.util.Log;
+
+import com.example.testapplication.core.service.OrderService;
+import com.example.testapplication.core.service.OrderServiceImpl;
 import com.example.testapplication.shared.pojo.Order;
 import com.example.testapplication.core.service.NotificationService;
 import com.example.testapplication.core.service.NotificationServiceImpl;
 import com.example.testapplication.ui.views.OrderPageView;
 
 public class OrderPagePresenter {
-    private NotificationService service;
+    private NotificationService notificationService;
+    private OrderService orderService;
     private OrderPageView view;
+    private final String TAG = "OrderPagePresenter";
 
     public OrderPagePresenter(OrderPageView orderPage){
-        if(service == null) {
-            service = new NotificationServiceImpl(orderPage);
+        if(notificationService == null) {
+            notificationService = new NotificationServiceImpl(orderPage);
+        }
+        if(orderService == null) {
+            orderService = new OrderServiceImpl();
         }
     }
 
     public void sendNotification(Order order) {
         try{
-            service.sendNotification(order);
+            notificationService.sendNotification(order);
         } catch (Exception e) {
-
+            Log.d(TAG, "sendNotification: ");
         }
+    }
+
+    public Order saveOrder(Order order) {
+        return orderService.save(order);
+    }
+
+    public Order updateOrder(Order order) {
+        return orderService.updateOrder(order);
     }
 }

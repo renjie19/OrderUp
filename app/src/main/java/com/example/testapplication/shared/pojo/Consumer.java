@@ -32,15 +32,6 @@ public class Consumer extends RealmObject implements Parcelable {
         return total;
     }
 
-    @Override
-    public String toString() {
-        String consumer = String.format("%s\n%s\n%s\n%s\n%s\n",date,name,location,status,total);
-        if(items != null){
-            for(Item item : items) consumer += item.toString();
-        }
-        return consumer;
-    }
-
     public Consumer() {
     }
 

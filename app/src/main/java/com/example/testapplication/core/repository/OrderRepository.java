@@ -18,6 +18,8 @@ public abstract class OrderRepository {
         return repository;
     }
 
-    public abstract Consumer save(Order order);
+    public abstract Order save(Order order);
     public abstract List<Order> getOrders(Client client);
+    public abstract Order getOrder(String id);
+    public abstract Order update(Order order);
 }

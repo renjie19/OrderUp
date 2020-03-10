@@ -34,7 +34,7 @@
             android:value="barcode" />
 
         <service
-            android:name=".core.broadcastreceiver.FireBaseService"
+            android:name=".core.broadcastreceiver.NotificationReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

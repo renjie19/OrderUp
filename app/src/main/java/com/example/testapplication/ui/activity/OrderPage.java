@@ -125,11 +125,20 @@ public class OrderPage extends BaseActivity implements OrderPageView {
             alert.setMessage("Are you sure with your items?\n");
             alert.setPositiveButton("YES", (dialog, which) -> {
                 showProgressBar("Sending Request... Please Wait...");
-                sendNotification();
+                saveOrUpdateOrderThenSend();
             });
             alert.setNegativeButton("NO", null);
             alert.show();
         });
+    }
+
+    private void saveOrUpdateOrderThenSend() {
+        if(order.getTotal() <= 0) {
+            this.order = presenter.saveOrder(order);
+        } else {
+            this.order = presenter.updateOrder(order);
+        }
+        sendNotification();
     }
 
     private void buildConsumerOrder(Order order) {

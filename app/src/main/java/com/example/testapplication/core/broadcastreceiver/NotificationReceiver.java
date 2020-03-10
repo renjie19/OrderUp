@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.testapplication.core.service.NotificationService;
+import com.example.testapplication.core.service.NotificationServiceImpl;
 import com.example.testapplication.shared.pojo.Order;
 import com.example.testapplication.core.repository.OrderRepository;
 import com.example.testapplication.core.service.AccountService;
@@ -12,8 +14,9 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.GsonBuilder;
 
 
-public class FireBaseService extends FirebaseMessagingService {
+public class NotificationReceiver extends FirebaseMessagingService {
     private final String TAG = "FIREBASE";
+    private final NotificationService notificationService = new NotificationServiceImpl(null);
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
@@ -22,8 +25,9 @@ public class FireBaseService extends FirebaseMessagingService {
         try{
             Order order = new GsonBuilder().create().fromJson(remoteMessage.getData().get("message"), Order.class);
             if(order != null) {
-                AccountService.getInstance().addClient(order.getClient());
-                OrderRepository.getInstance().save(order);
+                notificationService.manageReceivedOrder(order);
+//                AccountService.getInstance().addClient(order.getClient());
+//                OrderRepository.getInstance().handleReceivedOrder(order);
                 Log.d(TAG, "Save Successful");
             }
         } catch (Exception e){
