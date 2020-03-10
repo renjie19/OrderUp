@@ -2,10 +2,12 @@ package com.example.testapplication.core.service;
 
 import android.util.Log;
 
-import com.example.testapplication.ui.activity.ConsumerOrderList;
+import com.example.testapplication.core.repository.AccountRepository;
+import com.example.testapplication.shared.util.AccountMapper;
+import com.example.testapplication.ui.activity.OrderPage;
 import com.example.testapplication.shared.pojo.Order;
 import com.example.testapplication.core.rest.FirebaseRestApi;
-import com.example.testapplication.ui.views.ConsumerOrderListView;
+import com.example.testapplication.ui.views.OrderPageView;
 import com.google.gson.GsonBuilder;
 
 
@@ -23,15 +25,19 @@ public class NotificationServiceImpl implements NotificationService {
             .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create()))
             .build();
     private FirebaseRestApi restApi = retrofit.create(FirebaseRestApi.class);
-    private ConsumerOrderListView view;
+    private OrderPageView view;
+    private AccountRepository accountRepository;
 
-    public NotificationServiceImpl(ConsumerOrderList consumerOrderList) {
-        this.view = consumerOrderList;
+    public NotificationServiceImpl(OrderPageView orderPage) {
+        this.view = orderPage;
+        this.accountRepository = AccountRepository.getInstance();
     }
 
     @Override
     public void sendNotification(Order order) {
-        restApi.sendNotification(new GsonBuilder().create().toJson(order), order.getClient().getToken(),
+        String recipientToken = order.getClient().getToken();
+        order.setClient(AccountMapper.INSTANCE.accountToClient(accountRepository.getAccount()));
+        restApi.sendNotification(new GsonBuilder().create().toJson(order), recipientToken,
                 "Bearer " + serverKey).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +17,8 @@ import android.widget.Toast;
 
 import com.example.testapplication.R;
 import com.example.testapplication.shared.pojo.Account;
+import com.example.testapplication.shared.pojo.Client;
+import com.example.testapplication.shared.util.AccountMapper;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -45,7 +50,7 @@ public class BarCodeScanner extends AppCompatActivity {
 
         source = new CameraSource.Builder(this, detector)
                 .setAutoFocusEnabled(true)
-                .setRequestedPreviewSize(1920,1080)
+                .setRequestedPreviewSize(1000, 1000)
                 .build();
 
         initializeSurfaceView();
@@ -63,8 +68,21 @@ public class BarCodeScanner extends AppCompatActivity {
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> qrCode = detections.getDetectedItems();
-                if(qrCode != null) {
-                    Account account = new GsonBuilder().create().fromJson(qrCode.valueAt(0).displayValue, Account.class);
+                if (qrCode != null) {
+                    try {
+                        Client client = AccountMapper
+                                .INSTANCE
+                                .accountToClient(new GsonBuilder().create().fromJson(qrCode.valueAt(0).displayValue, Account.class));
+
+                        if(client != null) {
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("data", client);
+                            setResult(Activity.RESULT_OK, resultIntent);
+                            finish();
+                        }
+                    } catch (Exception e) {
+                        Log.d("BARCODE SCANNER", "receiveDetections: " + "Could not convert data to Account object...");
+                    }
                 }
             }
         });
@@ -74,8 +92,8 @@ public class BarCodeScanner extends AppCompatActivity {
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                try{
-                    if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                try {
+                    if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                         source.start(surfaceView.getHolder());
                     } else {
                         ActivityCompat.requestPermissions(BarCodeScanner.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);

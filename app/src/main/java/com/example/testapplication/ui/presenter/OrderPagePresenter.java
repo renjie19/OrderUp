@@ -1,16 +1,26 @@
 package com.example.testapplication.ui.presenter;
 
-import com.example.testapplication.shared.pojo.Client;
+import com.example.testapplication.ui.activity.OrderPage;
 import com.example.testapplication.shared.pojo.Order;
-import com.example.testapplication.core.repository.OrderRepository;
-
-import java.util.List;
+import com.example.testapplication.core.service.NotificationService;
+import com.example.testapplication.core.service.NotificationServiceImpl;
+import com.example.testapplication.ui.views.OrderPageView;
 
 public class OrderPagePresenter {
-    private final OrderRepository orderRepository = OrderRepository.getInstance();
+    private NotificationService service;
+    private OrderPageView view;
 
+    public OrderPagePresenter(OrderPageView orderPage){
+        if(service == null) {
+            service = new NotificationServiceImpl(orderPage);
+        }
+    }
 
-    public List<Order> getOrders(Client client){
-        return orderRepository.getOrders(client);
+    public void sendNotification(Order order) {
+        try{
+            service.sendNotification(order);
+        } catch (Exception e) {
+
+        }
     }
 }

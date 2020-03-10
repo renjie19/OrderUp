@@ -47,7 +47,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".ui.activity.ConsumerOrderList" />
+        <activity android:name=".ui.activity.OrderPage" />
         <activity
             android:name=".ui.activity.Login"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -57,7 +57,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.OrderPage" />
+        <activity android:name=".ui.activity.OrderTrail" />
 
         <receiver android:name=".core.broadcastreceiver.SmsReceiver">
             <intent-filter android:priority="999">
