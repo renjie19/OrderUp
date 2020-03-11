@@ -22,6 +22,7 @@ public class Order extends RealmObject implements Parcelable {
     private RealmList<Item> items;
 
     public double getTotal() {
+        total = 0;
         for (Item item : items) {
             total += item.getPrice();
         }

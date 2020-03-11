@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.testapplication.shared.pojo.Client;
 import com.example.testapplication.shared.pojo.Consumer;
+import com.example.testapplication.shared.pojo.Item;
 import com.example.testapplication.shared.pojo.Order;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 
 class OrderRepositoryImpl extends OrderRepository {
     private final String TAG = this.getClass().getSimpleName();
@@ -30,37 +32,45 @@ class OrderRepositoryImpl extends OrderRepository {
 
     @Override
     public List<Order> getOrders(Client client) {
-        try (Realm realm = Realm.getDefaultInstance()) {
+        Realm realm = Realm.getDefaultInstance();
+        try {
             realm.refresh();
             List<Order> list = realm.where(Order.class).equalTo("client.token",client.getToken()).findAll();
             return realm.copyFromRealm(list);
         } catch (Exception e) {
             Log.d(TAG, "getOrders: Error Occurred");
+        } finally {
+            realm.close();
         }
         return new ArrayList<>();
     }
 
     @Override
     public Order getOrder(String id) {
-        try(Realm realm = Realm.getDefaultInstance()) {
+        Realm realm = Realm.getDefaultInstance();
+        try {
             realm.refresh();
             Order order = realm.where(Order.class)
                     .equalTo("id", id).findFirst();
             return realm.copyFromRealm(order);
         } catch (Exception e) {
             Log.d(TAG, "getOrder: "+e.getMessage());
+        } finally {
+            realm.close();
         }
         return null;
     }
 
     @Override
     public Order update(Order order) {
-        try(Realm realm = Realm.getDefaultInstance()) {
-            realm.refresh();
-            return realm.copyToRealmOrUpdate(order);
-        } catch (Exception e) {
-            Log.d(TAG, "update: "+e.getMessage());
-        }
-        return order;
+        Realm realm = Realm.getDefaultInstance();
+        realm.refresh();
+        Order savedOrder = realm.where(Order.class).equalTo("id",order.getId()).findFirst();
+        realm.executeTransaction(realm1 -> {
+            savedOrder.setItems(new RealmList<>());
+            savedOrder.getItems().addAll(order.getItems());
+            savedOrder.setStatus(order.getStatus());
+        });
+        return realm.copyFromRealm(savedOrder);
     }
 }
