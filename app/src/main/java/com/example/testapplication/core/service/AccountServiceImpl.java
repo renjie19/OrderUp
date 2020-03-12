@@ -9,7 +9,7 @@ import java.util.Map;
 
 import io.realm.RealmList;
 
-class AccountServiceImpl extends AccountService {
+class AccountServiceImpl implements AccountService {
     private AccountRepository repository;
 
     public AccountServiceImpl() {

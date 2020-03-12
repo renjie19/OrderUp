@@ -92,7 +92,6 @@ public class OrderTrail extends BaseActivity {
                 this.clientAddress.setText(client.getLocation());
             }
         }
-
     }
 
     private void initializeAdapter() {

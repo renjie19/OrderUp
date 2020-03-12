@@ -142,9 +142,7 @@ public class OrderPage extends BaseActivity implements OrderPageView {
     }
 
     private void buildConsumerOrder(Order order) {
-        order.getClient().setName(consumerField.getText().toString());
         order.setDate(System.currentTimeMillis());
-        order.getClient().setLocation(location.getText().toString());
         order.setStatus(order.getTotal() == 0 ? "PENDING" : "FOR DELIVERY");
     }
 

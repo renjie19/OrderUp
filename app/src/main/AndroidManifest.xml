@@ -24,30 +24,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activity.BarCodeScanner"/>
-        <activity android:name=".ui.activity.ClientList" />
-        <activity android:name=".ui.activity.AccountManagement" />
-        <activity android:name=".ui.activity.MainPage" />
+        <activity android:name=".ui.activity.OrderPage" />
+        <activity android:name=".ui.activity.Settings"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity android:name=".ui.activity.BarCodeScanner"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity android:name=".ui.activity.ClientList"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity android:name=".ui.activity.AccountManagement"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity android:name=".ui.activity.MainPage"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />
 
-        <service
-            android:name=".core.broadcastreceiver.NotificationReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <service android:name=".shared.util.FirebaseIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
-
-        <activity android:name=".ui.activity.OrderPage" />
         <activity
             android:name=".ui.activity.Login"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -58,6 +50,21 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.OrderTrail" />
+
+        <service
+            android:name=".core.broadcastreceiver.NotificationReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".shared.util.FirebaseIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
 
         <receiver android:name=".core.broadcastreceiver.SmsReceiver">
             <intent-filter android:priority="999">

@@ -17,6 +17,6 @@ public class MainPage extends BaseActivity {
     private void initializeComponents() {
         findViewById(R.id.accountBtn).setOnClickListener(v -> startActivity(new Intent(this, AccountManagement.class)));
         findViewById(R.id.clientsBtn).setOnClickListener(v -> startActivity(new Intent(this, ClientList.class)));
-        findViewById(R.id.settingsBtn).setOnClickListener(v -> startActivity(new Intent(this, OrderTrail.class)));
+        findViewById(R.id.settingsBtn).setOnClickListener(v -> startActivity(new Intent(this, Settings.class)));
     }
 }

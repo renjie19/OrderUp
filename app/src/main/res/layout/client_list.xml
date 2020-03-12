@@ -25,10 +25,11 @@
         android:layout_marginBottom="16dp"
         android:clickable="true"
         android:foreground="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="@+id/clientRv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.921"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@color/colorAccent" />
+        app:srcCompat="@color/colorPrimaryDark" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

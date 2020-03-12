@@ -26,8 +26,6 @@ public class NotificationReceiver extends FirebaseMessagingService {
             Order order = new GsonBuilder().create().fromJson(remoteMessage.getData().get("message"), Order.class);
             if(order != null) {
                 notificationService.manageReceivedOrder(order);
-//                AccountService.getInstance().addClient(order.getClient());
-//                OrderRepository.getInstance().handleReceivedOrder(order);
                 Log.d(TAG, "Save Successful");
             }
         } catch (Exception e){

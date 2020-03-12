@@ -1,5 +1,7 @@
 package com.example.testapplication.ui.presenter;
 
+import com.example.testapplication.core.service.ServiceEnum;
+import com.example.testapplication.core.service.ServiceFactory;
 import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.core.service.AccountService;
 import com.example.testapplication.ui.views.AccountManagementViews;
@@ -9,7 +11,7 @@ public class AccountManagementPresenter {
     private AccountManagementViews view;
 
     public AccountManagementPresenter(AccountManagementViews view) {
-        this.service = AccountService.getInstance();
+        this.service = (AccountService) ServiceFactory.INSTANCE.create(ServiceEnum.ACCOUNT);
         this.view = view;
     }
 

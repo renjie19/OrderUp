@@ -5,7 +5,6 @@ import android.util.Log;
 import com.example.testapplication.core.repository.AccountRepository;
 import com.example.testapplication.core.repository.OrderRepository;
 import com.example.testapplication.shared.util.AccountMapper;
-import com.example.testapplication.ui.activity.OrderPage;
 import com.example.testapplication.shared.pojo.Order;
 import com.example.testapplication.core.rest.FirebaseRestApi;
 import com.example.testapplication.ui.views.OrderPageView;
@@ -28,10 +27,12 @@ public class NotificationServiceImpl implements NotificationService {
     private FirebaseRestApi restApi = retrofit.create(FirebaseRestApi.class);
     private OrderPageView view;
     private AccountRepository accountRepository;
+    private AccountService accountService;
 
     public NotificationServiceImpl(OrderPageView orderPage) {
         this.view = orderPage;
         this.accountRepository = AccountRepository.getInstance();
+        this.accountService = (AccountService) ServiceFactory.INSTANCE.create(ServiceEnum.ACCOUNT);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void manageReceivedOrder(final Order order) {
-        AccountService.getInstance().addClient(order.getClient());
+        accountService.addClient(order.getClient());
         Order orderFromDb = OrderRepository.getInstance().getOrder(order.getId());
         if(orderFromDb == null) {
             OrderRepository.getInstance().save(order);

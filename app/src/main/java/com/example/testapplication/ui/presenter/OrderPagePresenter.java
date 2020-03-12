@@ -2,11 +2,12 @@ package com.example.testapplication.ui.presenter;
 
 import android.util.Log;
 
+import com.example.testapplication.core.service.NotificationServiceImpl;
 import com.example.testapplication.core.service.OrderService;
-import com.example.testapplication.core.service.OrderServiceImpl;
+import com.example.testapplication.core.service.ServiceEnum;
+import com.example.testapplication.core.service.ServiceFactory;
 import com.example.testapplication.shared.pojo.Order;
 import com.example.testapplication.core.service.NotificationService;
-import com.example.testapplication.core.service.NotificationServiceImpl;
 import com.example.testapplication.ui.views.OrderPageView;
 
 public class OrderPagePresenter {
@@ -20,7 +21,7 @@ public class OrderPagePresenter {
             notificationService = new NotificationServiceImpl(orderPage);
         }
         if(orderService == null) {
-            orderService = new OrderServiceImpl();
+            orderService = (OrderService) ServiceFactory.INSTANCE.create(ServiceEnum.ORDER);
         }
     }
 
