@@ -17,7 +17,7 @@ public class Order extends RealmObject implements Parcelable {
     private Client client;
     private long date;
     private String status;
-    private boolean sent;
+    private boolean forPayment;
     private double total;
     private RealmList<Item> items;
 
@@ -43,7 +43,7 @@ public class Order extends RealmObject implements Parcelable {
         dest.writeParcelable(this.client, flags);
         dest.writeLong(this.date);
         dest.writeString(this.status);
-        dest.writeByte(this.sent ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.forPayment ? (byte) 1 : (byte) 0);
         dest.writeDouble(this.total);
         dest.writeTypedList(this.items);
     }
@@ -53,7 +53,7 @@ public class Order extends RealmObject implements Parcelable {
         this.client = in.readParcelable(Client.class.getClassLoader());
         this.date = in.readLong();
         this.status = in.readString();
-        this.sent = in.readByte() != 0;
+        this.forPayment = in.readByte() != 0;
         this.total = in.readDouble();
         this.items = new RealmList<>();
         this.items.addAll(in.createTypedArrayList(Item.CREATOR));

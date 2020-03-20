@@ -8,4 +8,6 @@ public interface AccountManagementViews {
     void loadAccount(Account account);
 
     void showMessage(String message);
+
+    void exitPage();
 }

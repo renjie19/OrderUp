@@ -2,11 +2,16 @@ package com.example.testapplication.ui.activity;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.testapplication.R;
+import com.example.testapplication.shared.Preferences;
+import com.example.testapplication.shared.enums.PrefParamEnum;
 import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.shared.util.QrGenerator;
 import com.example.testapplication.ui.presenter.AccountManagementPresenter;
@@ -19,6 +24,7 @@ public class AccountManagement extends BaseActivity implements AccountManagement
     private TextView lastName;
     private TextView location;
     private TextView phoneNumber;
+    private ToggleButton modeBtn;
     private AccountManagementPresenter presenter;
     private Account account;
 
@@ -41,6 +47,7 @@ public class AccountManagement extends BaseActivity implements AccountManagement
         this.lastName = findViewById(R.id.lastNameField);
         this.location = findViewById(R.id.locationField);
         this.phoneNumber = findViewById(R.id.contactNoField);
+        this.modeBtn = findViewById(R.id.mode);
 
         findViewById(R.id.saveBtn).setOnClickListener(v -> {
             try {
@@ -58,6 +65,13 @@ public class AccountManagement extends BaseActivity implements AccountManagement
             qrCode.setImageBitmap(QrGenerator.INSTANCE.getQrCode(new GsonBuilder().create().toJson(account)));
             dialog.setView(qrCode).show();
         });
+
+        this.modeBtn.setChecked(Preferences.getMode());
+        this.modeBtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Preferences.setPref(PrefParamEnum.MODE.name(), isChecked);
+        });
+
+
     }
 
     private Account buildAccount() throws Exception {
@@ -98,5 +112,10 @@ public class AccountManagement extends BaseActivity implements AccountManagement
     @Override
     public void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void exitPage() {
+        finish();
     }
 }

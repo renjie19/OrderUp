@@ -3,12 +3,9 @@ package com.example.testapplication.core.broadcastreceiver;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-
 import com.example.testapplication.core.service.NotificationService;
 import com.example.testapplication.core.service.NotificationServiceImpl;
 import com.example.testapplication.shared.pojo.Order;
-import com.example.testapplication.core.repository.OrderRepository;
-import com.example.testapplication.core.service.AccountService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.GsonBuilder;
@@ -32,7 +29,6 @@ public class NotificationReceiver extends FirebaseMessagingService {
             Log.d(TAG, "Could not parse message");
         }
     }
-
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);

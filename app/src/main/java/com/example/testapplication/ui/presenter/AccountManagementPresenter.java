@@ -19,6 +19,7 @@ public class AccountManagementPresenter {
         service.save(account);
         view.hideProgressBar();
         view.showMessage("Save Success..");
+        view.exitPage();
     }
 
     public void getAccount() {

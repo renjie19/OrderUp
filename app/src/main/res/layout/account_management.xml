@@ -16,6 +16,22 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/man" />
 
+    <ToggleButton
+        android:id="@+id/mode"
+        android:layout_width="93dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:textColor="@color/colorPrimary"
+        android:textOff="OFFLINE MODE"
+        android:textOn="ONLINE MODE"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
@@ -43,6 +59,7 @@
             android:paddingTop="10dp"
             android:paddingRight="15dp"
             android:paddingBottom="10dp"
+            android:textColor="@color/colorPrimary"
             android:textSize="24sp" />
 
         <EditText
@@ -59,6 +76,7 @@
             android:paddingTop="10dp"
             android:paddingRight="15dp"
             android:paddingBottom="10dp"
+            android:textColor="@color/colorPrimary"
             android:textSize="24sp" />
 
         <EditText
@@ -75,6 +93,7 @@
             android:paddingTop="10dp"
             android:paddingRight="15dp"
             android:paddingBottom="10dp"
+            android:textColor="@color/colorPrimary"
             android:textSize="24sp" />
 
         <EditText
@@ -91,6 +110,7 @@
             android:paddingTop="10dp"
             android:paddingRight="15dp"
             android:paddingBottom="10dp"
+            android:textColor="@color/colorPrimary"
             android:textSize="24sp" />
 
     </LinearLayout>
@@ -101,7 +121,7 @@
         android:layout_height="59dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:background="#1B4A5B"
+        android:background="@color/colorPrimaryDark"
         android:text="SAVE"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
