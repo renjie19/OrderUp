@@ -61,6 +61,7 @@ public class OrderTrail extends BaseActivity {
                 order.setItems(new RealmList<>());
                 Intent intent = new Intent(this, OrderPage.class);
                 intent.putExtra("data",order);
+                intent.putExtra("ACTION", "CREATE");
                 startActivity(intent);
             }
             case R.id.remove: {

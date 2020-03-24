@@ -16,11 +16,11 @@ import java.util.List;
 
 import io.realm.RealmList;
 
-public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemListViewHolder> {
+public class OrderPageAdapter extends RecyclerView.Adapter<OrderPageAdapter.ItemListViewHolder> {
     private List<Item> items;
     private View.OnClickListener onClickListener;
 
-    public ItemListAdapter(List<Item> items, View.OnClickListener onClickListener) {
+    public OrderPageAdapter(List<Item> items, View.OnClickListener onClickListener) {
         if(items == null) {
             items = new RealmList<>();
         }

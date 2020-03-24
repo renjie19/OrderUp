@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.example.testapplication.R;
 import com.example.testapplication.shared.Preferences;
 import com.example.testapplication.shared.enums.StatusEnum;
-import com.example.testapplication.ui.adapter.ItemListAdapter;
+import com.example.testapplication.ui.adapter.OrderPageAdapter;
 import com.example.testapplication.shared.pojo.Client;
 import com.example.testapplication.shared.pojo.Item;
 import com.example.testapplication.shared.pojo.Order;
@@ -41,31 +41,33 @@ public class OrderPage extends BaseActivity implements OrderPageView {
     private EditText consumerField, location;
     private Order order;
     private RecyclerView rv;
-    private ItemListAdapter adapter;
+    private OrderPageAdapter adapter;
     private Button doneBtn, addItemBtn;
 
     private EditText itemName, quantity, price, pckg;
     private OrderPagePresenter presenter;
+    private String action;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_consumer_order_list);
+        setContentView(R.layout.activity_order_page);
 
-        presenter = new OrderPagePresenter(this);
+        this.presenter = new OrderPagePresenter(this);
 
-        order = getIntent().getParcelableExtra("data");
-        if (order == null) {
-            order = new Order();
-            order.setItems(new RealmList<>());
-            order.setClient(new Client());
+        this.order = getIntent().getParcelableExtra("data");
+        this.action = getIntent().getStringExtra("ACTION");
+        if (this.order == null) {
+            this.order = new Order();
+            this.order.setItems(new RealmList<>());
+            this.order.setClient(new Client());
         }
         initializeComponents();
         setAdapter();
     }
 
     private void setAdapter() {
-        adapter = new ItemListAdapter(order.getItems(), getOnClickListener());
+        adapter = new OrderPageAdapter(order.getItems(), getOnClickListener());
         rv.setAdapter(adapter);
     }
 
@@ -77,24 +79,50 @@ public class OrderPage extends BaseActivity implements OrderPageView {
     }
 
     private void showItemEditAlertDialog(Item item, DialogInterface.OnClickListener listener) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        View editView = getLayoutInflater().inflate(R.layout.item_edit, null);
+        if (isNotPaid()) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            View editView = getLayoutInflater().inflate(R.layout.item_edit, null);
 
-        itemName = editView.findViewById(R.id.itemName);
-        quantity = editView.findViewById(R.id.quantity);
-        price = editView.findViewById(R.id.value);
-        pckg = editView.findViewById(R.id.pkg);
+            itemName = editView.findViewById(R.id.itemName);
+            quantity = editView.findViewById(R.id.quantity);
+            price = editView.findViewById(R.id.value);
+            pckg = editView.findViewById(R.id.pkg);
 
-        itemName.setText(item.getName());
-        quantity.setText(String.valueOf(item.getQuantity()));
-        pckg.setText(item.getPackaging());
-        price.setText(String.valueOf(item.getPrice()));
-        price.setEnabled(order.getId() != null);
-        alert.setView(editView);
+            itemName.setText(item.getName());
+            quantity.setText(String.valueOf(item.getQuantity()));
+            pckg.setText(item.getPackaging());
+            price.setText(String.valueOf(item.getPrice()));
+            price.setEnabled(order.getId() != null);
+            alert.setView(editView);
 
-        alert.setPositiveButton("SUBMIT", listener);
-        alert.setNegativeButton("CANCEL", null);
-        alert.create().show();
+            alert.setPositiveButton("SUBMIT", listener);
+            alert.setNeutralButton("CANCEL", null);
+            alert.setNegativeButton("SUBMIT AND CONTINUE", (dialog, which) -> {
+                //TODO refactor only the first selected item changes
+                listener.onClick(dialog, which);
+                switch (action) {
+                    case "VIEW":
+                        int itemIndex = order.getItems().indexOf(item);
+                        if (++itemIndex <= order.getItems().size() - 1) {
+                            Item nextItem = order.getItems().get(itemIndex);
+                            showItemEditAlertDialog(nextItem, updatePrice(nextItem));
+                        }
+                        break;
+                    case "CREATE":
+                        Item newItem = new Item();
+                        showItemEditAlertDialog(newItem, createItemAndAddToOrder(newItem));
+                        break;
+                }
+            });
+            alert.create().show();
+        }
+    }
+
+    private boolean isNotPaid() {
+        if(order.getStatus() != null){
+            return !order.getStatus().equals(StatusEnum.PAID.toString());
+        }
+        return true;
     }
 
     private void initializeComponents() {
@@ -121,7 +149,12 @@ public class OrderPage extends BaseActivity implements OrderPageView {
     }
 
     private void setClickListeners() {
-        if (order.isForPayment()) {
+        final boolean isPaid = order.getStatus() != null && order.getStatus().equals(StatusEnum.PAID.toString());
+        final boolean isForPayment = order != null && order.isForPayment();
+
+        if (isPaid) {
+            this.addItemBtn.setEnabled(false);
+        } else if (isForPayment) {
             this.addItemBtn.setEnabled(false);
             this.doneBtn.setText(StatusEnum.PAID.name());
             this.doneBtn.setOnClickListener(payOnItemClick());
@@ -134,7 +167,7 @@ public class OrderPage extends BaseActivity implements OrderPageView {
             doneBtn.setOnClickListener(view -> {
                 buildClientOrder(order);
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                alert.setMessage("Are you sure with your items?\n");
+                alert.setMessage("Are you sure with your items?");
                 alert.setPositiveButton("YES", (dialog, which) -> {
                     showProgressBar("Sending Request... Please Wait...");
                     saveOrUpdateOrderThenSend();
@@ -157,11 +190,11 @@ public class OrderPage extends BaseActivity implements OrderPageView {
         if (order.getTotal() <= 0) {
             this.order = presenter.saveOrder(order);
         } else {
-            this.order = presenter.updateOrder(order);
             this.order.setForPayment(true);
+            this.order = presenter.updateOrder(order);
         }
 
-        if(Preferences.getMode()) {
+        if (Preferences.getMode()) {
             sendNotification();
         } else {
             sendLongTextMessage();
@@ -212,6 +245,7 @@ public class OrderPage extends BaseActivity implements OrderPageView {
                     finish();
                 } else {
                     Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                    hideProgressBar();
                 }
             }
         }, new IntentFilter("SENT"));

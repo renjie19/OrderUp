@@ -70,6 +70,7 @@ class OrderRepositoryImpl extends OrderRepository {
             savedOrder.setItems(new RealmList<>());
             savedOrder.getItems().addAll(order.getItems());
             savedOrder.setStatus(order.getStatus());
+            savedOrder.setForPayment(order.isForPayment());
         });
         return realm.copyFromRealm(savedOrder);
     }
