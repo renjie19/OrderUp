@@ -10,8 +10,6 @@
         android:id="@+id/cardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:contentPaddingLeft="10dp"
-        app:contentPaddingRight="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -19,7 +17,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:background="@drawable/custom_card_background"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -30,14 +31,20 @@
                     android:id="@+id/consumerName"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
-                    android:hint="NAME" />
+                    android:hint="NAME"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#C9C9C9"
+                    android:textStyle="bold" />
 
                 <EditText
                     android:id="@+id/orderDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="DATE"
-                    android:inputType="date" />
+                    android:inputType="date"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#C9C9C9"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -46,7 +53,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="ADDRESS"
-                android:inputType="textShortMessage|text" />
+                android:inputType="textShortMessage|text"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#C9C9C9"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -58,14 +68,20 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="TOTAL:" />
+                    android:text="TOTAL:"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#C9C9C9"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/totalField"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#C9C9C9"
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
@@ -79,39 +95,40 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/cardView">
 
     </androidx.recyclerview.widget.RecyclerView>
 
     <Button
         android:id="@+id/add"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
-        android:layout_marginLeft="88dp"
-        android:background="@color/colorPrimaryDark"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="3dp"
+        android:background="@drawable/custom_button"
         android:text="Add Items"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/done"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintBottom_toTopOf="@+id/done"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/done"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:background="@color/colorPrimaryDark"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/custom_button"
         android:text="DONE"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.431"
-        app:layout_constraintStart_toEndOf="@+id/add" />
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

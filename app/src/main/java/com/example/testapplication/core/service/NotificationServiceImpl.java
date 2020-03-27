@@ -63,11 +63,11 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void manageReceivedOrder(final Order order) {
         accountService.addClient(order.getClient());
-        Order orderFromDb = OrderRepository.getInstance().getOrder(order.getId());
-        if(orderFromDb == null) {
-            OrderRepository.getInstance().save(order);
+        OrderService orderService = (OrderService) ServiceFactory.INSTANCE.create(ServiceEnum.ORDER);
+        if(orderService.getOrder(order.getId()) == null) {
+            orderService.save(order);
         } else {
-            OrderRepository.getInstance().update(order);
+            orderService.update(order);
         }
     }
 }

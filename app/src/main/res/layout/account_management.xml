@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/man" />
+        app:srcCompat="@drawable/man" />
 
     <ToggleButton
         android:id="@+id/mode"
@@ -121,7 +121,7 @@
         android:layout_height="59dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@drawable/custom_button"
         android:text="SAVE"
         android:textColor="#FFFFFF"
         android:textSize="20sp"

@@ -21,5 +21,6 @@ public abstract class OrderRepository {
     public abstract Order save(Order order);
     public abstract List<Order> getOrders(Client client);
     public abstract Order getOrder(String id);
+    @Deprecated
     public abstract Order update(Order order);
 }

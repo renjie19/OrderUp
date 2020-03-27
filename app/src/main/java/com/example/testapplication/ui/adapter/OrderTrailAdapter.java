@@ -16,11 +16,11 @@ import com.example.testapplication.shared.util.DateUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainPageOrderListAdapter extends Adapter<MainPageOrderListAdapter.MainPageViewHolder> {
+public class OrderTrailAdapter extends Adapter<OrderTrailAdapter.MainPageViewHolder> {
     private List<Order> list;
     private OnClickListener onClickListener;
 
-    public MainPageOrderListAdapter(List<Order> list, OnClickListener onClickListener2) {
+    public OrderTrailAdapter(List<Order> list, OnClickListener onClickListener2) {
         this.list = list;
         if(this.list == null){
             this.list = new ArrayList<>();
@@ -36,7 +36,6 @@ public class MainPageOrderListAdapter extends Adapter<MainPageOrderListAdapter.M
     public void onBindViewHolder(MainPageViewHolder holder, int position) {
         Order order = this.list.get(position);
         holder.dateTv.setText(DateUtil.getStringDate(order.getDate()));
-        holder.consumerTv.setText(order.getClient().getName());
         holder.statusTv.setText(order.getStatus());
         holder.parentView.setOnClickListener(this.onClickListener);
         holder.parentView.setTag(order);
@@ -47,7 +46,6 @@ public class MainPageOrderListAdapter extends Adapter<MainPageOrderListAdapter.M
     }
 
     class MainPageViewHolder extends ViewHolder {
-        private TextView consumerTv;
         private TextView dateTv;
         private LinearLayout parentView;
         private TextView statusTv;
@@ -55,7 +53,6 @@ public class MainPageOrderListAdapter extends Adapter<MainPageOrderListAdapter.M
         private MainPageViewHolder(View itemView) {
             super(itemView);
             this.dateTv = itemView.findViewById(R.id.date);
-            this.consumerTv = itemView.findViewById(R.id.consumer);
             this.statusTv = itemView.findViewById(R.id.status);
             this.parentView = itemView.findViewById(R.id.parent);
         }

@@ -61,6 +61,7 @@ class OrderRepositoryImpl extends OrderRepository {
         return null;
     }
 
+    @Deprecated
     @Override
     public Order update(Order order) {
         Realm realm = Realm.getDefaultInstance();

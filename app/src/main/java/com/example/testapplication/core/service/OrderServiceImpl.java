@@ -15,8 +15,27 @@ class OrderServiceImpl implements OrderService {
         return repository.save(order);
     }
 
+    //TODO for verification for the behavior when receiving orders
     @Override
-    public Order updateOrder(Order order) {
-        return repository.update(order);
+    public Order update(Order updatedOrder) {
+//        Order orderCopy = repository.getOrder(updatedOrder.getId());
+//        orderCopy.setItems(updatedOrder.getItems());
+//        return repository.save(orderCopy);
+        return save(updatedOrder);
+    }
+
+    @Override
+    public void manageReceivedOrder(Order order) {
+        Order orderFromDb = repository.getOrder(order.getId());
+        if(orderFromDb == null) {
+            save(order);
+        } else {
+            update(order);
+        }
+    }
+
+    @Override
+    public Order getOrder(String id) {
+        return repository.getOrder(id);
     }
 }

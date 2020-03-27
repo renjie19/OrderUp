@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/custom_background"
     tools:context=".ui.activity.MainPage">
 
     <ImageButton
@@ -17,7 +18,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/clientsBtn"
-        app:srcCompat="@mipmap/config" />
+        app:srcCompat="@drawable/custom_button_setting" />
 
     <ImageButton
         android:id="@+id/clientsBtn"
@@ -30,7 +31,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/men" />
+        app:srcCompat="@drawable/custom_button_men" />
 
     <ImageButton
         android:id="@+id/accountBtn"
@@ -42,6 +43,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/man" />
+        app:srcCompat="@drawable/custom_button_man" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

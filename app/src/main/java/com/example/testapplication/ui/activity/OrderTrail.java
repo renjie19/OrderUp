@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.example.testapplication.ui.adapter.MainPageOrderListAdapter;
+import com.example.testapplication.ui.adapter.OrderTrailAdapter;
 import com.example.testapplication.R;
 import com.example.testapplication.shared.pojo.Client;
 import com.example.testapplication.shared.pojo.Order;
@@ -25,7 +25,7 @@ import io.realm.RealmList;
 
 
 public class OrderTrail extends BaseActivity {
-    private MainPageOrderListAdapter adapter;
+    private OrderTrailAdapter adapter;
     private RecyclerView rv;
     private Client client;
     private TextView clientName;
@@ -96,7 +96,7 @@ public class OrderTrail extends BaseActivity {
     }
 
     private void initializeAdapter() {
-        this.adapter = new MainPageOrderListAdapter(list, getOnClickListener());
+        this.adapter = new OrderTrailAdapter(list, getOnClickListener());
         this.rv.setAdapter(this.adapter);
     }
 

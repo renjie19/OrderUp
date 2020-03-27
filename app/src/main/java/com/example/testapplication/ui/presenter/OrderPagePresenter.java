@@ -38,6 +38,6 @@ public class OrderPagePresenter {
     }
 
     public Order updateOrder(Order order) {
-        return orderService.updateOrder(order);
+        return orderService.update(order);
     }
 }
