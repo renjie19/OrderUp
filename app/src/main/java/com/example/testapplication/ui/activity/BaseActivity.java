@@ -1,6 +1,7 @@
 package com.example.testapplication.ui.activity;
 
 import android.app.ProgressDialog;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,5 +25,9 @@ public class BaseActivity extends AppCompatActivity {
         if(mProgressDialog != null) {
             mProgressDialog.cancel();
         }
+    }
+
+    protected void showMessage(String message){
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }

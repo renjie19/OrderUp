@@ -5,11 +5,25 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
+    <Button
+        android:id="@+id/signUpBtn"
+        android:layout_width="183dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/custom_button"
+        android:text="SIGN UP"
+        android:textColor="#ffffffff"
+        android:textSize="18.0sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <EditText
         android:id="@+id/usernameField"
         android:layout_width="303.0dip"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="24dp"
         android:background="@drawable/oval_line_no_fill"
         android:ems="10"
         android:inputType="textPersonName"
@@ -22,37 +36,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <EditText
-        android:id="@+id/passwordField"
-        android:layout_width="303.0dip"
-        android:layout_height="47dp"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/oval_line_no_fill"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:paddingLeft="20.0dip"
-        android:paddingTop="10.0dip"
-        android:paddingRight="20.0dip"
-        android:paddingBottom="10.0dip"
-        android:textSize="20.0sp"
-        app:layout_constraintBottom_toTopOf="@+id/loginButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="183.0dip"
-        android:layout_height="46.0dip"
-        android:layout_marginBottom="52dp"
-        android:background="@drawable/custom_button"
-        android:text="LOGIN"
-        android:textColor="#ffffffff"
-        android:textSize="18.0sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -61,7 +44,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/usernameField"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.219"
+        app:layout_constraintHorizontal_bias="0.22"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -74,4 +57,36 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.217"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="183dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/custom_button"
+        android:text="LOGIN"
+        android:textColor="#ffffffff"
+        android:textSize="18.0sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/signUpBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/passwordField"
+        android:layout_width="303.0dip"
+        android:layout_height="47dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/oval_line_no_fill"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:paddingLeft="20.0dip"
+        android:paddingTop="10.0dip"
+        android:paddingRight="20.0dip"
+        android:paddingBottom="10.0dip"
+        android:textSize="20.0sp"
+        app:layout_constraintBottom_toTopOf="@+id/loginButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
