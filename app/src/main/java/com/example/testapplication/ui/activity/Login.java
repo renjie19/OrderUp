@@ -40,10 +40,6 @@ public class Login extends BaseActivity{
             permissionsForRequest = permissions.toArray(permissionsForRequest);
             ActivityCompat.requestPermissions(this, permissionsForRequest, PERMISSION_ALL);
         }
-
-
-
-
     }
 
     private void initializeComponents() {
