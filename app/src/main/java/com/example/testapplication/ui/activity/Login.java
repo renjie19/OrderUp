@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class Login extends BaseActivity {
     private TextView passwordField;
     private TextView usernameField;
-//    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +53,7 @@ public class Login extends BaseActivity {
     }
 
     private void initializeComponents() {
-//        this.mAuth = FirebaseAuth.getInstance();
+        this.mAuth = FirebaseAuth.getInstance();
         this.usernameField = findViewById(R.id.usernameField);
         this.passwordField = findViewById(R.id.passwordField);
         findViewById(R.id.loginButton).setOnClickListener(view -> verifyLogin());
@@ -65,16 +65,23 @@ public class Login extends BaseActivity {
     }
 
     private void verifyLogin() {
-        startActivity(new Intent(this, MainPage.class));
-//        showProgressBar("Logging In...");
-//        mAuth.signInWithEmailAndPassword(usernameField.getText().toString(), passwordField.getText().toString())
-//                .addOnCompleteListener(task -> {
-//                    hideProgressBar();
-//                    if(task.isSuccessful()) {
-//                        startActivity(new Intent(this, MainPage.class));
-//                    } else {
-//                        showMessage("Login Failed");
-//                    }
-//                });
+        showProgressBar("Logging In...");
+        String username = usernameField.getText().toString();
+        String password = passwordField.getText().toString();
+        if(!username.isEmpty() && !password.isEmpty()) {
+            mAuth.signInWithEmailAndPassword(username, password)
+                    .addOnCompleteListener(task -> {
+                        if(task.isSuccessful()) {
+                            startActivity(new Intent(this, MainPage.class));
+                        } else {
+                            showMessage("Login Failed");
+                        }
+                        hideProgressBar();
+                    });
+        } else {
+            showMessage("Fill in fields");
+            hideProgressBar();
+        }
+
     }
 }
