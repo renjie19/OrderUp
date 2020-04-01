@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class Login extends BaseActivity {
     private TextView passwordField;
     private TextView usernameField;
-    private FirebaseAuth mAuth;
+//    private FirebaseAuth mAuth;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +42,9 @@ public class Login extends BaseActivity {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
             permissions.add(Manifest.permission.READ_SMS);
         }
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            permissions.add(Manifest.permission.INTERNET);
+        }
         if (permissions.size() != 0) {
             String[] permissionsForRequest = new String[permissions.size()];
             permissionsForRequest = permissions.toArray(permissionsForRequest);
@@ -50,7 +53,7 @@ public class Login extends BaseActivity {
     }
 
     private void initializeComponents() {
-        this.mAuth = FirebaseAuth.getInstance();
+//        this.mAuth = FirebaseAuth.getInstance();
         this.usernameField = findViewById(R.id.usernameField);
         this.passwordField = findViewById(R.id.passwordField);
         findViewById(R.id.loginButton).setOnClickListener(view -> verifyLogin());
@@ -62,15 +65,16 @@ public class Login extends BaseActivity {
     }
 
     private void verifyLogin() {
-        showProgressBar("Logging In...");
-        mAuth.signInWithEmailAndPassword(usernameField.getText().toString(), passwordField.getText().toString())
-                .addOnCompleteListener(task -> {
-                    hideProgressBar();
-                    if(task.isSuccessful()) {
-                        startActivity(new Intent(this, MainPage.class));
-                    } else {
-                        showMessage("Login Failed");
-                    }
-                });
+        startActivity(new Intent(this, MainPage.class));
+//        showProgressBar("Logging In...");
+//        mAuth.signInWithEmailAndPassword(usernameField.getText().toString(), passwordField.getText().toString())
+//                .addOnCompleteListener(task -> {
+//                    hideProgressBar();
+//                    if(task.isSuccessful()) {
+//                        startActivity(new Intent(this, MainPage.class));
+//                    } else {
+//                        showMessage("Login Failed");
+//                    }
+//                });
     }
 }

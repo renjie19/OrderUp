@@ -18,7 +18,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/clientsBtn"
-        app:srcCompat="@drawable/custom_button_setting" />
+        app:srcCompat="@mipmap/imanager" />
 
     <ImageButton
         android:id="@+id/clientsBtn"
@@ -31,7 +31,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/custom_button_men" />
+        app:srcCompat="@mipmap/email" />
 
     <ImageButton
         android:id="@+id/accountBtn"
@@ -43,6 +43,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/custom_button_man" />
+        app:srcCompat="@mipmap/googlemusic" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
