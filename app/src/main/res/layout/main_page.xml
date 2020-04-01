@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.676"
-        app:srcCompat="@mipmap/email" />
+        app:srcCompat="@drawable/custom_button_men" />
 
     <ImageButton
         android:id="@+id/accountBtn"
@@ -30,6 +30,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/googlemusic" />
+        app:srcCompat="@drawable/custom_button_man" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
