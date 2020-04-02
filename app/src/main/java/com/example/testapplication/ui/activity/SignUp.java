@@ -18,6 +18,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -84,8 +85,9 @@ public class SignUp extends BaseActivity {
     //TODO refactor the hiding of progress dialog on one declaration only
     private void addToFireStore() {
         Map<String, Object> accountInfo = mapInfo();
+        UserInfo user = FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(0);
         db.collection("Users")
-                .document(String.valueOf(accountInfo.get("email")))
+                .document(user.getUid())
                 .set(accountInfo)
                 .addOnSuccessListener(documentReference -> {
                     hideProgressBar();
