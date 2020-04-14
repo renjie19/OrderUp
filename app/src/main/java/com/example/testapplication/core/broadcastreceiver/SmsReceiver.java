@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
+import com.example.testapplication.core.repository.RepositoryEnum;
+import com.example.testapplication.core.repository.RepositoryFactory;
 import com.example.testapplication.shared.pojo.Order;
 import com.example.testapplication.core.repository.OrderRepository;
 import com.google.gson.GsonBuilder;
@@ -20,7 +22,7 @@ import static java.lang.Thread.sleep;
 
 public class SmsReceiver extends BroadcastReceiver {
     private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
-    private final OrderRepository orderRepository = OrderRepository.getInstance();
+    private final OrderRepository orderRepository = (OrderRepository) RepositoryFactory.INSTANCE.create(RepositoryEnum.ORDER);
     Map<Long, String> messageDetails = new HashMap<>();
     String address;
 

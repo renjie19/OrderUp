@@ -2,20 +2,11 @@ package com.example.testapplication.core.repository;
 
 import com.example.testapplication.shared.pojo.Account;
 
-public abstract class AccountRepository {
-    private static AccountRepository repository;
+public interface AccountRepository {
 
-    protected AccountRepository() {
-    }
+    Account save(Account account);
 
-    public static AccountRepository getInstance(){
-        if(repository == null) {
-            repository = new AccountRepositoryImpl();
-        }
-        return repository;
-    }
+    Account getAccount();
 
-    public abstract Account save(Account account);
-
-    public abstract Account getAccount();
+    void clearData();
 }

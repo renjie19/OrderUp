@@ -1,5 +1,6 @@
 package com.example.testapplication.ui.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,20 +13,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.testapplication.R;
 import com.example.testapplication.shared.pojo.Item;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.realm.RealmList;
 
-public class OrderPageAdapter extends RecyclerView.Adapter<OrderPageAdapter.ItemListViewHolder> {
-    private List<Item> items;
-    private View.OnClickListener onClickListener;
+public class OrderPageAdapter extends RecyclerView.Adapter<OrderPageAdapter.ItemListViewHolder> implements Adapter{
+    private List<Item> mItems;
+    private View.OnClickListener mOnClickListener;
+    private Map<Integer, Item> removedItem;
 
-    public OrderPageAdapter(List<Item> items, View.OnClickListener onClickListener) {
-        if(items == null) {
-            items = new RealmList<>();
+    public OrderPageAdapter(List<Item> mItems, View.OnClickListener mOnClickListener) {
+        if(mItems == null) {
+            mItems = new RealmList<>();
         }
-        this.items = items;
-        this.onClickListener = onClickListener;
+        this.mItems = mItems;
+        this.mOnClickListener = mOnClickListener;
+        this.removedItem = new HashMap<>();
     }
 
     @NonNull
@@ -37,24 +42,42 @@ public class OrderPageAdapter extends RecyclerView.Adapter<OrderPageAdapter.Item
 
     @Override
     public void onBindViewHolder(@NonNull ItemListViewHolder holder, int position) {
-        Item item = items.get(position);
+        Item item = mItems.get(position);
         holder.order.setText(item.getName());
         holder.quantity.setText(String.valueOf(item.getQuantity()));
         holder.price.setText(String.valueOf(item.getPrice()));
-        holder.classification.setText(item.getPackaging() == null ? "pc(s)" : item.getPackaging());
-        holder.itemCard.setOnClickListener(onClickListener);
+        holder.classification.setText(item.getPackaging() == null || item.getPackaging().isEmpty() ? "pc(s)" : item.getPackaging());
+        holder.itemCard.setOnClickListener(mOnClickListener);
         holder.itemCard.setTag(item);
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return mItems.size();
     }
 
-    public class ItemListViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void delete(int position) {
+        removedItem.put(position, mItems.get(position));
+        mItems.remove(position);
+        this.notifyDataSetChanged();
+    }
+
+    @Override
+    public void restore() {
+        if(removedItem.size() != 0) {
+            for(Map.Entry<Integer, Item> item : removedItem.entrySet()) {
+                mItems.add(item.getKey(), item.getValue());
+            }
+            removedItem.clear();
+        }
+        notifyDataSetChanged();
+    }
+
+    class ItemListViewHolder extends RecyclerView.ViewHolder {
         private TextView order, quantity, price, classification;
         private CardView itemCard;
-        public ItemListViewHolder(@NonNull View itemView) {
+        ItemListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.order = itemView.findViewById(R.id.orderName);
             this.quantity = itemView.findViewById(R.id.quantity);

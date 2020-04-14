@@ -24,6 +24,7 @@ public class AccountManagement extends BaseActivity implements AccountManagement
     private TextView lastName;
     private TextView location;
     private TextView phoneNumber;
+    private TextView email;
     private ToggleButton modeBtn;
     private AccountManagementPresenter presenter;
     private Account account;
@@ -47,6 +48,7 @@ public class AccountManagement extends BaseActivity implements AccountManagement
         this.lastName = findViewById(R.id.lastNameField);
         this.location = findViewById(R.id.locationField);
         this.phoneNumber = findViewById(R.id.contactNoField);
+        this.email = findViewById(R.id.emailField);
         this.modeBtn = findViewById(R.id.mode);
 
         findViewById(R.id.saveBtn).setOnClickListener(v -> {
@@ -67,9 +69,7 @@ public class AccountManagement extends BaseActivity implements AccountManagement
         });
 
         this.modeBtn.setChecked(Preferences.getMode());
-        this.modeBtn.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Preferences.setPref(PrefParamEnum.MODE.name(), isChecked);
-        });
+        this.modeBtn.setOnCheckedChangeListener((buttonView, isChecked) -> Preferences.setPref(PrefParamEnum.MODE.name(), isChecked));
 
 
     }
@@ -106,6 +106,7 @@ public class AccountManagement extends BaseActivity implements AccountManagement
             this.lastName.setText(account.getLastName());
             this.location.setText(account.getLocation());
             this.phoneNumber.setText(account.getContactNumber());
+            this.email.setText(account.getEmail());
         }
     }
 

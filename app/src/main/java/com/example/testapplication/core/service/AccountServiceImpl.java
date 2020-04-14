@@ -1,5 +1,8 @@
 package com.example.testapplication.core.service;
 
+import com.example.testapplication.core.repository.OrderRepository;
+import com.example.testapplication.core.repository.RepositoryEnum;
+import com.example.testapplication.core.repository.RepositoryFactory;
 import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.shared.pojo.Client;
 import com.example.testapplication.core.repository.AccountRepository;
@@ -13,7 +16,7 @@ class AccountServiceImpl implements AccountService {
     private AccountRepository repository;
 
     public AccountServiceImpl() {
-        this.repository = AccountRepository.getInstance();
+        this.repository = (AccountRepository) RepositoryFactory.INSTANCE.create(RepositoryEnum.ACCOUNT);
     }
 
     @Override
@@ -49,6 +52,11 @@ class AccountServiceImpl implements AccountService {
             account.getClients().add(uniqueClients.getValue());
         }
         return repository.save(account);
+    }
+
+    @Override
+    public void clearData() {
+        repository.clearData();
     }
 
 }

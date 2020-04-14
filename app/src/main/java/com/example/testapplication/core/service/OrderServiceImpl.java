@@ -1,13 +1,15 @@
 package com.example.testapplication.core.service;
 
 import com.example.testapplication.core.repository.OrderRepository;
+import com.example.testapplication.core.repository.RepositoryEnum;
+import com.example.testapplication.core.repository.RepositoryFactory;
 import com.example.testapplication.shared.pojo.Order;
 
 class OrderServiceImpl implements OrderService {
     private OrderRepository repository;
 
     public OrderServiceImpl() {
-        this.repository = OrderRepository.getInstance();
+        this.repository = (OrderRepository) RepositoryFactory.INSTANCE.create(RepositoryEnum.ORDER);
     }
 
     @Override
@@ -15,12 +17,8 @@ class OrderServiceImpl implements OrderService {
         return repository.save(order);
     }
 
-    //TODO for verification for the behavior when receiving orders
     @Override
     public Order update(Order updatedOrder) {
-//        Order orderCopy = repository.getOrder(updatedOrder.getId());
-//        orderCopy.setItems(updatedOrder.getItems());
-//        return repository.save(orderCopy);
         return save(updatedOrder);
     }
 

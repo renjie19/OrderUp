@@ -1,5 +1,6 @@
 package com.example.testapplication.ui.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +36,9 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Cl
     public void onBindViewHolder(@NonNull ClientListViewHolder holder, int position) {
         Client client = clients.get(position);
         holder.clientName.setText(client.getName());
-        holder.entryContainer.setOnClickListener(listener);
-        holder.entryContainer.setTag(client);
+        holder.clientName.setOnClickListener(listener);
+        holder.clientName.setTag(client);
+        holder.clientName.setBackgroundColor(position % 2 == 0 ? Color.WHITE : 0x42A5F5);
     }
 
     @Override
@@ -46,11 +48,9 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Cl
 
     public class ClientListViewHolder extends RecyclerView.ViewHolder {
         private TextView clientName;
-        private CardView entryContainer;
         public ClientListViewHolder(@NonNull View itemView) {
             super(itemView);
             clientName = itemView.findViewById(R.id.client_name);
-            entryContainer = itemView.findViewById(R.id.entry_container);
         }
     }
 }

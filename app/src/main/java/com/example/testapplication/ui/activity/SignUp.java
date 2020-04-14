@@ -1,42 +1,27 @@
 package com.example.testapplication.ui.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.example.testapplication.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.vision.text.Text;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SignUp extends BaseActivity {
 
-    private TextView txtFname;
-    private TextView txtLname;
-    private TextView txtLocation;
-    private TextView txtContact;
-    private TextView txtEmail;
-    private TextView txtPassword;
-    private TextView txtConfirmPassword;
-    private TextInputLayout txtInputLayoutPassword;
-    private TextInputLayout txtInputLayoutConfirm;
+    private TextInputLayout fnameLayout;
+    private TextInputLayout lnameLayout;
+    private TextInputLayout locationLayout;
+    private TextInputLayout contactLayout;
+    private TextInputLayout emailLayout;
+    private TextInputLayout passwordLayout;
+    private TextInputLayout confirmLayout;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -50,15 +35,13 @@ public class SignUp extends BaseActivity {
     private void initializeComponents() {
         this.mAuth = FirebaseAuth.getInstance();
         this.db = FirebaseFirestore.getInstance();
-        this.txtFname = findViewById(R.id.txtFname);
-        this.txtLname = findViewById(R.id.txtLname);
-        this.txtLocation = findViewById(R.id.txtLocation);
-        this.txtContact = findViewById(R.id.txtContact);
-        this.txtEmail = findViewById(R.id.txtEmail);
-        this.txtPassword = findViewById(R.id.txtPassword);
-        this.txtConfirmPassword = findViewById(R.id.txtConfirmPassword);
-        this.txtInputLayoutConfirm = findViewById(R.id.txtInputLayoutConfirm);
-        this.txtInputLayoutPassword = findViewById(R.id.txtInputLayoutPassword);
+        this.fnameLayout = findViewById(R.id.fnameLayout);
+        this.lnameLayout = findViewById(R.id.lnameLayout);
+        this.locationLayout = findViewById(R.id.locationLayout);
+        this.contactLayout = findViewById(R.id.contactLayout);
+        this.emailLayout = findViewById(R.id.emailLayout);
+        this.confirmLayout = findViewById(R.id.confirmLayout);
+        this.passwordLayout = findViewById(R.id.passwordLayout);
         findViewById(R.id.btnRegister).setOnClickListener(save());
     }
 
@@ -66,7 +49,7 @@ public class SignUp extends BaseActivity {
         return v -> {
             showProgressBar("Creating Account....");
             if (checkValidFields()) {
-                mAuth.createUserWithEmailAndPassword(txtEmail.getText().toString(), txtPassword.getText().toString())
+                mAuth.createUserWithEmailAndPassword(String.valueOf(emailLayout.getEditText().getText()), String.valueOf(passwordLayout.getEditText().getText()))
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 addToFireStore();
@@ -102,38 +85,32 @@ public class SignUp extends BaseActivity {
 
     private Map<String, Object> mapInfo() {
         Map<String, Object> info = new HashMap<>();
-        info.put("firstName", String.valueOf(txtFname.getText()));
-        info.put("lastame", String.valueOf(txtLname.getText()));
-        info.put("location", String.valueOf(txtLocation.getText()));
-        info.put("contact", String.valueOf(txtContact.getText()));
-        info.put("email", String.valueOf(txtEmail.getText()));
+        info.put("firstName", String.valueOf(fnameLayout.getEditText().getText()));
+        info.put("lastName", String.valueOf(lnameLayout.getEditText().getText()));
+        info.put("location", String.valueOf(locationLayout.getEditText().getText()));
+        info.put("contact", String.valueOf(contactLayout.getEditText().getText()));
+        info.put("email", String.valueOf(emailLayout.getEditText().getText()));
         return info;
     }
 
     private boolean checkValidFields() {
-        return validate(txtFname, txtLname, txtLocation, txtContact, txtEmail) || verifyPassword();
+        return validate(fnameLayout, lnameLayout, locationLayout, contactLayout, emailLayout) || verifyPassword();
     }
 
     private boolean verifyPassword() {
-        boolean isValidPassword = validate(txtInputLayoutPassword);
-        boolean isValidConfirmPassword = validate(txtInputLayoutConfirm);
+        boolean isValidPassword = validate(passwordLayout);
+        boolean isValidConfirmPassword = validate(confirmLayout);
         return (isValidPassword && isValidConfirmPassword)
-                || !String.valueOf(txtPassword.getText()).equals(String.valueOf(txtConfirmPassword.getText()));
+                || !String.valueOf(passwordLayout.getEditText().getText()).equals(String.valueOf(confirmLayout.getEditText().getText()));
     }
 
-    private boolean validate(View... view) {
+    private boolean validate(TextInputLayout... view) {
         boolean isValid = true;
-        for (View v : view) {
-            if (v instanceof TextView && (((TextView) v).getText() == null || String.valueOf(((TextView) v).getText()).isEmpty())) {
-                ((TextView) v).setError("Required Field");
+        for (TextInputLayout v : view) {
+            EditText editText = v.getEditText();
+            if (editText.getText() == null || String.valueOf(editText.getText()).isEmpty()) {
+                v.setError("Required Field");
                 isValid = false;
-            }
-            if (v instanceof TextInputLayout) {
-                EditText editText = ((TextInputLayout) v).getEditText();
-                if (editText.getText() == null || String.valueOf(editText.getText()).isEmpty()) {
-                    ((TextInputLayout) v).setError("Required Field");
-                    isValid = false;
-                }
             }
         }
         return isValid;

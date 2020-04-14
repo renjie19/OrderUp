@@ -1,6 +1,9 @@
 package com.example.testapplication.ui.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,6 +14,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.view.View;
@@ -21,6 +32,7 @@ import android.widget.Toast;
 
 import com.example.testapplication.R;
 import com.example.testapplication.shared.Preferences;
+import com.example.testapplication.shared.SwipeDeleteHandler;
 import com.example.testapplication.shared.enums.StatusEnum;
 import com.example.testapplication.ui.adapter.OrderPageAdapter;
 import com.example.testapplication.shared.pojo.Client;
@@ -69,6 +81,8 @@ public class OrderPage extends BaseActivity implements OrderPageView {
     private void setAdapter() {
         adapter = new OrderPageAdapter(order.getItems(), getOnClickListener());
         rv.setAdapter(adapter);
+        //TODO move management of list as current list is saved not on the adapter
+        new ItemTouchHelper(new SwipeDeleteHandler(adapter, this)).attachToRecyclerView(rv);
     }
 
     private View.OnClickListener getOnClickListener() {
@@ -98,7 +112,6 @@ public class OrderPage extends BaseActivity implements OrderPageView {
             alert.setPositiveButton("SUBMIT", listener);
             alert.setNeutralButton("CANCEL", null);
             alert.setNegativeButton("SUBMIT AND CONTINUE", (dialog, which) -> {
-                //TODO refactor only the first selected item changes
                 listener.onClick(dialog, which);
                 switch (action) {
                     case "VIEW":

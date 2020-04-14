@@ -6,21 +6,11 @@ import com.example.testapplication.shared.pojo.Order;
 
 import java.util.List;
 
-public abstract class OrderRepository {
-    private static OrderRepository repository;
+public interface OrderRepository {
 
-    protected OrderRepository(){}
-
-    public static OrderRepository getInstance(){
-        if(repository == null){
-            repository = new OrderRepositoryImpl();
-        }
-        return repository;
-    }
-
-    public abstract Order save(Order order);
-    public abstract List<Order> getOrders(Client client);
-    public abstract Order getOrder(String id);
+    Order save(Order order);
+    List<Order> getOrders(Client client);
+    Order getOrder(String id);
     @Deprecated
-    public abstract Order update(Order order);
+    Order update(Order order);
 }

@@ -6,7 +6,7 @@ import com.example.testapplication.shared.pojo.Account;
 
 import io.realm.Realm;
 
-class AccountRepositoryImpl extends AccountRepository {
+class AccountRepositoryImpl implements AccountRepository {
     private final String TAG = "AccountRepositoryImpl";
 
     @Override
@@ -38,5 +38,11 @@ class AccountRepositoryImpl extends AccountRepository {
             realm.close();
         }
         return null;
+    }
+
+    @Override
+    public void clearData() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(transaction -> transaction.deleteAll());
     }
 }

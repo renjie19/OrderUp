@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.example.testapplication.core.repository.AccountRepository;
 import com.example.testapplication.core.repository.OrderRepository;
+import com.example.testapplication.core.repository.RepositoryEnum;
+import com.example.testapplication.core.repository.RepositoryFactory;
 import com.example.testapplication.shared.util.AccountMapper;
 import com.example.testapplication.shared.pojo.Order;
 import com.example.testapplication.core.rest.FirebaseRestApi;
@@ -31,7 +33,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     public NotificationServiceImpl(OrderPageView orderPage) {
         this.view = orderPage;
-        this.accountRepository = AccountRepository.getInstance();
+        this.accountRepository = (AccountRepository) RepositoryFactory.INSTANCE.create(RepositoryEnum.ACCOUNT);
         this.accountService = (AccountService) ServiceFactory.INSTANCE.create(ServiceEnum.ACCOUNT);
     }
 
@@ -64,7 +66,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void manageReceivedOrder(final Order order) {
         accountService.addClient(order.getClient());
         OrderService orderService = (OrderService) ServiceFactory.INSTANCE.create(ServiceEnum.ORDER);
-        if(orderService.getOrder(order.getId()) == null) {
+        if (orderService.getOrder(order.getId()) == null) {
             orderService.save(order);
         } else {
             orderService.update(order);

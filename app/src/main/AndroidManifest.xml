@@ -37,14 +37,12 @@
             android:name=".ui.activity.BarCodeScanner"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".ui.activity.ClientList"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:name=".ui.activity.ClientList"/>
         <activity
             android:name=".ui.activity.AccountManagement"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".ui.activity.MainPage"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:name=".ui.activity.MainPage"/>
         <activity android:name=".ui.activity.OrderTrail" />
 
         <meta-data

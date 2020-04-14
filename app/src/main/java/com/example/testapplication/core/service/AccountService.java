@@ -12,4 +12,6 @@ public interface AccountService {
     Account update(Account account);
 
     Account addClient(Client client);
+
+    void clearData();
 }

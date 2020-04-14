@@ -14,7 +14,7 @@ import java.util.UUID;
 import io.realm.Realm;
 import io.realm.RealmList;
 
-class OrderRepositoryImpl extends OrderRepository {
+class OrderRepositoryImpl implements OrderRepository {
     private final String TAG = this.getClass().getSimpleName();
 
     @Override

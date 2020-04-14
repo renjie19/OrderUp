@@ -1,35 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/custom_background"
-    tools:context=".ui.activity.MainPage">
-
-    <ImageButton
-        android:id="@+id/clientsBtn"
-        android:layout_width="106dp"
-        android:layout_height="105dp"
-        android:background="#00FFFFFF"
-        android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.676"
-        app:srcCompat="@drawable/custom_button_men" />
+    android:gravity="center"
+    android:orientation="vertical">
 
     <ImageButton
         android:id="@+id/accountBtn"
-        android:layout_width="106dp"
+        android:layout_width="match_parent"
         android:layout_height="105dp"
         android:background="#00FFFFFF"
         android:scaleType="centerInside"
-        app:layout_constraintBottom_toTopOf="@+id/clientsBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/custom_button_man" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageButton
+        android:id="@+id/clientsBtn"
+        android:layout_width="match_parent"
+        android:layout_height="105dp"
+        android:background="#00FFFFFF"
+        android:scaleType="centerInside"
+        app:srcCompat="@drawable/custom_button_men" />
+</LinearLayout>

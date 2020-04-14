@@ -1,12 +1,14 @@
 package com.example.testapplication.core.service;
 
+import com.example.testapplication.core.repository.RepositoryEnum;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public enum ServiceFactory {
     INSTANCE;
 
-    private Map<String, Object> services = new HashMap<>();
+    private Map<ServiceEnum, Object> services = new HashMap<>();
 
     public Object create(ServiceEnum service) {
         switch (service) {
@@ -14,7 +16,7 @@ public enum ServiceFactory {
                 Object accountService = services.get(service);
                 if(accountService == null) {
                     accountService = new AccountServiceImpl();
-                    services.put(service.toString(), accountService);
+                    services.put(service, accountService);
                 }
                 return accountService;
             }
@@ -22,7 +24,7 @@ public enum ServiceFactory {
                 Object orderService = services.get(service);
                 if(orderService == null) {
                     orderService = new OrderServiceImpl();
-                    services.put(service.toString(), orderService);
+                    services.put(service, orderService);
                 }
                 return orderService;
             }

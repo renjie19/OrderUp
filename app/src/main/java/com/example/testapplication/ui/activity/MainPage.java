@@ -30,20 +30,4 @@ public class MainPage extends BaseActivity {
     }
 
 
-
-    @Override
-    public void onBackPressed() {
-        confirmLogOut();
-    }
-
-    private void confirmLogOut() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage("Are You Sure To Sign Out?")
-                .setPositiveButton("Sign Out", (dialog1, which) -> {
-                    mAuth.signOut();
-                    finish();
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
 }
