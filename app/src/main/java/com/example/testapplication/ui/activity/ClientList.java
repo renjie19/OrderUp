@@ -79,10 +79,6 @@ public class ClientList extends BaseActivity implements ClientListView {
 
     @Override
     public void setListOfClients(List<Client> clients) {
-        Client client = new Client();
-        client.setName("Test");
-        client.setLocation("TEstset");
-        clients.add(client);
         this.clients = clients;
     }
 

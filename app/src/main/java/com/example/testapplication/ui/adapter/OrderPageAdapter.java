@@ -56,24 +56,6 @@ public class OrderPageAdapter extends RecyclerView.Adapter<OrderPageAdapter.Item
         return mItems.size();
     }
 
-    @Override
-    public void delete(int position) {
-        removedItem.put(position, mItems.get(position));
-        mItems.remove(position);
-        this.notifyDataSetChanged();
-    }
-
-    @Override
-    public void restore() {
-        if(removedItem.size() != 0) {
-            for(Map.Entry<Integer, Item> item : removedItem.entrySet()) {
-                mItems.add(item.getKey(), item.getValue());
-            }
-            removedItem.clear();
-        }
-        notifyDataSetChanged();
-    }
-
     class ItemListViewHolder extends RecyclerView.ViewHolder {
         private TextView order, quantity, price, classification;
         private CardView itemCard;

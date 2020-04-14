@@ -10,5 +10,6 @@
 
     <color name="bright_blue">#174173</color>
     <color name="error">#F01E1E</color>
+    <color name="delete">#F2F13131</color>
     <color name="accent">#14ADAAAA</color>
 </resources>

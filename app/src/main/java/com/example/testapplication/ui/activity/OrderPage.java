@@ -14,12 +14,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -32,7 +27,6 @@ import android.widget.Toast;
 
 import com.example.testapplication.R;
 import com.example.testapplication.shared.Preferences;
-import com.example.testapplication.shared.SwipeDeleteHandler;
 import com.example.testapplication.shared.enums.StatusEnum;
 import com.example.testapplication.ui.adapter.OrderPageAdapter;
 import com.example.testapplication.shared.pojo.Client;
@@ -41,6 +35,7 @@ import com.example.testapplication.shared.pojo.Order;
 import com.example.testapplication.ui.presenter.OrderPagePresenter;
 import com.example.testapplication.shared.util.DateUtil;
 import com.example.testapplication.ui.views.OrderPageView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
@@ -59,6 +54,9 @@ public class OrderPage extends BaseActivity implements OrderPageView {
     private EditText itemName, quantity, price, pckg;
     private OrderPagePresenter presenter;
     private String action;
+
+    private Drawable icon;
+    private ColorDrawable background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +80,10 @@ public class OrderPage extends BaseActivity implements OrderPageView {
         adapter = new OrderPageAdapter(order.getItems(), getOnClickListener());
         rv.setAdapter(adapter);
         //TODO move management of list as current list is saved not on the adapter
-        new ItemTouchHelper(new SwipeDeleteHandler(adapter, this)).attachToRecyclerView(rv);
+        new ItemTouchHelper(getItemTouchHelper()).attachToRecyclerView(rv);
     }
+
+
 
     private View.OnClickListener getOnClickListener() {
         return view -> {
@@ -139,6 +139,8 @@ public class OrderPage extends BaseActivity implements OrderPageView {
     }
 
     private void initializeComponents() {
+        this.icon = ContextCompat.getDrawable(this, R.drawable.ic_delete_black_24dp);
+        this.background = new ColorDrawable(0xF2F13131);
         this.consumerField = findViewById(R.id.consumerName);
         this.consumerField.setEnabled(false);
 
@@ -289,5 +291,69 @@ public class OrderPage extends BaseActivity implements OrderPageView {
             hideProgressBar();
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         });
+    }
+
+    private ItemTouchHelper.SimpleCallback getItemTouchHelper() {
+        return new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            int index;
+            Item item;
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                index = viewHolder.getAdapterPosition();
+                item = order.getItems().get(index);
+                order.getItems().remove(item);
+                adapter.notifyDataSetChanged();
+                showSnackUndoBar();
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                View itemView = viewHolder.itemView;
+                int backgroundCornerOffset = 20;
+
+                int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                int iconTop = itemView.getTop() + (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                int iconBottom = iconTop + icon.getIntrinsicHeight();
+
+                if (dX > 0) { // Swiping to the right
+                    int iconLeft = itemView.getLeft() + iconMargin + icon.getIntrinsicWidth();
+                    int iconRight = itemView.getLeft() + iconMargin;
+                    icon.setBounds(iconRight, iconTop, iconLeft, iconBottom);
+
+                    background.setBounds(itemView.getLeft(), itemView.getTop(),
+                            itemView.getLeft() + ((int) dX) + backgroundCornerOffset,
+                            itemView.getBottom());
+    //            } else if (dX < 0) { // Swiping to the left
+    //                int iconLeft = itemView.getRight() - iconMargin - icon.getIntrinsicWidth();
+    //                int iconRight = itemView.getRight() - iconMargin;
+    //                icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+    //
+    //                background.setBounds(itemView.getRight() + ((int) dX) - backgroundCornerOffset,
+    //                        itemView.getTop(), itemView.getRight(), itemView.getBottom());
+                } else { // view is unSwiped
+                    background.setBounds(0, 0, 0, 0);
+                }
+
+                background.draw(c);
+                icon.draw(c);
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+
+            private void showSnackUndoBar() {
+                Snackbar.make(getWindow().getDecorView().getRootView(), "Removed Successfully", Snackbar.LENGTH_LONG)
+                        .setAction("Undo", v -> undoDelete())
+                        .show();
+            }
+
+            private void undoDelete() {
+                order.getItems().add(index, item);
+                adapter.notifyDataSetChanged();
+            }
+        };
     }
 }
