@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.testapplication.R;
+import com.example.testapplication.shared.util.FirebaseUtil;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserInfo;
@@ -90,6 +91,7 @@ public class SignUp extends BaseActivity {
         info.put("location", String.valueOf(locationLayout.getEditText().getText()));
         info.put("contact", String.valueOf(contactLayout.getEditText().getText()));
         info.put("email", String.valueOf(emailLayout.getEditText().getText()));
+        info.put("token", FirebaseUtil.INSTANCE.getToken());
         return info;
     }
 

@@ -4,15 +4,20 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.security.ConfirmationCallback;
 import android.util.Patterns;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.example.testapplication.R;
+import com.example.testapplication.shared.callback.CallBack;
 import com.example.testapplication.shared.util.AccountMapper;
 import com.example.testapplication.ui.presenter.LoginPresenter;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,6 +25,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class Login extends BaseActivity {
     public static final String NO_RECORD = "There is no user record corresponding to this identifier. The user may have been deleted.";
@@ -99,8 +106,9 @@ public class Login extends BaseActivity {
                         } else {
                             String cause = task.getException().getMessage();
                             showMessage(getCause(cause));
+                            hideProgressBar();
                         }
-                        hideProgressBar();
+
                     });
         } else {
             setErrorOnField();
@@ -145,11 +153,17 @@ public class Login extends BaseActivity {
         if(!presenter.checkIfUserHasExistingData(user.getUid())) {
             db.collection("Users").document(user.getUid()).get().addOnCompleteListener(task -> {
                 if(task.isSuccessful() && task.getResult() != null) {
-                    presenter.clearDataAndReplace(AccountMapper.INSTANCE.documentToAccount(task.getResult(), user.getUid()));
+                    presenter.clearDataAndReplace(task.getResult(), user.getUid(), getCallBack());
                 }
             }).addOnFailureListener(e -> showMessage("Data retrieval Failed"));
-
         }
-        startActivity(new Intent(this, ClientList.class));
+    }
+
+    private CallBack getCallBack() {
+        return () -> {
+            Intent intent = new Intent(this, ClientList.class);
+            intent.putExtra("status", "New");
+            startActivity(intent);
+        };
     }
 }

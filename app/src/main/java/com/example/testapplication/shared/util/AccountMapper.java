@@ -8,6 +8,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import io.realm.RealmList;
 
@@ -24,27 +25,15 @@ public enum AccountMapper {
         return client;
     }
 
-    public Account documentToAccount(DocumentSnapshot object, String id) {
+    public Account documentToAccount(Map<String, Object> accountMap, String id) {
         Account account = new Account();
         account.setId(id);
-        account.setFirstName((String) object.get("firstName"));
-        account.setLastName((String) object.get("lastName"));
-        account.setLocation((String)object.get("location"));
-        account.setContactNumber((String)object.get("contact"));
-        account.setEmail((String)object.get("email"));
-        RealmList<Client> clientList = getClientsFromDocumentReference(object.get("clients"));
-        account.setClients(clientList);
+        account.setFirstName((String) accountMap.get("firstName"));
+        account.setLastName((String) accountMap.get("lastName"));
+        account.setLocation((String)accountMap.get("location"));
+        account.setContactNumber((String)accountMap.get("contact"));
+        account.setEmail((String)accountMap.get("email"));
+        account.setClients(new RealmList<>());
         return account;
-    }
-
-    private RealmList<Client> getClientsFromDocumentReference(Object object) {
-        RealmList<Client> clientList = new RealmList<>();
-        if(object instanceof ArrayList) {
-            for(Object item : ((ArrayList)object)) {
-                if(item instanceof DocumentReference)
-                clientList.add(FirebaseUtil.INSTANCE.getClientFromDocumentReference((DocumentReference) item));
-            }
-        }
-        return clientList;
     }
 }

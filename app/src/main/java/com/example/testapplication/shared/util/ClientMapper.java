@@ -16,4 +16,14 @@ public enum ClientMapper {
         map.put("location", client.getLocation());
         return map;
     }
+
+    public Client mapToClient(Map<String, Object> map, String id) {
+        Client client = new Client();
+        client.setName(String.format("%s %s",map.get("firstName"), map.get("lastName")));
+        client.setLocation(String.valueOf(map.get("location")));
+        client.setContactNo(String.valueOf(map.get("contact")));
+        client.setToken(String.valueOf(map.get("token")));
+        client.setUid(id);
+        return client;
+    }
 }

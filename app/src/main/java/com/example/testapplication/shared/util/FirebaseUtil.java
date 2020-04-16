@@ -8,17 +8,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public enum FirebaseUtil {
     INSTANCE;
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
     private final String TAG = getClass().getSimpleName();
+    private String token;
 
     public FirebaseFirestore getFirebaseDb() {
         return mFireStore;
@@ -38,18 +35,14 @@ public enum FirebaseUtil {
                     Log.i(TAG, "updateListOfClients: Add Success");
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "updateListOfClients: " + e.getMessage() );
+                    Log.e(TAG, "updateListOfClients: " + e.getMessage());
                 });
     }
 
-    public Client getClientFromDocumentReference(DocumentReference reference) {
-        Map<String, Object> map = reference.get().getResult().getData();
-        Client client = new Client();
-        client.setUid(reference.getId());
-        client.setName(String.valueOf(map.get("name")));
-        client.setLocation(String.valueOf(map.get("location")));
-        client.setContactNo(String.valueOf(map.get("contact")));
-        client.setToken(String.valueOf(map.get("token")));
-        return client;
+    public String getToken() {
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+            token = task.getResult().getToken();
+        });
+        return token;
     }
 }

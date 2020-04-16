@@ -2,8 +2,6 @@ package com.example.testapplication.ui.activity;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,9 +11,9 @@ import com.example.testapplication.R;
 import com.example.testapplication.shared.Preferences;
 import com.example.testapplication.shared.enums.PrefParamEnum;
 import com.example.testapplication.shared.pojo.Account;
+import com.example.testapplication.shared.util.FirebaseUtil;
 import com.example.testapplication.shared.util.QrGenerator;
 import com.example.testapplication.ui.presenter.AccountManagementPresenter;
-import com.example.testapplication.shared.util.FirebaseToken;
 import com.example.testapplication.ui.views.AccountManagementViews;
 import com.google.gson.GsonBuilder;
 
@@ -80,7 +78,7 @@ public class AccountManagement extends BaseActivity implements AccountManagement
             account.setLastName(lastName.getText().toString());
             account.setLocation(location.getText().toString());
             account.setContactNumber(phoneNumber.getText().toString());
-            account.setToken(FirebaseToken.INSTANCE.getToken());
+            account.setToken(FirebaseUtil.INSTANCE.getToken());
             return account;
         }
         throw new Exception("Fill In All Fields...");
