@@ -1,11 +1,5 @@
 package com.example.testapplication.ui.activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -13,12 +7,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.testapplication.R;
 import com.example.testapplication.shared.callback.DeleteCallback;
 import com.example.testapplication.shared.callback.SwipeDeleteCallback;
+import com.example.testapplication.shared.pojo.Client;
 import com.example.testapplication.shared.util.FirebaseUtil;
 import com.example.testapplication.ui.adapter.ClientListAdapter;
-import com.example.testapplication.shared.pojo.Client;
 import com.example.testapplication.ui.presenter.ClientListPresenter;
 import com.example.testapplication.ui.views.ClientListView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -117,11 +117,13 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
         this.removedClient = clients.get(itemIndex);
         this.clients.remove(removedClient);
         adapter.notifyDataSetChanged();
+        presenter.deleteClient(removedClient);
     }
 
     @Override
     public void onUndo() {
         this.clients.add(itemIndex, removedClient);
         adapter.notifyDataSetChanged();
+        presenter.restoreClient(itemIndex, removedClient);
     }
 }

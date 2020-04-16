@@ -1,11 +1,11 @@
 package com.example.testapplication.core.service;
 
+import com.example.testapplication.core.repository.AccountRepository;
 import com.example.testapplication.core.repository.RepositoryEnum;
 import com.example.testapplication.core.repository.RepositoryFactory;
 import com.example.testapplication.shared.callback.CallBack;
 import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.shared.pojo.Client;
-import com.example.testapplication.core.repository.AccountRepository;
 import com.example.testapplication.shared.util.AccountMapper;
 import com.example.testapplication.shared.util.ClientMapper;
 import com.google.android.gms.tasks.Task;
@@ -64,6 +64,21 @@ class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public void deleteClient(Client client) {
+        Account account = repository.getAccount();
+        RealmList<Client> clientRealmList = account.getClients();
+        Client toBeRemoved = null;
+        for(Client c : clientRealmList) {
+            if(c.getUid().equals(client.getUid())) {
+                toBeRemoved = c;
+            }
+        }
+        clientRealmList.remove(toBeRemoved);
+        account.setClients(clientRealmList);
+        repository.save(account);
+    }
+
+    @Override
     public void clearData() {
         repository.clearData();
     }
@@ -84,6 +99,15 @@ class AccountServiceImpl implements AccountService {
             }
             saveData(snapshot, id, clientList, callBack);
         });
+    }
+
+    @Override
+    public void restoreClient(int itemIndex, Client removedClient) {
+        Account account = repository.getAccount();
+        RealmList<Client> clients = account.getClients();
+        clients.add(itemIndex, removedClient);
+        account.setClients(clients);
+        repository.save(account);
     }
 
     private void saveData(DocumentSnapshot snapshot, String id, RealmList<Client> clientList, CallBack callBack) {

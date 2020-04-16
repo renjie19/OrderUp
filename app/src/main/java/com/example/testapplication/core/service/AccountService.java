@@ -15,7 +15,11 @@ public interface AccountService {
 
     Account addClient(Client client);
 
+    void deleteClient(Client client);
+
     void clearData();
 
     void saveAccountFromSnapshot(DocumentSnapshot snapshot, String id, CallBack callBack);
+
+    void restoreClient(int itemIndex, Client removedClient);
 }
