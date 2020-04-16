@@ -12,9 +12,11 @@ import androidx.core.app.ActivityCompat;
 import com.example.testapplication.R;
 import com.example.testapplication.shared.util.AccountMapper;
 import com.example.testapplication.ui.presenter.LoginPresenter;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -146,6 +148,7 @@ public class Login extends BaseActivity {
                     presenter.clearDataAndReplace(AccountMapper.INSTANCE.documentToAccount(task.getResult(), user.getUid()));
                 }
             }).addOnFailureListener(e -> showMessage("Data retrieval Failed"));
+
         }
         startActivity(new Intent(this, ClientList.class));
     }

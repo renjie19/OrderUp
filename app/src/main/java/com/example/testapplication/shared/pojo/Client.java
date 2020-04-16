@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Client extends RealmObject implements Parcelable {
     @PrimaryKey
+    private String uid;
     private String token;
     private String name;
     private String location;
@@ -24,6 +25,7 @@ public class Client extends RealmObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.uid);
         dest.writeString(this.token);
         dest.writeString(this.name);
         dest.writeString(this.location);
@@ -31,6 +33,7 @@ public class Client extends RealmObject implements Parcelable {
     }
 
     protected Client(Parcel in) {
+        this.uid = in.readString();
         this.token = in.readString();
         this.name = in.readString();
         this.location = in.readString();

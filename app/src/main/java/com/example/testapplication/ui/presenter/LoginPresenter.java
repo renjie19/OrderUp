@@ -10,7 +10,7 @@ public class LoginPresenter {
 
     public boolean checkIfUserHasExistingData(String id) {
         Account account = accountService.getAccount();
-        return account.getId() != null && account.getId().equals(id);
+        return account.getEmail() != null && account.getEmail().equals(id);
     }
 
     public void clearDataAndReplace(Account account) {

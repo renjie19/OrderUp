@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.testapplication.R;
@@ -44,6 +43,14 @@ public class ClientListAdapter extends RecyclerView.Adapter<ClientListAdapter.Cl
     @Override
     public int getItemCount() {
         return clients.size();
+    }
+
+    public List<Client> getList() {
+        return clients;
+    }
+
+    public void setList(List<Client> clients) {
+        this.clients = clients;
     }
 
     public class ClientListViewHolder extends RecyclerView.ViewHolder {

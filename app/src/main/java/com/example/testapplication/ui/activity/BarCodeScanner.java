@@ -97,6 +97,11 @@ public class BarCodeScanner extends AppCompatActivity {
                         source.start(surfaceView.getHolder());
                     } else {
                         ActivityCompat.requestPermissions(BarCodeScanner.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+                        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                            source.start(surfaceView.getHolder());
+                        } else {
+                           source.stop();
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -44,9 +44,9 @@ class AccountServiceImpl implements AccountService {
         Map<String, Client> clientMap = new HashMap<>();
         Account account = repository.getAccount();
         for(Client savedClient : account.getClients()) {
-            clientMap.put(savedClient.getToken(), savedClient);
+            clientMap.put(savedClient.getUid(), savedClient);
         }
-        clientMap.put(client.getToken(), client);
+        clientMap.put(client.getUid(), client);
         account.setClients(new RealmList<>());
         for(Map.Entry<String, Client> uniqueClients : clientMap.entrySet()) {
             account.getClients().add(uniqueClients.getValue());

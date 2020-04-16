@@ -102,6 +102,7 @@ public class AccountManagement extends BaseActivity implements AccountManagement
     public void loadAccount(Account account) {
         this.account = account;
         if(account != null) {
+            this.account.getClients().clear();
             this.userName.setText(account.getFirstName());
             this.lastName.setText(account.getLastName());
             this.location.setText(account.getLocation());
