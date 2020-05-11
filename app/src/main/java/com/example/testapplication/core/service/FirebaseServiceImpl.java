@@ -1,8 +1,5 @@
 package com.example.testapplication.core.service;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.example.testapplication.core.repository.AccountRepository;
 import com.example.testapplication.core.repository.RepositoryEnum;
 import com.example.testapplication.core.repository.RepositoryFactory;
@@ -11,19 +8,12 @@ import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.shared.pojo.Client;
 import com.example.testapplication.shared.pojo.Item;
 import com.example.testapplication.shared.pojo.Order;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -51,14 +41,12 @@ public class FirebaseServiceImpl implements FirebaseService {
     public void createUser(Account account, CallBack callBack) {
         DocumentReference reference = mStore.collection(USER_COLLECTION).document(mAuth.getUid());
         account.setId(reference.getId());
-        reference.addSnapshotListener((documentSnapshot, e) -> {
-           // build account from snapshot
-            getAccountFromMap(documentSnapshot.getData());
-            // update account to repository
-        });
         reference.set(buildAccountMap(account))
                 .addOnSuccessListener(aVoid -> callBack.onSuccess(null))
                 .addOnFailureListener(e -> callBack.onFailure(null));
+        reference.addSnapshotListener((documentSnapshot, e) -> {
+            getAccountAndSave(documentSnapshot.getData(), null);
+        });
     }
 
     @Override
@@ -67,7 +55,7 @@ public class FirebaseServiceImpl implements FirebaseService {
             @Override
             public void onSuccess(Object object) {
                 mStore.collection(USER_COLLECTION)
-                        .document((String)object)
+                        .document((String) object)
                         .update(buildAccountMap(account));
             }
 
@@ -79,9 +67,22 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
-    public void login(String email, String password, CallBack callBack  ) {
+    public void getAccount(String id, CallBack callBack) {
+        mStore.collection(USER_COLLECTION)
+                .document(id)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
+                        getAccountAndSave(documentSnapshot.getData(), callBack);
+                    }
+                })
+                .addOnFailureListener(e -> callBack.onFailure(e.getMessage()));
+    }
+
+    @Override
+    public void login(String email, String password, CallBack callBack) {
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener(authResult -> callBack.onSuccess(null))
+                .addOnSuccessListener(authResult -> callBack.onSuccess(authResult.getUser().getUid()))
                 .addOnFailureListener(e -> callBack.onFailure(null));
     }
 
@@ -122,7 +123,7 @@ public class FirebaseServiceImpl implements FirebaseService {
             @Override
             public void onSuccess(Object object) {
                 mStore.collection(ORDER_COLLECTION)
-                        .document((String)object)
+                        .document((String) object)
                         .update(buildOrderMap(order))
                         .addOnSuccessListener(aVoid -> {
 
@@ -193,7 +194,7 @@ public class FirebaseServiceImpl implements FirebaseService {
         return map;
     }
 
-    private Account getAccountFromMap(Map<String, Object> data) {
+    private void getAccountAndSave(Map<String, Object> data, CallBack callBack) {
         Account account = new Account();
         account.setFirstName((String) data.get("firstName"));
         account.setLastName((String) data.get("lastName"));
@@ -201,25 +202,27 @@ public class FirebaseServiceImpl implements FirebaseService {
         account.setContactNumber((String) data.get("contactNumber"));
         account.setEmail((String) data.get("email"));
         account.setToken((String) data.get("token"));
-        getClientsFromMap((List) data.get("clients"), account);
-        return account;
+        getClientsFromMap((List) data.get("clients"), account, callBack);
     }
 
-    private void getClientsFromMap(List clients, Account account) {
+    private void getClientsFromMap(List clients, Account account, CallBack callBack) {
         account.setClients(new RealmList<>());
         List<Task<QuerySnapshot>> tasks = new ArrayList<>();
-        for(Object id : clients) {
+        for (Object id : clients) {
             tasks.add(mStore.collection(USER_COLLECTION).whereEqualTo("id", id).get());
         }
         Task<List<QuerySnapshot>> taskResult = Tasks.whenAllSuccess(tasks);
         taskResult.addOnSuccessListener(querySnapshots -> {
-            for(QuerySnapshot snapshots : querySnapshots) {
+            for (QuerySnapshot snapshots : querySnapshots) {
                 Map<String, Object> clientMap = snapshots.getDocuments().get(0).getData();
-                if(clientMap != null) {
+                if (clientMap != null) {
                     account.getClients().add(getClient(clientMap));
                 }
             }
             accountRepository.save(account);
+            if(callBack != null) {
+                callBack.onSuccess(null);
+            }
         });
     }
 
@@ -233,9 +236,9 @@ public class FirebaseServiceImpl implements FirebaseService {
         return client;
     }
 
-    private List<Map<String, Object>>getItemMaps(List<Item> items) {
+    private List<Map<String, Object>> getItemMaps(List<Item> items) {
         List<Map<String, Object>> itemsMap = new ArrayList<>();
-        for(Item item : items) {
+        for (Item item : items) {
             itemsMap.add(getItemMap(item));
         }
         return itemsMap;

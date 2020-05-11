@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat;
 import com.example.testapplication.R;
 import com.example.testapplication.shared.callback.CallBack;
 import com.example.testapplication.ui.presenter.LoginPresenter;
+import com.example.testapplication.ui.views.LoginView;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,7 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
-public class Login extends BaseActivity {
+public class Login extends BaseActivity implements LoginView {
     public static final String NO_RECORD = "There is no user record corresponding to this identifier. The user may have been deleted.";
     public static final String BAD_EMAIL_FORMAT = "The email address is badly formatted.";
     public static final String INVALID_PASSWORD = "The password is invalid or the user does not have a password.";
@@ -70,7 +71,7 @@ public class Login extends BaseActivity {
     private void initializeComponents() {
         this.mAuth = FirebaseAuth.getInstance();
         this.db = FirebaseFirestore.getInstance();
-        this.presenter = new LoginPresenter();
+        this.presenter = new LoginPresenter(this);
         this.usernameField = findViewById(R.id.usernameField);
         this.passwordField = findViewById(R.id.passwordField);
         this.emailLayout = findViewById(R.id.emailLayout);
@@ -90,17 +91,18 @@ public class Login extends BaseActivity {
         String username = usernameField.getText().toString();
         String password = passwordField.getText().toString();
         if(!username.isEmpty() && !password.isEmpty()) {
-            mAuth.signInWithEmailAndPassword(username, password)
-                    .addOnCompleteListener(task -> {
-                        if(task.isSuccessful()) {
-                            retrieveUserData();
-                        } else {
-                            String cause = task.getException().getMessage();
-                            showMessage(getCause(cause));
-                            hideProgressBar();
-                        }
-
-                    });
+            presenter.login(username, password);
+//            mAuth.signInWithEmailAndPassword(username, password)
+//                    .addOnCompleteListener(task -> {
+//                        if(task.isSuccessful()) {
+//                            retrieveUserData();
+//                        } else {
+//                            String cause = task.getException().getMessage();
+//                            showMessage(getCause(cause));
+//                            hideProgressBar();
+//                        }
+//
+//                    });
         } else {
             setErrorOnField();
             showMessage("FILL IN ALL FIELDS");
@@ -160,5 +162,17 @@ public class Login extends BaseActivity {
 
             }
         };
+    }
+
+    @Override
+    public void onSuccess(Object object) {
+        hideProgressBar();
+        startActivity(new Intent(this, ClientList.class));
+    }
+
+    @Override
+    public void onFailure(Object message) {
+        hideProgressBar();
+        showMessage((String) message);
     }
 }
