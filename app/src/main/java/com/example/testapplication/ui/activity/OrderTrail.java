@@ -48,29 +48,19 @@ public class OrderTrail extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        new MenuInflater(this).inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.add: {
-                Order order = new Order();
-                order.setClient(client);
-                order.setItems(new RealmList<>());
-                Intent intent = new Intent(this, OrderPage.class);
-                intent.putExtra("data",order);
-                intent.putExtra("ACTION", "CREATE");
-                startActivity(intent);
-            }
-            case R.id.remove: {
-
-            }
-            case R.id.updated: {
-
-            }
-        }
+        Order order = new Order();
+        order.setClient(client);
+        order.setItems(new RealmList<>());
+        Intent intent = new Intent(this, OrderPage.class);
+        intent.putExtra("data",order);
+        intent.putExtra("ACTION", "CREATE");
+        startActivity(intent);
         return true;
     }
 
