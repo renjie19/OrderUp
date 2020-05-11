@@ -118,7 +118,7 @@ class AccountServiceImpl implements AccountService {
         Account account = AccountMapper.INSTANCE.documentToAccount(data, id);
         account.setClients(clientList);
         repository.save(account);
-        callBack.run();
+        callBack.onSuccess(null);
     }
 
 }

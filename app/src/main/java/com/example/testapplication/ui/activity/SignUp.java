@@ -5,7 +5,11 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.example.testapplication.R;
+import com.example.testapplication.shared.callback.CallBack;
+import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.shared.util.FirebaseUtil;
+import com.example.testapplication.ui.presenter.SignUpPresenter;
+import com.example.testapplication.ui.views.SignUpView;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserInfo;
@@ -14,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SignUp extends BaseActivity {
+public class SignUp extends BaseActivity implements SignUpView {
 
     private TextInputLayout fnameLayout;
     private TextInputLayout lnameLayout;
@@ -26,6 +30,8 @@ public class SignUp extends BaseActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
+    private SignUpPresenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +40,7 @@ public class SignUp extends BaseActivity {
     }
 
     private void initializeComponents() {
+        this.presenter = new SignUpPresenter(this);
         this.mAuth = FirebaseAuth.getInstance();
         this.db = FirebaseFirestore.getInstance();
         this.fnameLayout = findViewById(R.id.fnameLayout);
@@ -50,15 +57,18 @@ public class SignUp extends BaseActivity {
         return v -> {
             showProgressBar("Creating Account....");
             if (checkValidFields()) {
-                mAuth.createUserWithEmailAndPassword(String.valueOf(emailLayout.getEditText().getText()), String.valueOf(passwordLayout.getEditText().getText()))
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                addToFireStore();
-                            } else {
-                                showMessage("Registration Failed");
-                                hideProgressBar();
-                            }
-                        });
+                String email = String.valueOf(emailLayout.getEditText().getText());
+                String password = String.valueOf(passwordLayout.getEditText().getText());
+                presenter.signUp(buildAccount(), email, password);
+//                mAuth.createUserWithEmailAndPassword(String.valueOf(emailLayout.getEditText().getText()), String.valueOf(passwordLayout.getEditText().getText()))
+//                        .addOnCompleteListener(task -> {
+//                            if (task.isSuccessful()) {
+//                                addToFireStore();
+//                            } else {
+//                                showMessage("Registration Failed");
+//                                hideProgressBar();
+//                            }
+//                        });
             } else {
                 showMessage("Fill in all fields!");
                 hideProgressBar();
@@ -66,7 +76,20 @@ public class SignUp extends BaseActivity {
 
         };
     }
+
+    private Account buildAccount() {
+        Account account = new Account();
+        account.setFirstName(String.valueOf(fnameLayout.getEditText().getText()));
+        account.setLastName(String.valueOf(lnameLayout.getEditText().getText()));
+        account.setLocation(String.valueOf(locationLayout.getEditText().getText()));
+        account.setContactNumber(String.valueOf(contactLayout.getEditText().getText()));
+        account.setEmail(String.valueOf(emailLayout.getEditText().getText()));
+        account.setToken(FirebaseUtil.INSTANCE.getToken());
+        return account;
+    }
+
     //TODO refactor the hiding of progress dialog on one declaration only
+    @Deprecated
     private void addToFireStore() {
         Map<String, Object> accountInfo = mapInfo();
         UserInfo user = FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(0);
@@ -116,5 +139,17 @@ public class SignUp extends BaseActivity {
             }
         }
         return isValid;
+    }
+
+    @Override
+    public void onCreateAccountSuccess() {
+        showMessage("Account Created");
+        finish();
+    }
+
+    @Override
+    public void onFailure(String message) {
+        hideProgressBar();
+        showMessage(message);
     }
 }

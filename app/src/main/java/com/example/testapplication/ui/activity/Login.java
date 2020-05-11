@@ -149,10 +149,16 @@ public class Login extends BaseActivity {
     }
 
     private CallBack getCallBack() {
-        return () -> {
-            Intent intent = new Intent(this, ClientList.class);
-            intent.putExtra("status", "New");
-            startActivity(intent);
+        return new CallBack() {
+            @Override
+            public void onSuccess(Object object) {
+                startActivity(new Intent(getApplicationContext(), ClientList.class));
+            }
+
+            @Override
+            public void onFailure(Object object) {
+
+            }
         };
     }
 }
