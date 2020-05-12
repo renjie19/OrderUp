@@ -13,7 +13,7 @@ public interface FirebaseService {
     void signUp(String email, String password, CallBack callBack);
     void logout();
     void createOrder(Order order, CallBack callBack);
-    void updateOrder(Order order);
+    void updateOrder(Order order, CallBack callBack);
     void removeClient(Client client);
     void addClient(Client client);
     void initializeListeners();

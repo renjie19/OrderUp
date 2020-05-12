@@ -176,7 +176,7 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
-    public void updateOrder(Order order) {
+    public void updateOrder(Order order, CallBack callBack) {
         getDocumentId(ORDER_COLLECTION, "id", order.getId(), new CallBack() {
             @Override
             public void onSuccess(Object object) {
@@ -184,11 +184,9 @@ public class FirebaseServiceImpl implements FirebaseService {
                         .document((String) object)
                         .update(buildOrderMap(order))
                         .addOnSuccessListener(aVoid -> {
-
+                            callBack.onSuccess("Order Updated");
                         })
-                        .addOnFailureListener(e -> {
-
-                        });
+                        .addOnFailureListener(e -> callBack.onFailure(e.getMessage()));
             }
 
             @Override

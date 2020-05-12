@@ -45,6 +45,7 @@ public class OrderPagePresenter {
     }
 
     public Order updateOrder(Order order) {
+        firebaseService.updateOrder(order, view);
         return orderService.update(order);
     }
 }

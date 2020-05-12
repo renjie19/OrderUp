@@ -175,17 +175,37 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
             });
 
             doneBtn.setOnClickListener(view -> {
-                buildClientOrder(order);
-                AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                alert.setMessage("Are you sure with your items?");
-                alert.setPositiveButton("YES", (dialog, which) -> {
-                    showProgressBar("Sending Request... Please Wait...");
-                    saveOrUpdateOrderThenSend();
-                });
-                alert.setNegativeButton("NO", null);
-                alert.show();
+                try{
+                    checkRequiredFields();
+                    buildClientOrder(order);
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.setMessage("Are you sure with your items?");
+                    alert.setPositiveButton("YES", (dialog, which) -> {
+                        showProgressBar("Sending Request... Please Wait...");
+                        saveOrUpdateOrderThenSend();
+                    });
+                    alert.setNegativeButton("NO", null);
+                    alert.show();
+                } catch (Exception e) {
+                    showMessage(e.getMessage());
+                }
             });
         }
+    }
+
+    private void checkRequiredFields() throws Exception {
+        boolean isNotValid = false;
+        if(order.getId() != null) {
+            for (Item item : order.getItems()) {
+                if (item.getQuantity() != 0 && item.getPrice() == 0) {
+                    isNotValid = true;
+                }
+            }
+        }
+        if (isNotValid) {
+            throw new Exception("Price with quantity should not be zero");
+        }
+
     }
 
     private void setFieldData() {
