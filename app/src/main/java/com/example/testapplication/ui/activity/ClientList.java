@@ -46,6 +46,11 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
         setContentView(R.layout.client_list);
         initializeComponents();
         initializeAdapter();
+        initializeListeners();
+    }
+
+    private void initializeListeners() {
+        presenter.initListeners();
     }
 
     @Override

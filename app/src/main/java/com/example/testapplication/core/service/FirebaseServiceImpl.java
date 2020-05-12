@@ -1,6 +1,10 @@
 package com.example.testapplication.core.service;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.example.testapplication.core.repository.AccountRepository;
+import com.example.testapplication.core.repository.OrderRepository;
 import com.example.testapplication.core.repository.RepositoryEnum;
 import com.example.testapplication.core.repository.RepositoryFactory;
 import com.example.testapplication.shared.callback.CallBack;
@@ -8,33 +12,43 @@ import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.shared.pojo.Client;
 import com.example.testapplication.shared.pojo.Item;
 import com.example.testapplication.shared.pojo.Order;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import io.realm.RealmList;
+
+import static com.google.android.gms.tasks.Tasks.await;
 
 public class FirebaseServiceImpl implements FirebaseService {
     private FirebaseAuth mAuth;
     private FirebaseFirestore mStore;
     private static final String USER_COLLECTION = "Users";
-    private static final String ORDER_COLLECTION = "Order";
+    private static final String ORDER_COLLECTION = "Orders";
 
     private AccountRepository accountRepository;
+    private OrderRepository orderRepository;
 
     public FirebaseServiceImpl() {
         this.mAuth = FirebaseAuth.getInstance();
         this.mStore = FirebaseFirestore.getInstance();
         this.accountRepository = (AccountRepository) RepositoryFactory.INSTANCE.create(RepositoryEnum.ACCOUNT);
+        this.orderRepository = (OrderRepository) RepositoryFactory.INSTANCE.create(RepositoryEnum.ORDER);
     }
 
     @Override
@@ -103,18 +117,62 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
-    public void createOrder(Order order) {
+    public void createOrder(Order order, CallBack callBack) {
         DocumentReference reference = mStore.collection(ORDER_COLLECTION).document();
-        reference.addSnapshotListener((documentSnapshot, e) -> {
-            // update local
-        });
+        order.setId(reference.getId());
         reference.set(buildOrderMap(order))
                 .addOnSuccessListener(aVoid -> {
-
+                    addOrderToClient(reference.getId(), order.getClient().getUid());
+                    addOrderToAccount(reference.getId());
+                    callBack.onSuccess("Order Sent");
                 })
                 .addOnFailureListener(e -> {
-
+                    System.out.println("failed");
                 });
+        addListenerToOrder(reference);
+    }
+
+    private void addListenerToOrder(DocumentReference reference) {
+        reference.addSnapshotListener((documentSnapshot, e) -> {
+            if (documentSnapshot != null && documentSnapshot.exists() && documentSnapshot.getData() != null) {
+                buildOrder(documentSnapshot.getData(), new CallBack() {
+                    @Override
+                    public void onSuccess(Object object) {
+                        orderRepository.save((Order) object);
+                    }
+
+                    @Override
+                    public void onFailure(Object object) {
+                        // nothing
+                    }
+                });
+            }
+        });
+    }
+
+    private void buildOrder(Map<String, Object> data, CallBack callBack) {
+        Order order = new Order();
+        order.setDate((long) data.get("date"));
+        order.setId((String) data.get("id"));
+        order.setForPayment((boolean) data.get("forPayment"));
+        order.setStatus((String) data.get("status"));
+        order.setTotal((double) data.get("total"));
+        order.setItems(buildItems((List) data.get("items")));
+        String to = (String) data.get("to");
+        String from = (String) data.get("from");
+        getClient(to, from, order, callBack);
+    }
+
+    private void addOrderToClient(String orderId, String clientId) {
+        mStore.collection(USER_COLLECTION)
+                .document(clientId)
+                .update("orders", FieldValue.arrayUnion(orderId));
+    }
+
+    private void addOrderToAccount(String orderId) {
+        mStore.collection(USER_COLLECTION)
+                .document(mAuth.getUid())
+                .update("orders", FieldValue.arrayUnion(orderId));
     }
 
     @Override
@@ -154,6 +212,26 @@ public class FirebaseServiceImpl implements FirebaseService {
                 .update("clients", FieldValue.arrayUnion(client.getUid()));
     }
 
+    @Override
+    public void initializeListeners() {
+        mStore.collection(USER_COLLECTION).document(mAuth.getUid())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    mStore.collection(USER_COLLECTION)
+                            .document(documentSnapshot.getId())
+                            .addSnapshotListener((accountSnapshot, e) -> getAccountAndSave(accountSnapshot.getData(), null));
+
+                    List<String> orderIds = (List<String>) documentSnapshot.get("orders");
+                    if(orderIds != null && orderIds.size() > 0) {
+                        for(String id : orderIds) {
+                            DocumentReference orderReference = mStore.collection(ORDER_COLLECTION).document(id);
+                            addListenerToOrder(orderReference);
+                        }
+                    }
+                });
+
+    }
+
     private void getDocumentId(String collection, String field, String param, CallBack callBack) {
         mStore.collection(collection)
                 .whereEqualTo(field, param)
@@ -177,14 +255,20 @@ public class FirebaseServiceImpl implements FirebaseService {
         map.put("location", account.getLocation());
         map.put("contactNo", account.getContactNumber());
         map.put("email", account.getEmail());
-        map.put("clients", new RealmList<>());
+
+        RealmList<String> clientIds = new RealmList<>();
+        for (Client client : account.getClients()) {
+            clientIds.add(client.getUid());
+        }
+        map.put("clients", clientIds);
+        map.put("orders", new ArrayList<String>());
         return map;
     }
 
     private Map<String, Object> buildOrderMap(Order order) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", order.getId());
-        map.put("client", order.getClient().getUid());
+        map.put("to", order.getClient().getUid());
         map.put("from", mAuth.getUid());
         map.put("date", order.getDate());
         map.put("status", order.getStatus());
@@ -214,13 +298,14 @@ public class FirebaseServiceImpl implements FirebaseService {
         Task<List<QuerySnapshot>> taskResult = Tasks.whenAllSuccess(tasks);
         taskResult.addOnSuccessListener(querySnapshots -> {
             for (QuerySnapshot snapshots : querySnapshots) {
-                Map<String, Object> clientMap = snapshots.getDocuments().get(0).getData();
-                if (clientMap != null) {
+                List<DocumentSnapshot> documents = snapshots.getDocuments();
+                if (!documents.isEmpty()) {
+                    Map<String, Object> clientMap = documents.get(0).getData();
                     account.getClients().add(getClient(clientMap));
                 }
             }
             accountRepository.save(account);
-            if(callBack != null) {
+            if (callBack != null) {
                 callBack.onSuccess(null);
             }
         });
@@ -231,9 +316,34 @@ public class FirebaseServiceImpl implements FirebaseService {
         client.setUid((String) map.get("id"));
         client.setName(String.format("%s %s", map.get("firstName"), map.get("lastName")));
         client.setLocation((String) map.get("location"));
-        client.setContactNo((String) map.get("contactNo"));
+        client.setContactNo((String) map.get("contactNumber"));
         client.setToken((String) map.get("token"));
         return client;
+    }
+
+    private void getClient(String to, String from, Order order, CallBack callBack) {
+        String id = mAuth.getUid().equals(to) ? from : to;
+        Account account = accountRepository.getAccount();
+        Client clientAccount = null;
+        for (Client client : account.getClients()) {
+            if (client.getUid() != null && id != null && client.getUid().equals(id)) {
+                clientAccount = client;
+            }
+        }
+        if (clientAccount == null) {
+            mStore.collection(USER_COLLECTION)
+                    .document(id)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
+                            order.setClient(getClient(documentSnapshot.getData()));
+                            callBack.onSuccess(order);
+                        }
+                    })
+                    .addOnFailureListener(e -> callBack.onFailure(e.getMessage()));
+        }
+        order.setClient(clientAccount);
+        callBack.onSuccess(order);
     }
 
     private List<Map<String, Object>> getItemMaps(List<Item> items) {
@@ -251,5 +361,22 @@ public class FirebaseServiceImpl implements FirebaseService {
         itemMap.put("quantity", item.getQuantity());
         itemMap.put("packaging", item.getPackaging());
         return itemMap;
+    }
+
+    private RealmList<Item> buildItems(List<Map<String, Object>> items) {
+        RealmList<Item> itemList = new RealmList<>();
+        for (Map<String, Object> itemMap : items) {
+            itemList.add(getItemFromMap(itemMap));
+        }
+        return itemList;
+    }
+
+    private Item getItemFromMap(Map<String, Object> itemMap) {
+        Item item = new Item();
+        item.setName((String) itemMap.get("name"));
+        item.setPackaging((String) itemMap.get("packaging"));
+        item.setPrice(Double.parseDouble(String.valueOf(itemMap.get("price"))));
+        item.setQuantity(Integer.parseInt(String.valueOf(itemMap.get("quantity"))));
+        return item;
     }
 }

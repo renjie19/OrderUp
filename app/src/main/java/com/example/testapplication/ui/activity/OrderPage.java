@@ -53,9 +53,6 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
     private OrderPagePresenter presenter;
     private String action;
 
-    private Drawable icon;
-    private ColorDrawable background;
-
     private int itemIndex;
     private Item deletedItem;
 
@@ -207,11 +204,11 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
             this.order = presenter.updateOrder(order);
         }
 
-        if (Preferences.getMode()) {
-            sendNotification();
-        } else {
-            sendLongTextMessage();
-        }
+//        if (Preferences.getMode()) {
+//            sendNotification();
+//        } else {
+//            sendLongTextMessage();
+//        }
     }
 
     private void buildClientOrder(Order order) {
@@ -275,19 +272,19 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
     }
 
     @Override
-    public void onSuccess(String message) {
+    public void onSuccess(Object message) {
         runOnUiThread(() -> {
             hideProgressBar();
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,(String) message, Toast.LENGTH_SHORT).show();
             finish();
         });
     }
 
     @Override
-    public void onFailure(String message) {
+    public void onFailure(Object message) {
         runOnUiThread(() -> {
             hideProgressBar();
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            Toast.makeText(this,(String) message, Toast.LENGTH_LONG).show();
         });
     }
 

@@ -1,8 +1,7 @@
 package com.example.testapplication.ui.views;
 
-public interface OrderPageView {
+import com.example.testapplication.shared.callback.CallBack;
 
-    void onSuccess(String message);
+public interface OrderPageView extends CallBack {
 
-    void onFailure(String message);
 }

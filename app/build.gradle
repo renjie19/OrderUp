@@ -52,4 +52,5 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.support:support-compat:28.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.ea.async:ea-async:1.2.3'
 }

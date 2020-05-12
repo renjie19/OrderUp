@@ -12,8 +12,9 @@ public interface FirebaseService {
     void login(String email, String password, CallBack callBack);
     void signUp(String email, String password, CallBack callBack);
     void logout();
-    void createOrder(Order order);
+    void createOrder(Order order, CallBack callBack);
     void updateOrder(Order order);
     void removeClient(Client client);
     void addClient(Client client);
+    void initializeListeners();
 }

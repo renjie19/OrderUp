@@ -18,6 +18,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.realm.RealmList;
+
 public class SignUp extends BaseActivity implements SignUpView {
 
     private TextInputLayout fnameLayout;
@@ -85,6 +87,7 @@ public class SignUp extends BaseActivity implements SignUpView {
         account.setContactNumber(String.valueOf(contactLayout.getEditText().getText()));
         account.setEmail(String.valueOf(emailLayout.getEditText().getText()));
         account.setToken(FirebaseUtil.INSTANCE.getToken());
+        account.setClients(new RealmList<>());
         return account;
     }
 
