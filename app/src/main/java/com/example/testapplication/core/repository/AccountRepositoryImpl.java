@@ -3,6 +3,9 @@ package com.example.testapplication.core.repository;
 import android.util.Log;
 
 import com.example.testapplication.shared.pojo.Account;
+import com.example.testapplication.shared.pojo.Client;
+
+import java.util.List;
 
 import io.realm.Realm;
 
@@ -44,5 +47,11 @@ class AccountRepositoryImpl implements AccountRepository {
     public void clearData() {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(transaction -> transaction.deleteAll());
+    }
+
+    @Override
+    public List<Client> getClients() {
+        Realm realm = Realm.getDefaultInstance();
+        return realm.where(Client.class).findAll();
     }
 }

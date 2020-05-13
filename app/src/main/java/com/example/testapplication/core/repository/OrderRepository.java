@@ -9,7 +9,8 @@ import java.util.List;
 public interface OrderRepository {
 
     Order save(Order order);
-    List<Order> getOrders(Client client);
+    List<Order> getOrdersByClient(Client client);
+    void removeOrdersByClient(Client client);
     Order getOrder(String id);
     @Deprecated
     Order update(Order order);

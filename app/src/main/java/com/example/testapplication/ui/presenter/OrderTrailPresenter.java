@@ -12,6 +12,6 @@ public class OrderTrailPresenter {
     private final OrderRepository orderRepository = (OrderRepository) RepositoryFactory.INSTANCE.create(RepositoryEnum.ORDER);
 
     public List<Order> getOrders(Client client){
-        return orderRepository.getOrders(client);
+        return orderRepository.getOrdersByClient(client);
     }
 }

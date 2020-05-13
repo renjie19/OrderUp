@@ -43,7 +43,6 @@ public class ClientListPresenter {
     }
 
     public void removeClientFromStore(Client removedClient) {
-
         firebaseService.removeClient(removedClient);
     }
 }

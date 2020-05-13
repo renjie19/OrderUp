@@ -110,6 +110,11 @@ class AccountServiceImpl implements AccountService {
         repository.save(account);
     }
 
+    @Override
+    public List<Client> getClients() {
+        return repository.getClients();
+    }
+
     private void saveData(DocumentSnapshot snapshot, String id, RealmList<Client> clientList, CallBack callBack) {
         Map<String, Object> data = snapshot.getData();
         if (data == null) {

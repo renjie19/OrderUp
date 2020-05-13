@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmResults;
 import io.realm.Sort;
 
 class OrderRepositoryImpl implements OrderRepository {
@@ -20,7 +21,7 @@ class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Order save(Order order) {
-        if(order.getId() == null) {
+        if (order.getId() == null) {
             order.setId(UUID.randomUUID().toString());
         }
         Realm realm = Realm.getDefaultInstance();
@@ -32,12 +33,12 @@ class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<Order> getOrders(Client client) {
+    public List<Order> getOrdersByClient(Client client) {
         Realm realm = Realm.getDefaultInstance();
         try {
             realm.refresh();
             List<Order> list = realm.where(Order.class)
-                    .equalTo("client.token",client.getToken())
+                    .equalTo("client.token", client.getToken())
                     .sort("date", Sort.DESCENDING).findAll();
             return realm.copyFromRealm(list);
         } catch (Exception e) {
@@ -49,6 +50,17 @@ class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public void removeOrdersByClient(Client client) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.refresh();
+        realm.executeTransactionAsync(realm1 -> {
+            RealmResults<Order> list = realm1.where(Order.class)
+                    .equalTo("client.uid", client.getUid()).findAll();
+            list.deleteAllFromRealm();
+        });
+    }
+
+    @Override
     public Order getOrder(String id) {
         Realm realm = Realm.getDefaultInstance();
         try {
@@ -57,7 +69,7 @@ class OrderRepositoryImpl implements OrderRepository {
                     .equalTo("id", id).findFirst();
             return realm.copyFromRealm(order);
         } catch (Exception e) {
-            Log.d(TAG, "getOrder: "+e.getMessage());
+            Log.d(TAG, "getOrder: " + e.getMessage());
         } finally {
             realm.close();
         }
@@ -69,7 +81,7 @@ class OrderRepositoryImpl implements OrderRepository {
     public Order update(Order order) {
         Realm realm = Realm.getDefaultInstance();
         realm.refresh();
-        Order savedOrder = realm.where(Order.class).equalTo("id",order.getId()).findFirst();
+        Order savedOrder = realm.where(Order.class).equalTo("id", order.getId()).findFirst();
         realm.executeTransaction(realm1 -> {
             savedOrder.setItems(new RealmList<>());
             savedOrder.getItems().addAll(order.getItems());

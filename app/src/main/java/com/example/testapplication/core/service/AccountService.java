@@ -5,6 +5,8 @@ import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.shared.pojo.Client;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.List;
+
 public interface AccountService {
 
     void save(Account account);
@@ -22,4 +24,6 @@ public interface AccountService {
     void saveAccountFromSnapshot(DocumentSnapshot snapshot, String id, CallBack callBack);
 
     void restoreClient(int itemIndex, Client removedClient);
+
+    List<Client> getClients();
 }

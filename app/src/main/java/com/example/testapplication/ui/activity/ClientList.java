@@ -21,8 +21,6 @@ import com.example.testapplication.shared.util.FirebaseUtil;
 import com.example.testapplication.ui.adapter.ClientListAdapter;
 import com.example.testapplication.ui.presenter.ClientListPresenter;
 import com.example.testapplication.ui.views.ClientListView;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
