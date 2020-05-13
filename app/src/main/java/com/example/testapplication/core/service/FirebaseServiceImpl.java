@@ -308,6 +308,7 @@ public class FirebaseServiceImpl implements FirebaseService {
 
     private void getAccountAndSave(Map<String, Object> data, CallBack callBack) {
         Account account = new Account();
+        account.setId((String) data.get("id"));
         account.setFirstName((String) data.get("firstName"));
         account.setLastName((String) data.get("lastName"));
         account.setLocation((String) data.get("location"));

@@ -17,6 +17,8 @@ import com.example.testapplication.ui.presenter.AccountManagementPresenter;
 import com.example.testapplication.ui.views.AccountManagementViews;
 import com.google.gson.GsonBuilder;
 
+import io.realm.RealmList;
+
 public class AccountManagement extends BaseActivity implements AccountManagementViews {
     private TextView userName;
     private TextView lastName;
@@ -52,7 +54,7 @@ public class AccountManagement extends BaseActivity implements AccountManagement
         findViewById(R.id.saveBtn).setOnClickListener(v -> {
             try {
                 showProgressBar("Saving Account...Please Wait...");
-                presenter.save(buildAccount());
+                presenter.save(buildAccount(account));
             } catch (Exception e) {
                 hideProgressBar();
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -60,10 +62,16 @@ public class AccountManagement extends BaseActivity implements AccountManagement
         });
 
         findViewById(R.id.qrBtn).setOnClickListener(v -> {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            ImageView qrCode = new ImageView(this);
-            qrCode.setImageBitmap(QrGenerator.INSTANCE.getQrCode(new GsonBuilder().create().toJson(account)));
-            dialog.setView(qrCode).show();
+            try {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                ImageView qrCode = new ImageView(this);
+                Account qrAccount = new Account();
+                qrAccount.setId(account.getId());
+                qrCode.setImageBitmap(QrGenerator.INSTANCE.getQrCode(new GsonBuilder().create().toJson(buildAccount(qrAccount))));
+                dialog.setView(qrCode).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
         this.modeBtn.setChecked(Preferences.getMode());
@@ -72,13 +80,14 @@ public class AccountManagement extends BaseActivity implements AccountManagement
 
     }
 
-    private Account buildAccount() throws Exception {
+    private Account buildAccount(Account account) throws Exception {
         if(!fieldsAreInvalid()) {
             account.setFirstName(userName.getText().toString());
             account.setLastName(lastName.getText().toString());
             account.setLocation(location.getText().toString());
             account.setContactNumber(phoneNumber.getText().toString());
             account.setToken(FirebaseUtil.INSTANCE.getToken());
+            account.setEmail(email.getText().toString());
             return account;
         }
         throw new Exception("Fill In All Fields...");
@@ -100,7 +109,6 @@ public class AccountManagement extends BaseActivity implements AccountManagement
     public void loadAccount(Account account) {
         this.account = account;
         if(account != null) {
-            this.account.getClients().clear();
             this.userName.setText(account.getFirstName());
             this.lastName.setText(account.getLastName());
             this.location.setText(account.getLocation());

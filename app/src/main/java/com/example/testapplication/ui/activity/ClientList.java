@@ -33,9 +33,6 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
     private ClientListAdapter adapter;
     private int requestCode = 0;
 
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
-
     private int itemIndex;
     private Client removedClient;
 
@@ -47,6 +44,14 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
         initializeComponents();
         initializeAdapter();
         initializeListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.clients = presenter.getListOfClients();
+        adapter.setList(clients);
+        adapter.notifyDataSetChanged();
     }
 
     private void initializeListeners() {
@@ -78,7 +83,6 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
     }
 
     private void initializeComponents() {
-        this.mAuth = FirebaseAuth.getInstance();
         this.presenter = new ClientListPresenter(null);
         this.clientRv = findViewById(R.id.clientRv);
         this.clientRv.setLayoutManager(new LinearLayoutManager(this));
@@ -93,7 +97,6 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
             if (client != null) {
                 presenter.addClient(client);
                 this.clients = presenter.getListOfClients();
-                FirebaseUtil.INSTANCE.saveClientToAccount(client);
                 adapter.setList(this.clients);
                 adapter.notifyDataSetChanged();
             }
@@ -109,7 +112,7 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setMessage("You are signing out. Are You Sure?")
                 .setPositiveButton("SIGN OUT", (dialog1, which) -> {
-                    mAuth.signOut();
+                    presenter.signOut();
                     finish();
                 })
                 .setNegativeButton("CANCEL", null)

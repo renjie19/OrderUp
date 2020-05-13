@@ -28,6 +28,7 @@ public class ClientListPresenter {
 
     public void addClient(Client client) {
         accountService.addClient(client);
+        firebaseService.addClient(client);
     }
 
     public void deleteClient(Client removedClient) {
@@ -44,5 +45,9 @@ public class ClientListPresenter {
 
     public void removeClientFromStore(Client removedClient) {
         firebaseService.removeClient(removedClient);
+    }
+
+    public void signOut() {
+        firebaseService.logout();
     }
 }
