@@ -5,6 +5,7 @@ import com.example.testapplication.core.service.FirebaseService;
 import com.example.testapplication.core.service.FirebaseServiceImpl;
 import com.example.testapplication.core.service.ServiceEnum;
 import com.example.testapplication.core.service.ServiceFactory;
+import com.example.testapplication.shared.callback.CallBack;
 import com.example.testapplication.shared.pojo.Client;
 import com.example.testapplication.ui.views.ClientListView;
 
@@ -37,7 +38,17 @@ public class ClientListPresenter {
         accountService.restoreClient(itemIndex, removedClient);
     }
 
-    public void initListeners() {
-        firebaseService.initializeListeners();
+    public void initListeners(ClientListView view) {
+        firebaseService.initializeListeners(new CallBack() {
+            @Override
+            public void onSuccess(Object object) {
+                view.showNotif("OrderUp", "You have an order update");
+            }
+
+            @Override
+            public void onFailure(Object object) {
+
+            }
+        });
     }
 }

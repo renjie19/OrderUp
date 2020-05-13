@@ -41,8 +41,6 @@
         <activity
             android:name=".ui.activity.AccountManagement"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name=".ui.activity.MainPage"/>
         <activity android:name=".ui.activity.OrderTrail" />
 
         <meta-data

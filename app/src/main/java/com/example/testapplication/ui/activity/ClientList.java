@@ -50,7 +50,7 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
     }
 
     private void initializeListeners() {
-        presenter.initListeners();
+        presenter.initListeners(this);
     }
 
     @Override
@@ -130,5 +130,10 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
         this.clients.add(itemIndex, removedClient);
         adapter.notifyDataSetChanged();
         presenter.restoreClient(itemIndex, removedClient);
+    }
+
+    @Override
+    public void showNotif(String title, String content) {
+        showNotification(title, content);
     }
 }

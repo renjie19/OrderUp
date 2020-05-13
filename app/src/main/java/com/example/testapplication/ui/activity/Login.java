@@ -92,17 +92,6 @@ public class Login extends BaseActivity implements LoginView {
         String password = passwordField.getText().toString();
         if(!username.isEmpty() && !password.isEmpty()) {
             presenter.login(username, password);
-//            mAuth.signInWithEmailAndPassword(username, password)
-//                    .addOnCompleteListener(task -> {
-//                        if(task.isSuccessful()) {
-//                            retrieveUserData();
-//                        } else {
-//                            String cause = task.getException().getMessage();
-//                            showMessage(getCause(cause));
-//                            hideProgressBar();
-//                        }
-//
-//                    });
         } else {
             setErrorOnField();
             showMessage("FILL IN ALL FIELDS");

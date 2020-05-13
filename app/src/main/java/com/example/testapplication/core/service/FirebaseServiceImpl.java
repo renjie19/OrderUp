@@ -1,8 +1,17 @@
 package com.example.testapplication.core.service;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.os.Build;
+import android.telecom.Call;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import com.example.testapplication.R;
 import com.example.testapplication.core.repository.AccountRepository;
 import com.example.testapplication.core.repository.OrderRepository;
 import com.example.testapplication.core.repository.RepositoryEnum;
@@ -23,6 +32,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.MetadataChanges;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -31,11 +41,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import io.grpc.Metadata;
 import io.realm.RealmList;
 
+import static androidx.core.content.ContextCompat.getSystemService;
 import static com.google.android.gms.tasks.Tasks.await;
 
 public class FirebaseServiceImpl implements FirebaseService {
+    private static final String CHANNEL_ID = "0001";
     private FirebaseAuth mAuth;
     private FirebaseFirestore mStore;
     private static final String USER_COLLECTION = "Users";
@@ -211,23 +224,27 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
-    public void initializeListeners() {
+    public void initializeListeners(CallBack callBack) {
         mStore.collection(USER_COLLECTION).document(mAuth.getUid())
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    mStore.collection(USER_COLLECTION)
-                            .document(documentSnapshot.getId())
-                            .addSnapshotListener((accountSnapshot, e) -> getAccountAndSave(accountSnapshot.getData(), null));
-
-                    List<String> orderIds = (List<String>) documentSnapshot.get("orders");
-                    if(orderIds != null && orderIds.size() > 0) {
-                        for(String id : orderIds) {
-                            DocumentReference orderReference = mStore.collection(ORDER_COLLECTION).document(id);
-                            addListenerToOrder(orderReference);
-                        }
-                    }
-                });
-
+                .addOnSuccessListener(documentSnapshot -> mStore.collection(USER_COLLECTION)
+                        .document(documentSnapshot.getId())
+                        .addSnapshotListener((accountSnapshot, e) -> {
+                            getAccountAndSave(accountSnapshot.getData(), null);
+                            List<String> orderIds = (List<String>) accountSnapshot.get("orders");
+                            if(orderIds != null && orderIds.size() > 0) {
+                                for(String id : orderIds) {
+                                    DocumentReference orderReference = mStore.collection(ORDER_COLLECTION).document(id);
+                                    addListenerToOrder(orderReference);
+                                }
+                            }
+                            for (String id : orderIds) {
+                                Order order = orderRepository.getOrder(id);
+                                if(order == null) {
+                                    callBack.onSuccess(true);
+                                }
+                            }
+                        }));
     }
 
     private void getDocumentId(String collection, String field, String param, CallBack callBack) {

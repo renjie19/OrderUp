@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.Sort;
 
 class OrderRepositoryImpl implements OrderRepository {
     private final String TAG = this.getClass().getSimpleName();
@@ -35,7 +36,9 @@ class OrderRepositoryImpl implements OrderRepository {
         Realm realm = Realm.getDefaultInstance();
         try {
             realm.refresh();
-            List<Order> list = realm.where(Order.class).equalTo("client.token",client.getToken()).findAll();
+            List<Order> list = realm.where(Order.class)
+                    .equalTo("client.token",client.getToken())
+                    .sort("date", Sort.DESCENDING).findAll();
             return realm.copyFromRealm(list);
         } catch (Exception e) {
             Log.d(TAG, "getOrders: Error Occurred");

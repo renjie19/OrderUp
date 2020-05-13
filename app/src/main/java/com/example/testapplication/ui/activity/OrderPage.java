@@ -1,19 +1,22 @@
 package com.example.testapplication.ui.activity;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.view.View;
@@ -23,8 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.testapplication.R;
-import com.example.testapplication.shared.callback.DeleteCallback;
 import com.example.testapplication.shared.Preferences;
+import com.example.testapplication.shared.callback.DeleteCallback;
 import com.example.testapplication.shared.callback.SwipeDeleteCallback;
 import com.example.testapplication.shared.enums.StatusEnum;
 import com.example.testapplication.ui.adapter.OrderPageAdapter;
@@ -224,11 +227,9 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
             this.order = presenter.updateOrder(order);
         }
 
-//        if (Preferences.getMode()) {
-//            sendNotification();
-//        } else {
-//            sendLongTextMessage();
-//        }
+        if (!Preferences.getMode()) {
+            sendLongTextMessage();
+        }
     }
 
     private void buildClientOrder(Order order) {
