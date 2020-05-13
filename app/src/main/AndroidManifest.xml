@@ -57,14 +57,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".core.broadcastreceiver.NotificationReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
         <service android:name=".shared.util.FirebaseIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />

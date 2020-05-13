@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.testapplication.OrderUp;
 import com.example.testapplication.R;
 import com.example.testapplication.core.repository.AccountRepository;
 import com.example.testapplication.core.repository.OrderRepository;
@@ -151,7 +152,18 @@ public class FirebaseServiceImpl implements FirebaseService {
                 buildOrder(documentSnapshot.getData(), new CallBack() {
                     @Override
                     public void onSuccess(Object object) {
-                        orderRepository.save((Order) object);
+                        boolean isNewClient = true;
+                        Account account = accountRepository.getAccount();
+                        Order order = (Order) object;
+                        for (Client client : account.getClients()) {
+                            if (client.getUid().equals(order.getId())) {
+                                isNewClient = false;
+                            }
+                        }
+                        if(isNewClient) {
+                            addClient(order.getClient());
+                        }
+                        orderRepository.save(order);
                     }
 
                     @Override
@@ -211,20 +223,33 @@ public class FirebaseServiceImpl implements FirebaseService {
 
     @Override
     public void removeClient(Client client) {
+        List<Order> ordersByClient = orderRepository.getOrders(client);
+        List<String> orderIds = new ArrayList<>();
+        for (Order order : ordersByClient) {
+            orderIds.add(order.getId());
+        }
+        removeOrderReferences(orderIds.toArray(new Object[orderIds.size()]));
         mStore.collection(USER_COLLECTION)
                 .document(mAuth.getUid())
                 .update("clients", FieldValue.arrayRemove(client.getUid()));
     }
 
-    @Override
-    public void addClient(Client client) {
-        mStore.collection(USER_COLLECTION)
-                .document(mAuth.getUid())
-                .update("clients", FieldValue.arrayUnion(client.getUid()));
+    private void removeOrderReferences(Object... orderIds) {
+        mStore.collection(USER_COLLECTION).document(mAuth.getUid())
+                .update("orders", FieldValue.arrayRemove(orderIds));
     }
 
     @Override
-    public void initializeListeners(CallBack callBack) {
+    public void addClient(Client client) {
+        if (client != null) {
+            mStore.collection(USER_COLLECTION)
+                    .document(mAuth.getUid())
+                    .update("clients", FieldValue.arrayUnion(client.getUid()));
+        }
+    }
+
+    @Override
+    public void initializeListeners() {
         mStore.collection(USER_COLLECTION).document(mAuth.getUid())
                 .get()
                 .addOnSuccessListener(documentSnapshot -> mStore.collection(USER_COLLECTION)
@@ -232,16 +257,17 @@ public class FirebaseServiceImpl implements FirebaseService {
                         .addSnapshotListener((accountSnapshot, e) -> {
                             getAccountAndSave(accountSnapshot.getData(), null);
                             List<String> orderIds = (List<String>) accountSnapshot.get("orders");
-                            if(orderIds != null && orderIds.size() > 0) {
-                                for(String id : orderIds) {
+                            if (orderIds != null && orderIds.size() > 0) {
+                                for (String id : orderIds) {
                                     DocumentReference orderReference = mStore.collection(ORDER_COLLECTION).document(id);
                                     addListenerToOrder(orderReference);
                                 }
                             }
                             for (String id : orderIds) {
                                 Order order = orderRepository.getOrder(id);
-                                if(order == null) {
-                                    callBack.onSuccess(true);
+                                if (order == null) {
+                                    OrderUp.createNotification("Order Update",
+                                            String.format("You have a new order update"));
                                 }
                             }
                         }));
@@ -298,7 +324,7 @@ public class FirebaseServiceImpl implements FirebaseService {
         account.setFirstName((String) data.get("firstName"));
         account.setLastName((String) data.get("lastName"));
         account.setLocation((String) data.get("location"));
-        account.setContactNumber((String) data.get("contactNumber"));
+        account.setContactNumber((String) data.get("contactNo"));
         account.setEmail((String) data.get("email"));
         account.setToken((String) data.get("token"));
         getClientsFromMap((List) data.get("clients"), account, callBack);
@@ -331,7 +357,7 @@ public class FirebaseServiceImpl implements FirebaseService {
         client.setUid((String) map.get("id"));
         client.setName(String.format("%s %s", map.get("firstName"), map.get("lastName")));
         client.setLocation((String) map.get("location"));
-        client.setContactNo((String) map.get("contactNumber"));
+        client.setContactNo((String) map.get("contactNo"));
         client.setToken((String) map.get("token"));
         return client;
     }

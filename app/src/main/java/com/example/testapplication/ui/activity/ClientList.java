@@ -21,6 +21,8 @@ import com.example.testapplication.shared.util.FirebaseUtil;
 import com.example.testapplication.ui.adapter.ClientListAdapter;
 import com.example.testapplication.ui.presenter.ClientListPresenter;
 import com.example.testapplication.ui.views.ClientListView;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -133,7 +135,20 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
     }
 
     @Override
-    public void showNotif(String title, String content) {
-        showNotification(title, content);
+    public void onSnackbarDismissed(int event) {
+        if(event != 1) {
+            presenter.removeClientFromStore(removedClient);
+        }
+    }
+
+    @Override
+    public void onSuccess(Object object) {
+        this.clients = presenter.getListOfClients();
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onFailure(Object object) {
+
     }
 }

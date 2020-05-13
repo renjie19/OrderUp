@@ -75,6 +75,14 @@ public class SwipeDeleteCallback extends ItemTouchHelper.SimpleCallback {
     private void showSnackUndoBar() {
         Snackbar.make(mRootView, "Removed Successfully", Snackbar.LENGTH_LONG)
                 .setAction("Undo", v -> deleteCallback.onUndo())
+                .addCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        deleteCallback.onSnackbarDismissed(event);
+                    }
+                })
                 .show();
     }
+
+
 }

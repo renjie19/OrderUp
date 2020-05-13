@@ -286,12 +286,6 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
                 completeMessage, sentPendingIntent, null);
     }
 
-    private void sendNotification() {
-        new Thread(() -> {
-            presenter.sendNotification(order);
-        }).run();
-    }
-
     @Override
     public void onSuccess(Object message) {
         runOnUiThread(() -> {
@@ -321,5 +315,10 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
     public void onUndo() {
         order.getItems().add(itemIndex, deletedItem);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSnackbarDismissed(int event) {
+        // nothing
     }
 }

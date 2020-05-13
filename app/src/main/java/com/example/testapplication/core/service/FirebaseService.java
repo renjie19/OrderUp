@@ -16,5 +16,5 @@ public interface FirebaseService {
     void updateOrder(Order order, CallBack callBack);
     void removeClient(Client client);
     void addClient(Client client);
-    void initializeListeners(CallBack callBack);
+    void initializeListeners();
 }

@@ -39,16 +39,11 @@ public class ClientListPresenter {
     }
 
     public void initListeners(ClientListView view) {
-        firebaseService.initializeListeners(new CallBack() {
-            @Override
-            public void onSuccess(Object object) {
-                view.showNotif("OrderUp", "You have an order update");
-            }
+        firebaseService.initializeListeners();
+    }
 
-            @Override
-            public void onFailure(Object object) {
+    public void removeClientFromStore(Client removedClient) {
 
-            }
-        });
+        firebaseService.removeClient(removedClient);
     }
 }

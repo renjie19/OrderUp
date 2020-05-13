@@ -44,7 +44,6 @@ public class SmsReceiver extends BroadcastReceiver {
                     }
                     Order order = new GsonBuilder().create().fromJson(completeMessage, Order.class);
                     orderRepository.save(order);
-                    //TODO fix deleting of parsed message
                     deleteReceivedParsedMessage(context, completeMessage);
                 } catch (Exception e) {
                     Log.d("PARSE", "CANNOT PARSE: " + messages[0].getMessageBody());
