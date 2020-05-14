@@ -215,16 +215,11 @@ public class FirebaseServiceImpl implements FirebaseService {
         for (Order order : ordersByClient) {
             orderIds.add(order.getId());
         }
-        removeOrderReferences(orderIds.toArray(new Object[orderIds.size()]));
         mStore.collection(USER_COLLECTION)
                 .document(mAuth.getUid())
-                .update("clients", FieldValue.arrayRemove(client.getUid()));
+                .update("orders",FieldValue.arrayRemove(orderIds.toArray(new Object[orderIds.size()]))
+                        ,"clients", FieldValue.arrayRemove(client.getUid()));
         orderRepository.removeOrdersByClient(client);
-    }
-
-    private void removeOrderReferences(Object... orderIds) {
-        mStore.collection(USER_COLLECTION).document(mAuth.getUid())
-                .update("orders", FieldValue.arrayRemove(orderIds));
     }
 
     @Override
