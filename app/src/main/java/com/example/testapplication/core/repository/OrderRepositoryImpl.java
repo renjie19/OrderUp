@@ -3,8 +3,6 @@ package com.example.testapplication.core.repository;
 import android.util.Log;
 
 import com.example.testapplication.shared.pojo.Client;
-import com.example.testapplication.shared.pojo.Consumer;
-import com.example.testapplication.shared.pojo.Item;
 import com.example.testapplication.shared.pojo.Order;
 
 import java.util.ArrayList;

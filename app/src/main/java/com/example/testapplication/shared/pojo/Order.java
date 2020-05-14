@@ -20,6 +20,7 @@ public class Order extends RealmObject implements Parcelable {
     private boolean forPayment;
     private double total;
     private RealmList<Item> items;
+    private boolean isPriceEditable;
 
     public double getTotal() {
         total = 0;
@@ -46,6 +47,7 @@ public class Order extends RealmObject implements Parcelable {
         dest.writeByte(this.forPayment ? (byte) 1 : (byte) 0);
         dest.writeDouble(this.total);
         dest.writeTypedList(this.items);
+        dest.writeByte(this.isPriceEditable ? (byte) 1 : (byte) 0);
     }
 
     protected Order(Parcel in) {
@@ -57,6 +59,7 @@ public class Order extends RealmObject implements Parcelable {
         this.total = in.readDouble();
         this.items = new RealmList<>();
         this.items.addAll(in.createTypedArrayList(Item.CREATOR));
+        this.isPriceEditable = in.readByte() != 0;
     }
 
     public static final Parcelable.Creator<Order> CREATOR = new Parcelable.Creator<Order>() {

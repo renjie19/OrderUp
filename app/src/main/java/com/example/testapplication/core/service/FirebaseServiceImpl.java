@@ -171,6 +171,7 @@ public class FirebaseServiceImpl implements FirebaseService {
         order.setItems(buildItems((List) data.get("items")));
         String to = (String) data.get("to");
         String from = (String) data.get("from");
+        order.setPriceEditable(order.getTotal() == 0 ? !from.equals(mAuth.getUid()) : !to.equals(mAuth.getUid()));
         getClient(to, from, order, callBack);
     }
 

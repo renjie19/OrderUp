@@ -106,7 +106,7 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
             quantity.setText(String.valueOf(item.getQuantity()));
             pckg.setText(item.getPackaging());
             price.setText(String.valueOf(item.getPrice()));
-            price.setEnabled(order.getId() != null);
+            price.setEnabled(order.isPriceEditable());
             alert.setView(editView);
 
             alert.setPositiveButton("SUBMIT", listener);
@@ -198,7 +198,7 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
 
     private void checkRequiredFields() throws Exception {
         boolean isNotValid = false;
-        if(order.getId() != null) {
+        if(order.isPriceEditable()) {
             for (Item item : order.getItems()) {
                 if (item.getQuantity() != 0 && item.getPrice() == 0) {
                     isNotValid = true;
