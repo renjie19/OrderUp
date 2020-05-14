@@ -3,7 +3,6 @@ package com.example.testapplication.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
@@ -11,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import com.example.testapplication.ui.adapter.OrderTrailAdapter;
@@ -27,6 +27,7 @@ import io.realm.RealmList;
 public class OrderTrail extends BaseActivity {
     private OrderTrailAdapter adapter;
     private RecyclerView rv;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private Client client;
     private TextView clientName;
     private TextView clientAddress;
@@ -35,15 +36,16 @@ public class OrderTrail extends BaseActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.order_page);
+        setContentView(R.layout.order_trail);
         presenter = new OrderTrailPresenter();
+        initializeComponents();
+        initializeAdapter();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        initializeComponents();
-        initializeAdapter();
+        reloadList();
     }
 
     @Override
@@ -66,7 +68,6 @@ public class OrderTrail extends BaseActivity {
 
     private void initializeComponents() {
         this.client = getIntent().getParcelableExtra("data");
-        this.list = presenter.getOrders(client);
         this.rv = findViewById(R.id.orderRv);
 
         this.clientName = findViewById(R.id.clientName);
@@ -74,6 +75,12 @@ public class OrderTrail extends BaseActivity {
 
         this.clientAddress = findViewById(R.id.clientAddress);
         this.clientAddress.setText(client.getLocation());
+
+        this.swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        this.swipeRefreshLayout.setOnRefreshListener(() -> {
+            reloadList();
+            swipeRefreshLayout.setRefreshing(false);
+        });
 
         this.rv.setLayoutManager(new LinearLayoutManager(this));
         if(list != null && list.size() > 0){
@@ -85,7 +92,14 @@ public class OrderTrail extends BaseActivity {
         }
     }
 
+    private void reloadList() {
+        this.list = presenter.getOrders(client);
+        adapter.setList(this.list);
+        adapter.notifyDataSetChanged();
+    }
+
     private void initializeAdapter() {
+        this.list = presenter.getOrders(client);
         this.adapter = new OrderTrailAdapter(list, getOnClickListener());
         this.rv.setAdapter(this.adapter);
     }

@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.testapplication.R;
 import com.example.testapplication.shared.callback.DeleteCallback;
@@ -28,6 +29,7 @@ import java.util.List;
 
 public class ClientList extends BaseActivity implements ClientListView, DeleteCallback {
     private List<Client> clients;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView clientRv;
     private ClientListPresenter presenter;
     private ClientListAdapter adapter;
@@ -49,6 +51,10 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
     @Override
     protected void onResume() {
         super.onResume();
+        reloadList();
+    }
+
+    private void reloadList() {
         this.clients = presenter.getListOfClients();
         adapter.setList(clients);
         adapter.notifyDataSetChanged();
@@ -84,9 +90,14 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
 
     private void initializeComponents() {
         this.presenter = new ClientListPresenter(null);
+        this.swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         this.clientRv = findViewById(R.id.clientRv);
         this.clientRv.setLayoutManager(new LinearLayoutManager(this));
         findViewById(R.id.addClientBtn).setOnClickListener(v -> startActivityForResult(new Intent(this, BarCodeScanner.class), requestCode));
+        this.swipeRefreshLayout.setOnRefreshListener(() -> {
+            reloadList();
+            swipeRefreshLayout.setRefreshing(false);
+        });
     }
 
     @Override
@@ -144,8 +155,7 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
 
     @Override
     public void onSuccess(Object object) {
-        this.clients = presenter.getListOfClients();
-        adapter.notifyDataSetChanged();
+        reloadList();
     }
 
     @Override

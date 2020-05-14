@@ -45,6 +45,10 @@ public class OrderTrailAdapter extends Adapter<OrderTrailAdapter.MainPageViewHol
         return this.list.size();
     }
 
+    public void setList(List<Order> list) {
+        this.list = list;
+    }
+
     class MainPageViewHolder extends ViewHolder {
         private TextView dateTv;
         private LinearLayout parentView;
