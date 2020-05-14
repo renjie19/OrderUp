@@ -197,16 +197,18 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
     }
 
     private void checkRequiredFields() throws Exception {
-        boolean isNotValid = false;
+        boolean isNotValid = order.getItems().isEmpty();
+        String message = "Order must not be empty";
         if(order.isPriceEditable()) {
             for (Item item : order.getItems()) {
                 if (item.getQuantity() != 0 && item.getPrice() == 0) {
                     isNotValid = true;
+                    message = "Price with quantity should not be zero";
                 }
             }
         }
         if (isNotValid) {
-            throw new Exception("Price with quantity should not be zero");
+            throw new Exception(message);
         }
 
     }
@@ -220,13 +222,8 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
     }
 
     private void saveOrUpdateOrderThenSend() {
-        if (order.getTotal() <= 0) {
-            this.order = presenter.saveOrder(order);
-        } else {
-            this.order.setForPayment(true);
-            this.order = presenter.updateOrder(order);
-        }
-
+        this.order.setForPayment(order.getTotal() > 0);
+        this.order = presenter.saveOrder(order);
         if (!Preferences.getMode()) {
             sendLongTextMessage();
         }
@@ -240,7 +237,7 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
     private View.OnClickListener payOnItemClick() {
         return v -> {
             this.order.setStatus(StatusEnum.PAID.label);
-            this.presenter.updateOrder(order);
+            this.presenter.saveOrder(order);
         };
     }
 

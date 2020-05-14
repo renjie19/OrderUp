@@ -26,8 +26,11 @@ public class OrderPagePresenter {
     }
 
     public Order saveOrder(Order order) {
-        firebaseService.createOrder(order, view);
-        return orderService.save(order);
+        if(order.getId() == null) {
+            firebaseService.createOrder(order, view);
+            return orderService.save(order);
+        }
+        return updateOrder(order);
     }
 
     public Order updateOrder(Order order) {
