@@ -234,12 +234,12 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
 
     private void buildClientOrder(Order order) {
         order.setDate(System.currentTimeMillis());
-        order.setStatus(order.getTotal() == 0 ? StatusEnum.PENDING.name() : StatusEnum.FOR_DELIVERY.name());
+        order.setStatus(order.getTotal() == 0 ? StatusEnum.PENDING.label : StatusEnum.FOR_DELIVERY.label);
     }
 
     private View.OnClickListener payOnItemClick() {
         return v -> {
-            this.order.setStatus(StatusEnum.PAID.name());
+            this.order.setStatus(StatusEnum.PAID.label);
             this.presenter.updateOrder(order);
         };
     }

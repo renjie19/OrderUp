@@ -73,11 +73,8 @@ public class AccountManagement extends BaseActivity implements AccountManagement
                 e.printStackTrace();
             }
         });
-
         this.modeBtn.setChecked(Preferences.getMode());
         this.modeBtn.setOnCheckedChangeListener((buttonView, isChecked) -> Preferences.setPref(PrefParamEnum.MODE.name(), isChecked));
-
-
     }
 
     private Account buildAccount(Account account) throws Exception {
