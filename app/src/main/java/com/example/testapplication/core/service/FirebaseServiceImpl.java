@@ -97,18 +97,14 @@ public class FirebaseServiceImpl implements FirebaseService {
     public void login(String email, String password, CallBack callBack) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(authResult -> callBack.onSuccess(authResult.getUser().getUid()))
-                .addOnFailureListener(e -> callBack.onFailure(null));
+                .addOnFailureListener(e -> callBack.onFailure(e.getCause()));
     }
 
     @Override
     public void signUp(String email, String password, CallBack callBack) {
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener(authResult -> {
-                    callBack.onSuccess(null);
-                })
-                .addOnFailureListener(e -> {
-                    callBack.onFailure(e.getMessage());
-                });
+                .addOnSuccessListener(authResult -> callBack.onSuccess(null))
+                .addOnFailureListener(e -> callBack.onFailure(e.getMessage()));
     }
 
     @Override

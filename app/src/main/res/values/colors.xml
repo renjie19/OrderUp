@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#42A5F5</color>
+    <color name="testMain">#42A5F5</color>
     <color name="colorPrimaryDark">#2155AA</color>
     <color name="colorAccent">#F8BE61</color>
 
@@ -13,7 +13,7 @@
     <color name="delete">#F2F13131</color>
     <color name="accent">#14ADAAAA</color>
 
-    <color name="testMain">#287CC0</color>
+    <color name="colorPrimary">#287CC0</color>
     <color name="testOne">#6DC0FF</color>
     <color name="testTwo">#101010</color>
 

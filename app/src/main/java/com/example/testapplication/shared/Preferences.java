@@ -37,6 +37,6 @@ public enum Preferences {
     }
 
     public static boolean getMode() {
-        return getPref().getBoolean(PrefParamEnum.MODE.name(), false);
+        return getPref().getBoolean(PrefParamEnum.MODE.name(), true);
     }
 }

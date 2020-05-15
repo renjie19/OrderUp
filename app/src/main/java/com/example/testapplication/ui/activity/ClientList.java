@@ -21,12 +21,9 @@ import com.example.testapplication.R;
 import com.example.testapplication.shared.callback.DeleteCallback;
 import com.example.testapplication.shared.callback.SwipeDeleteCallback;
 import com.example.testapplication.shared.pojo.Client;
-import com.example.testapplication.shared.util.FirebaseUtil;
 import com.example.testapplication.ui.adapter.ClientListAdapter;
 import com.example.testapplication.ui.presenter.ClientListPresenter;
 import com.example.testapplication.ui.views.ClientListView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
@@ -76,7 +73,10 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        startActivity(new Intent(this, AccountManagement.class));
+        CharSequence title = item.getTitle();
+        if(title != null && title.equals("Account")) {
+           startActivity(new Intent(this, AccountManagement.class));
+       }
         return true;
     }
 
@@ -93,6 +93,7 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
     }
 
     private void initializeComponents() {
+        initActionBar();
         this.presenter = new ClientListPresenter(null);
         this.swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         this.clientRv = findViewById(R.id.clientRv);
@@ -102,6 +103,12 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
             reloadList();
             swipeRefreshLayout.setRefreshing(false);
         });
+    }
+
+    private void initActionBar() {
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_logo_25dp);// set drawable icon
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("ORDERUP");
     }
 
     private void startQrScanner() {

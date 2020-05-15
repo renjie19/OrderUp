@@ -130,29 +130,6 @@ public class Login extends BaseActivity implements LoginView {
         }
     }
 
-    private void retrieveUserData() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        db.collection("Users").document(user.getUid()).get().addOnCompleteListener(task -> {
-            if(task.isSuccessful() && task.getResult() != null) {
-                presenter.clearDataAndReplace(task.getResult(), user.getUid(), getCallBack());
-            }
-        }).addOnFailureListener(e -> showMessage("Data retrieval Failed"));
-    }
-
-    private CallBack getCallBack() {
-        return new CallBack() {
-            @Override
-            public void onSuccess(Object object) {
-                startActivity(new Intent(getApplicationContext(), ClientList.class));
-            }
-
-            @Override
-            public void onFailure(Object object) {
-
-            }
-        };
-    }
-
     @Override
     public void onSuccess(Object object) {
         hideProgressBar();
@@ -162,6 +139,6 @@ public class Login extends BaseActivity implements LoginView {
     @Override
     public void onFailure(Object message) {
         hideProgressBar();
-        showMessage((String) message);
+        showMessage(getCause((String) message));
     }
 }
