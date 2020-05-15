@@ -62,15 +62,6 @@ public class SignUp extends BaseActivity implements SignUpView {
                 String email = String.valueOf(emailLayout.getEditText().getText());
                 String password = String.valueOf(passwordLayout.getEditText().getText());
                 presenter.signUp(buildAccount(), email, password);
-//                mAuth.createUserWithEmailAndPassword(String.valueOf(emailLayout.getEditText().getText()), String.valueOf(passwordLayout.getEditText().getText()))
-//                        .addOnCompleteListener(task -> {
-//                            if (task.isSuccessful()) {
-//                                addToFireStore();
-//                            } else {
-//                                showMessage("Registration Failed");
-//                                hideProgressBar();
-//                            }
-//                        });
             } else {
                 showMessage("Fill in all fields!");
                 hideProgressBar();
@@ -89,36 +80,6 @@ public class SignUp extends BaseActivity implements SignUpView {
         account.setToken(FirebaseUtil.INSTANCE.getToken());
         account.setClients(new RealmList<>());
         return account;
-    }
-
-    //TODO refactor the hiding of progress dialog on one declaration only
-    @Deprecated
-    private void addToFireStore() {
-        Map<String, Object> accountInfo = mapInfo();
-        UserInfo user = FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(0);
-        db.collection("Users")
-                .document(user.getUid())
-                .set(accountInfo)
-                .addOnSuccessListener(documentReference -> {
-                    hideProgressBar();
-                    showMessage("Registered Successfully");
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    showMessage("Error Saving Failed");
-                    hideProgressBar();
-                });
-    }
-
-    private Map<String, Object> mapInfo() {
-        Map<String, Object> info = new HashMap<>();
-        info.put("firstName", String.valueOf(fnameLayout.getEditText().getText()));
-        info.put("lastName", String.valueOf(lnameLayout.getEditText().getText()));
-        info.put("location", String.valueOf(locationLayout.getEditText().getText()));
-        info.put("contact", String.valueOf(contactLayout.getEditText().getText()));
-        info.put("email", String.valueOf(emailLayout.getEditText().getText()));
-        info.put("token", FirebaseUtil.INSTANCE.getToken());
-        return info;
     }
 
     private boolean checkValidFields() {
