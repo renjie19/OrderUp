@@ -1,14 +1,17 @@
 package com.example.testapplication.ui.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +37,7 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
     private ClientListPresenter presenter;
     private ClientListAdapter adapter;
     private int requestCode = 0;
+    private final int CAMERA_PERMISSION_CODE = 201;
 
     private int itemIndex;
     private Client removedClient;
@@ -93,11 +97,20 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
         this.swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         this.clientRv = findViewById(R.id.clientRv);
         this.clientRv.setLayoutManager(new LinearLayoutManager(this));
-        findViewById(R.id.addClientBtn).setOnClickListener(v -> startActivityForResult(new Intent(this, BarCodeScanner.class), requestCode));
+        findViewById(R.id.addClientBtn).setOnClickListener(v -> startQrScanner());
         this.swipeRefreshLayout.setOnRefreshListener(() -> {
             reloadList();
             swipeRefreshLayout.setRefreshing(false);
         });
+    }
+
+    private void startQrScanner() {
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            startActivityForResult(new Intent(this, BarCodeScanner.class), requestCode);
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+        }
+
     }
 
     @Override

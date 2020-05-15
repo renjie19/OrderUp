@@ -32,7 +32,6 @@ public class BarCodeScanner extends AppCompatActivity {
     private BarcodeDetector detector;
     private CameraSource source;
     private SurfaceView surfaceView;
-    private final int CAMERA_PERMISSION_CODE = 201;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,16 +92,7 @@ public class BarCodeScanner extends AppCompatActivity {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
                 try {
-                    if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                        source.start(surfaceView.getHolder());
-                    } else {
-                        ActivityCompat.requestPermissions(BarCodeScanner.this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-                        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                            source.start(surfaceView.getHolder());
-                        } else {
-                           source.stop();
-                        }
-                    }
+                    source.start(surfaceView.getHolder());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

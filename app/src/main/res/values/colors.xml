@@ -12,4 +12,9 @@
     <color name="error">#F01E1E</color>
     <color name="delete">#F2F13131</color>
     <color name="accent">#14ADAAAA</color>
+
+    <color name="testMain">#287CC0</color>
+    <color name="testOne">#6DC0FF</color>
+    <color name="testTwo">#101010</color>
+
 </resources>

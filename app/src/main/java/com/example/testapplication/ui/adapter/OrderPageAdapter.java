@@ -22,7 +22,6 @@ import io.realm.RealmList;
 public class OrderPageAdapter extends RecyclerView.Adapter<OrderPageAdapter.ItemListViewHolder> implements Adapter{
     private List<Item> mItems;
     private View.OnClickListener mOnClickListener;
-    private Map<Integer, Item> removedItem;
 
     public OrderPageAdapter(List<Item> mItems, View.OnClickListener mOnClickListener) {
         if(mItems == null) {
@@ -30,7 +29,6 @@ public class OrderPageAdapter extends RecyclerView.Adapter<OrderPageAdapter.Item
         }
         this.mItems = mItems;
         this.mOnClickListener = mOnClickListener;
-        this.removedItem = new HashMap<>();
     }
 
     @NonNull
@@ -45,7 +43,7 @@ public class OrderPageAdapter extends RecyclerView.Adapter<OrderPageAdapter.Item
         Item item = mItems.get(position);
         holder.order.setText(item.getName());
         holder.quantity.setText(String.valueOf(item.getQuantity()));
-        holder.price.setText(String.valueOf(item.getPrice()));
+        holder.price.setText(String.format("%,.2f", item.getPrice()));
         holder.classification.setText(item.getPackaging() == null || item.getPackaging().isEmpty() ? "pc(s)" : item.getPackaging());
         holder.itemCard.setOnClickListener(mOnClickListener);
         holder.itemCard.setTag(item);

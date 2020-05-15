@@ -149,7 +149,7 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
         this.date.setEnabled(false);
 
         this.total = findViewById(R.id.totalField);
-        this.total.setText(String.valueOf(order.getTotal()));
+        this.total.setText(String.format("%,.2f", order.getTotal()));
 
         this.rv = findViewById(R.id.itemListRv);
         this.rv.setLayoutManager(new LinearLayoutManager(this));
@@ -246,6 +246,7 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
             item.setName(itemName.getText().toString());
             item.setQuantity(Integer.parseInt(quantity.getText().toString()));
             item.setPackaging(pckg.getText().toString());
+            item.setPrice(Double.parseDouble(price.getText().toString()));
             order.getItems().add(item);
             adapter.notifyDataSetChanged();
         };
@@ -257,7 +258,7 @@ public class OrderPage extends BaseActivity implements OrderPageView, DeleteCall
             item.setName(itemName.getText().toString());
             item.setQuantity(Integer.parseInt(quantity.getText().toString()));
             item.setPackaging(pckg.getText().toString());
-            total.setText(String.valueOf(order.getTotal()));
+            total.setText(String.format("%,.2f", order.getTotal()));
             adapter.notifyDataSetChanged();
         };
     }

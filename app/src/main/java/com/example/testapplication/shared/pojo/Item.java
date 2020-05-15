@@ -3,11 +3,12 @@ package com.example.testapplication.shared.pojo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Objects;
+
 import io.realm.RealmObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 public class Item extends RealmObject implements Parcelable {
     private String name;
@@ -49,4 +50,20 @@ public class Item extends RealmObject implements Parcelable {
             return new Item[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return Double.compare(item.price, price) == 0 &&
+                quantity == item.quantity &&
+                Objects.equals(name, item.name) &&
+                Objects.equals(packaging, item.packaging);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, price, quantity, packaging);
+    }
 }

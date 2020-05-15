@@ -138,17 +138,8 @@ public class FirebaseServiceImpl implements FirebaseService {
                 buildOrder(documentSnapshot.getData(), new CallBack() {
                     @Override
                     public void onSuccess(Object object) {
-                        boolean isNewClient = true;
-                        Account account = accountRepository.getAccount();
-                        Order order = (Order) object;
-                        for (Client client : account.getClients()) {
-                            if (client.getUid().equals(order.getId())) {
-                                isNewClient = false;
-                            }
-                        }
-                        if(isNewClient) {
-                            addClient(order.getClient());
-                        }
+                        Order order = isNewClient((Order) object);
+                        isNewOrderUpdate(order);
                         orderRepository.save(order);
                     }
 
@@ -159,6 +150,33 @@ public class FirebaseServiceImpl implements FirebaseService {
                 });
             }
         });
+    }
+
+    private void isNewOrderUpdate(Order order) {
+        Order orderCopy = orderRepository.getOrder(order.getId());
+        if(orderCopy != null) {
+            boolean isSame = order.equals(orderCopy);
+            if(!isSame) {
+                OrderUp.createNotification("Order Update", String.format("You have an order update from %s", order.getClient().getName()), order);
+            }
+        } else if(!order.getId().equals(mAuth.getUid())){
+            OrderUp.createNotification("New Order", String.format("You have an order from %s", order.getClient().getName()), order);
+        }
+    }
+
+    private Order isNewClient(Order object) {
+        boolean isNewClient = true;
+        Account account = accountRepository.getAccount();
+        Order order = object;
+        for (Client client : account.getClients()) {
+            if (client.getUid().equals(order.getId())) {
+                isNewClient = false;
+            }
+        }
+        if(isNewClient) {
+            addClient(order.getClient());
+        }
+        return order;
     }
 
     private void buildOrder(Map<String, Object> data, CallBack callBack) {
@@ -246,13 +264,13 @@ public class FirebaseServiceImpl implements FirebaseService {
                                     addListenerToOrder(orderReference);
                                 }
                             }
-                            for (String id : orderIds) {
-                                Order order = orderRepository.getOrder(id);
-                                if (order == null) {
-                                    OrderUp.createNotification("Order Update",
-                                            String.format("You have a new order update"));
-                                }
-                            }
+//                            for (String id : orderIds) {
+//                                Order order = orderRepository.getOrder(id);
+//                                if (order == null) {
+//                                    OrderUp.createNotification("Order Update",
+//                                            String.format("You have a new order update"));
+//                                }
+//                            }
                         }));
     }
 

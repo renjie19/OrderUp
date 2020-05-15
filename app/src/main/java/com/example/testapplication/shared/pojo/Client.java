@@ -3,13 +3,13 @@ package com.example.testapplication.shared.pojo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Objects;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 public class Client extends RealmObject implements Parcelable {
     @PrimaryKey
     private String uid;
@@ -53,5 +53,22 @@ public class Client extends RealmObject implements Parcelable {
     };
 
     public Client() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Client client = (Client) o;
+        return Objects.equals(uid, client.uid) &&
+                Objects.equals(token, client.token) &&
+                Objects.equals(name, client.name) &&
+                Objects.equals(location, client.location) &&
+                Objects.equals(contactNo, client.contactNo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid, token, name, location, contactNo);
     }
 }
