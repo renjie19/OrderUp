@@ -97,7 +97,7 @@ public class FirebaseServiceImpl implements FirebaseService {
     public void login(String email, String password, CallBack callBack) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener(authResult -> callBack.onSuccess(authResult.getUser().getUid()))
-                .addOnFailureListener(e -> callBack.onFailure(e.getCause()));
+                .addOnFailureListener(e -> callBack.onFailure(e.getMessage()));
     }
 
     @Override
@@ -149,14 +149,16 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     private void isNewOrderUpdate(Order order) {
-        Order orderCopy = orderRepository.getOrder(order.getId());
-        if(orderCopy != null) {
-            boolean isSame = order.equals(orderCopy);
-            if(!isSame) {
-                OrderUp.createNotification("Order Update", String.format("You have an order update from %s", order.getClient().getName()), order);
+        if(order != null && order.getClient() != null) {
+            Order orderCopy = orderRepository.getOrder(order.getId());
+            if(orderCopy != null) {
+                boolean isSame = order.equals(orderCopy);
+                if(!isSame) {
+                    OrderUp.createNotification("Order Update", String.format("You have an order update from %s", order.getClient().getName()), order);
+                }
+            } else if(!order.getId().equals(mAuth.getUid())){
+                OrderUp.createNotification("New Order", String.format("You have an order from %s", order.getClient().getName()), order);
             }
-        } else if(!order.getId().equals(mAuth.getUid())){
-            OrderUp.createNotification("New Order", String.format("You have an order from %s", order.getClient().getName()), order);
         }
     }
 

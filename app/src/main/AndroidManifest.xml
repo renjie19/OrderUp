@@ -18,9 +18,9 @@
     <application
         android:name=".OrderUp"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="OrderUp"
+        android:icon="@mipmap/logo_round"
         android:roundIcon="@mipmap/logo_round"
+        android:label="OrderUp"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
