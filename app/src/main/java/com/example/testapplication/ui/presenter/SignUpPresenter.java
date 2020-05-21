@@ -3,6 +3,7 @@ package com.example.testapplication.ui.presenter;
 import com.example.testapplication.core.service.FirebaseService;
 import com.example.testapplication.core.service.FirebaseServiceImpl;
 import com.example.testapplication.shared.callback.CallBack;
+import com.example.testapplication.shared.callback.OnComplete;
 import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.ui.views.SignUpView;
 
@@ -16,29 +17,21 @@ public class SignUpPresenter {
     }
 
     public void signUp(Account account, String email, String password) {
-        firebaseService.signUp(email, password, new CallBack() {
-            @Override
-            public void onSuccess(Object object) {
+        firebaseService.signUp(email, password, exception -> {
+            if(exception == null) {
                 createUserAccount(account);
-            }
-
-            @Override
-            public void onFailure(Object object) {
-                view.onFailure((String) object);
+            } else {
+                view.onFailure(exception.getMessage());
             }
         });
     }
 
     private void createUserAccount(Account account) {
-        firebaseService.createUser(account, new CallBack() {
-            @Override
-            public void onSuccess(Object object) {
-                view.onCreateAccountSuccess();
-            }
-
-            @Override
-            public void onFailure(Object object) {
-                view.onFailure((String) object);
+        firebaseService.createUser(account, exception -> {
+            if(exception == null) {
+               view.onCreateAccountSuccess();
+            } else {
+                view.onFailure(exception.getMessage());
             }
         });
     }

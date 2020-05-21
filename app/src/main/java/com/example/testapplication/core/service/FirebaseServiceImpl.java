@@ -1,18 +1,24 @@
 package com.example.testapplication.core.service;
 
+import androidx.annotation.NonNull;
+
 import com.example.testapplication.OrderUp;
 import com.example.testapplication.core.repository.AccountRepository;
 import com.example.testapplication.core.repository.OrderRepository;
 import com.example.testapplication.core.repository.RepositoryEnum;
 import com.example.testapplication.core.repository.RepositoryFactory;
 import com.example.testapplication.shared.callback.CallBack;
+import com.example.testapplication.shared.callback.OnComplete;
 import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.shared.pojo.Client;
 import com.example.testapplication.shared.pojo.Item;
 import com.example.testapplication.shared.pojo.Order;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -45,12 +51,11 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
-    public void createUser(Account account, CallBack callBack) {
+    public void createUser(Account account, OnComplete<Exception> onComplete) {
         DocumentReference reference = mStore.collection(USER_COLLECTION).document(mAuth.getUid());
         account.setId(reference.getId());
         reference.set(buildAccountMap(account))
-                .addOnSuccessListener(aVoid -> callBack.onSuccess(null))
-                .addOnFailureListener(e -> callBack.onFailure(null));
+                .addOnCompleteListener(task -> onComplete.onComplete(task.getException()));
         reference.addSnapshotListener((documentSnapshot, e) -> {
             getAccountAndSave(documentSnapshot.getData(), null);
         });
@@ -87,17 +92,24 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
-    public void login(String email, String password, CallBack callBack) {
+    public void login(String email, String password, OnComplete<Object> onComplete) {
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener(authResult -> callBack.onSuccess(authResult.getUser().getUid()))
-                .addOnFailureListener(e -> callBack.onFailure(e.getMessage()));
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
+                        FirebaseUser user = task.getResult().getUser();
+                        onComplete.onComplete(user.getUid());
+                    } else {
+                        onComplete.onComplete(task.getException());
+                    }
+                });
     }
 
     @Override
-    public void signUp(String email, String password, CallBack callBack) {
+    public void signUp(String email, String password, OnComplete<Exception> onComplete) {
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener(authResult -> callBack.onSuccess(null))
-                .addOnFailureListener(e -> callBack.onFailure(e.getMessage()));
+        .addOnCompleteListener(task -> {
+            onComplete.onComplete(task.getException());
+        });
     }
 
     @Override
@@ -313,11 +325,17 @@ public class FirebaseServiceImpl implements FirebaseService {
         account.setContactNumber((String) data.get("contactNo"));
         account.setEmail((String) data.get("email"));
         account.setToken((String) data.get("token"));
-        getClientsFromMap((List) data.get("clients"), account, callBack);
+        getClientsFromMap((List) data.get("clients"), clients -> {
+            account.setClients(clients);
+            accountRepository.save(account);
+            if (callBack != null) {
+                callBack.onSuccess(null);
+            }
+        });
     }
 
-    private void getClientsFromMap(List clients, Account account, CallBack callBack) {
-        account.setClients(new RealmList<>());
+    private void getClientsFromMap(List clients, OnComplete<RealmList<Client>> onComplete) {
+        RealmList<Client> clientRealmList = new RealmList<>();
         List<Task<QuerySnapshot>> tasks = new ArrayList<>();
         for (Object id : clients) {
             tasks.add(mStore.collection(USER_COLLECTION).whereEqualTo("id", id).get());
@@ -328,13 +346,10 @@ public class FirebaseServiceImpl implements FirebaseService {
                 List<DocumentSnapshot> documents = snapshots.getDocuments();
                 if (!documents.isEmpty()) {
                     Map<String, Object> clientMap = documents.get(0).getData();
-                    account.getClients().add(getClient(clientMap));
+                    clientRealmList.add(getClient(clientMap));
                 }
             }
-            accountRepository.save(account);
-            if (callBack != null) {
-                callBack.onSuccess(null);
-            }
+            onComplete.onComplete(clientRealmList);
         });
     }
 
