@@ -115,18 +115,17 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
-    public void createOrder(Order order, OnComplete<CustomTask<String>> task) {
+    public void createOrder(Order order, OnComplete<CustomTask<Order>> task) {
         DocumentReference reference = mStore.collection(ORDER_COLLECTION).document();
         order.setId(reference.getId());
         reference.set(buildOrderMap(order))
                 .addOnCompleteListener(task1 -> {
                     boolean successful = task1.isSuccessful();
-                    String message = successful ? "Order Sent" : null;
                     if(successful) {
                         addOrderToClient(reference.getId(), order.getClient().getUid());
                         addOrderToAccount(reference.getId());
                     }
-                    task.onComplete(new CustomTask<>(message, task1.getException(), successful));
+                    task.onComplete(new CustomTask<>(order, task1.getException(), successful));
                 });
         addListenerToOrder(reference);
     }
@@ -207,19 +206,14 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
-    public void updateOrder(Order order, OnComplete<CustomTask<String>> customTask) {
+    public void updateOrder(Order order, OnComplete<CustomTask<Order>> customTask) {
         getDocumentId(ORDER_COLLECTION, "id", order.getId(), result -> {
             if(result.isSuccessful()) {
                 mStore.collection(ORDER_COLLECTION)
                         .document(result.getResult())
                         .update(buildOrderMap(order))
                         .addOnCompleteListener(task -> {
-                            final boolean successful = task.isSuccessful();
-                            String message = null;
-                            if(successful) {
-                                message = "Order Updated";
-                            }
-                            customTask.onComplete(new CustomTask<>(message, task.getException(), successful));
+                            customTask.onComplete(new CustomTask<>(order, task.getException(), task.isSuccessful()));
                         });
             }
         });

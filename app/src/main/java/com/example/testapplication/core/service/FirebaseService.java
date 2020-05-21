@@ -15,8 +15,8 @@ public interface FirebaseService {
     void signUp(String email, String password, OnComplete<CustomTask> onComplete);
     void logout();
 
-    void createOrder(Order order, OnComplete<CustomTask<String>> task);
-    void updateOrder(Order order, OnComplete<CustomTask<String>> task);
+    void createOrder(Order order, OnComplete<CustomTask<Order>> task);
+    void updateOrder(Order order, OnComplete<CustomTask<Order>> task);
 
     void removeClient(Client client);
     void addClient(Client client);

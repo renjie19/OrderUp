@@ -1,5 +1,5 @@
 package com.example.testapplication.shared.callback;
 
 public  interface OnComplete<T> {
-    void onComplete(T result);
+    void onComplete(T task);
 }

@@ -35,7 +35,7 @@ public class OrderPagePresenter {
     private Order save(Order order) {
         firebaseService.createOrder(order, task -> {
             if(task.isSuccessful()) {
-                view.onSuccess(task.getResult());
+                view.onSuccess("Order Sent");
             } else {
                 view.onFailure(task.getException().getMessage());
             }
@@ -46,7 +46,7 @@ public class OrderPagePresenter {
     private Order update(Order order) {
         firebaseService.updateOrder(order, result -> {
             if(result.isSuccessful()) {
-                view.onSuccess(result.getResult());
+                view.onSuccess("Order Updated");
             } else {
                 view.onFailure(result.getException().getMessage());
             }

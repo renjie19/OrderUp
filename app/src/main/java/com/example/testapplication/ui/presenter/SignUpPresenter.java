@@ -5,6 +5,7 @@ import com.example.testapplication.core.service.FirebaseServiceImpl;
 import com.example.testapplication.shared.callback.CallBack;
 import com.example.testapplication.shared.callback.OnComplete;
 import com.example.testapplication.shared.pojo.Account;
+import com.example.testapplication.shared.pojo.CustomTask;
 import com.example.testapplication.ui.views.SignUpView;
 
 public class SignUpPresenter {
