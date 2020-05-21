@@ -16,7 +16,7 @@ import com.example.testapplication.shared.pojo.Order;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.auth.AuthResult;
+import com.example.testapplication.shared.pojo.CustomTask;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -51,65 +51,62 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
-    public void createUser(Account account, OnComplete<Exception> onComplete) {
+    public void createUser(Account account, OnComplete<CustomTask<Account>> task) {
         DocumentReference reference = mStore.collection(USER_COLLECTION).document(mAuth.getUid());
         account.setId(reference.getId());
         reference.set(buildAccountMap(account))
-                .addOnCompleteListener(task -> onComplete.onComplete(task.getException()));
-        reference.addSnapshotListener((documentSnapshot, e) -> {
-            getAccountAndSave(documentSnapshot.getData(), null);
-        });
+                .addOnCompleteListener(task1 -> task.onComplete(new CustomTask<>(account, task1.getException(), task1.isSuccessful())));
+
+        reference.addSnapshotListener((documentSnapshot, e) -> getAccountAndSave(documentSnapshot.getData(), null));
     }
 
     @Override
     public void updateUser(Account account) {
-        getDocumentId(USER_COLLECTION, "id", account.getId(), new CallBack() {
-            @Override
-            public void onSuccess(Object object) {
+        getDocumentId(USER_COLLECTION, "id", account.getId(), task -> {
+            if (task.isSuccessful()) {
                 mStore.collection(USER_COLLECTION)
-                        .document((String) object)
+                        .document(task.getResult())
                         .update(buildAccountMap(account));
-            }
-
-            @Override
-            public void onFailure(Object object) {
-
             }
         });
     }
 
     @Override
-    public void getAccount(String id, CallBack callBack) {
+    public void getAccount(String id, OnComplete<CustomTask<Account>> customTask) {
         mStore.collection(USER_COLLECTION)
                 .document(id)
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists() && documentSnapshot.getData() != null) {
-                        getAccountAndSave(documentSnapshot.getData(), callBack);
-                    }
-                })
-                .addOnFailureListener(e -> callBack.onFailure(e.getMessage()));
-    }
-
-    @Override
-    public void login(String email, String password, OnComplete<Object> onComplete) {
-        mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()) {
-                        FirebaseUser user = task.getResult().getUser();
-                        onComplete.onComplete(user.getUid());
+                    boolean successful = task.isSuccessful();
+                    if (successful) {
+                        DocumentSnapshot result = task.getResult();
+                        if (result != null && result.exists() && result.getData() != null) {
+                            getAccountAndSave(result.getData(), customTask);
+                        }
                     } else {
-                        onComplete.onComplete(task.getException());
+                        customTask.onComplete(new CustomTask<>(null, task.getException(), false));
                     }
                 });
     }
 
     @Override
-    public void signUp(String email, String password, OnComplete<Exception> onComplete) {
+    public void login(String email, String password, OnComplete<CustomTask<String>> customTask) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task1 -> {
+                    String id = null;
+                    final boolean successful = task1.isSuccessful();
+                    if(successful) {
+                        FirebaseUser user = task1.getResult().getUser();
+                        id = user.getUid();
+                    }
+                    customTask.onComplete(new CustomTask<>(id, task1.getException(), successful));
+                });
+    }
+
+    @Override
+    public void signUp(String email, String password, OnComplete<CustomTask> customTask) {
         mAuth.createUserWithEmailAndPassword(email, password)
-        .addOnCompleteListener(task -> {
-            onComplete.onComplete(task.getException());
-        });
+        .addOnCompleteListener(task -> customTask.onComplete(new CustomTask<>(null, task.getException(), task.isSuccessful())));
     }
 
     @Override
@@ -118,17 +115,18 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
-    public void createOrder(Order order, CallBack callBack) {
+    public void createOrder(Order order, OnComplete<CustomTask<String>> task) {
         DocumentReference reference = mStore.collection(ORDER_COLLECTION).document();
         order.setId(reference.getId());
         reference.set(buildOrderMap(order))
-                .addOnSuccessListener(aVoid -> {
-                    addOrderToClient(reference.getId(), order.getClient().getUid());
-                    addOrderToAccount(reference.getId());
-                    callBack.onSuccess("Order Sent");
-                })
-                .addOnFailureListener(e -> {
-                    System.out.println("failed");
+                .addOnCompleteListener(task1 -> {
+                    boolean successful = task1.isSuccessful();
+                    String message = successful ? "Order Sent" : null;
+                    if(successful) {
+                        addOrderToClient(reference.getId(), order.getClient().getUid());
+                        addOrderToAccount(reference.getId());
+                    }
+                    task.onComplete(new CustomTask<>(message, task1.getException(), successful));
                 });
         addListenerToOrder(reference);
     }
@@ -209,22 +207,20 @@ public class FirebaseServiceImpl implements FirebaseService {
     }
 
     @Override
-    public void updateOrder(Order order, CallBack callBack) {
-        getDocumentId(ORDER_COLLECTION, "id", order.getId(), new CallBack() {
-            @Override
-            public void onSuccess(Object object) {
+    public void updateOrder(Order order, OnComplete<CustomTask<String>> customTask) {
+        getDocumentId(ORDER_COLLECTION, "id", order.getId(), result -> {
+            if(result.isSuccessful()) {
                 mStore.collection(ORDER_COLLECTION)
-                        .document((String) object)
+                        .document(result.getResult())
                         .update(buildOrderMap(order))
-                        .addOnSuccessListener(aVoid -> {
-                            callBack.onSuccess("Order Updated");
-                        })
-                        .addOnFailureListener(e -> callBack.onFailure(e.getMessage()));
-            }
-
-            @Override
-            public void onFailure(Object object) {
-
+                        .addOnCompleteListener(task -> {
+                            final boolean successful = task.isSuccessful();
+                            String message = null;
+                            if(successful) {
+                                message = "Order Updated";
+                            }
+                            customTask.onComplete(new CustomTask<>(message, task.getException(), successful));
+                        });
             }
         });
     }
@@ -270,17 +266,20 @@ public class FirebaseServiceImpl implements FirebaseService {
                         }));
     }
 
-    private void getDocumentId(String collection, String field, String param, CallBack callBack) {
+    private void getDocumentId(String collection, String field, String param, OnComplete<CustomTask<String>> customTask) {
         mStore.collection(collection)
                 .whereEqualTo(field, param)
                 .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.getDocuments().isEmpty()) {
-                        callBack.onSuccess(queryDocumentSnapshots.getDocuments().get(0).getId());
+                .addOnCompleteListener(task -> {
+                    boolean successful = task.isSuccessful();
+                    String id = null;
+                    if(successful) {
+                        QuerySnapshot result = task.getResult();
+                        if (result != null && !result.getDocuments().isEmpty()) {
+                            id = result.getDocuments().get(0).getId();
+                        }
                     }
-                })
-                .addOnFailureListener(e -> {
-
+                    customTask.onComplete(new CustomTask<>(id, task.getException(), successful));
                 });
     }
 
@@ -316,7 +315,7 @@ public class FirebaseServiceImpl implements FirebaseService {
         return map;
     }
 
-    private void getAccountAndSave(Map<String, Object> data, CallBack callBack) {
+    private void getAccountAndSave(Map<String, Object> data, OnComplete<CustomTask<Account>> task) {
         Account account = new Account();
         account.setId((String) data.get("id"));
         account.setFirstName((String) data.get("firstName"));
@@ -328,8 +327,8 @@ public class FirebaseServiceImpl implements FirebaseService {
         getClientsFromMap((List) data.get("clients"), clients -> {
             account.setClients(clients);
             accountRepository.save(account);
-            if (callBack != null) {
-                callBack.onSuccess(null);
+            if (task != null) {
+                task.onComplete(new CustomTask<>(account, null, true));
             }
         });
     }

@@ -17,21 +17,21 @@ public class SignUpPresenter {
     }
 
     public void signUp(Account account, String email, String password) {
-        firebaseService.signUp(email, password, exception -> {
-            if(exception == null) {
+        firebaseService.signUp(email, password, task -> {
+            if(task.isSuccessful()) {
                 createUserAccount(account);
             } else {
-                view.onFailure(exception.getMessage());
+                view.onFailure(task.getException().getMessage());
             }
         });
     }
 
     private void createUserAccount(Account account) {
-        firebaseService.createUser(account, exception -> {
-            if(exception == null) {
+        firebaseService.createUser(account, result -> {
+            if(result.isSuccessful()) {
                view.onCreateAccountSuccess();
             } else {
-                view.onFailure(exception.getMessage());
+                view.onFailure(result.getException().getMessage());
             }
         });
     }
