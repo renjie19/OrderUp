@@ -1,10 +1,5 @@
 package com.example.testapplication.core.service;
 
-import android.content.Intent;
-import android.content.IntentFilter;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.example.testapplication.OrderUp;
 import com.example.testapplication.core.repository.AccountRepository;
 import com.example.testapplication.core.repository.OrderRepository;
@@ -15,7 +10,6 @@ import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.shared.pojo.Client;
 import com.example.testapplication.shared.pojo.Item;
 import com.example.testapplication.shared.pojo.Order;
-import com.example.testapplication.ui.activity.ClientList;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,7 +26,6 @@ import java.util.Map;
 
 import io.realm.RealmList;
 
-import static com.google.android.gms.tasks.Tasks.await;
 
 public class FirebaseServiceImpl implements FirebaseService {
     private static final String CHANNEL_ID = "0001";
@@ -262,13 +255,6 @@ public class FirebaseServiceImpl implements FirebaseService {
                                     addListenerToOrder(orderReference);
                                 }
                             }
-//                            for (String id : orderIds) {
-//                                Order order = orderRepository.getOrder(id);
-//                                if (order == null) {
-//                                    OrderUp.createNotification("Order Update",
-//                                            String.format("You have a new order update"));
-//                                }
-//                            }
                         }));
     }
 
