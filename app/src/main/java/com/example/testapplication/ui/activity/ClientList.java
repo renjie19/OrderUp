@@ -106,7 +106,7 @@ public class ClientList extends BaseActivity implements ClientListView, DeleteCa
     }
 
     private void initActionBar() {
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_logo_25dp);// set drawable icon
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_logo_36dp);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("ORDERUP");
     }

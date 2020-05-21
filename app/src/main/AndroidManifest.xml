@@ -31,9 +31,6 @@
             android:name=".ui.activity.OrderPage"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".ui.activity.Settings"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
             android:name=".ui.activity.BarCodeScanner"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
