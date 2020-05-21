@@ -1,19 +1,16 @@
 package com.example.testapplication.core.service;
 
-import androidx.annotation.NonNull;
-
 import com.example.testapplication.OrderUp;
 import com.example.testapplication.core.repository.AccountRepository;
+import com.example.testapplication.core.repository.AccountRepositoryImpl;
 import com.example.testapplication.core.repository.OrderRepository;
-import com.example.testapplication.core.repository.RepositoryEnum;
-import com.example.testapplication.core.repository.RepositoryFactory;
+import com.example.testapplication.core.repository.OrderRepositoryImpl;
 import com.example.testapplication.shared.callback.CallBack;
 import com.example.testapplication.shared.callback.OnComplete;
 import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.shared.pojo.Client;
 import com.example.testapplication.shared.pojo.Item;
 import com.example.testapplication.shared.pojo.Order;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.example.testapplication.shared.pojo.CustomTask;
@@ -46,8 +43,8 @@ public class FirebaseServiceImpl implements FirebaseService {
     public FirebaseServiceImpl() {
         this.mAuth = FirebaseAuth.getInstance();
         this.mStore = FirebaseFirestore.getInstance();
-        this.accountRepository = (AccountRepository) RepositoryFactory.INSTANCE.create(RepositoryEnum.ACCOUNT);
-        this.orderRepository = (OrderRepository) RepositoryFactory.INSTANCE.create(RepositoryEnum.ORDER);
+        this.accountRepository = new AccountRepositoryImpl();
+        this.orderRepository = new OrderRepositoryImpl();
     }
 
     @Override

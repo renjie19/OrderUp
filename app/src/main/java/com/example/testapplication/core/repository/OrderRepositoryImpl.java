@@ -14,7 +14,7 @@ import io.realm.RealmList;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-class OrderRepositoryImpl implements OrderRepository {
+public class OrderRepositoryImpl implements OrderRepository {
     private final String TAG = this.getClass().getSimpleName();
 
     @Override

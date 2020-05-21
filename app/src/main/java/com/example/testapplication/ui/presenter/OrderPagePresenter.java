@@ -3,10 +3,7 @@ package com.example.testapplication.ui.presenter;
 import com.example.testapplication.core.service.FirebaseService;
 import com.example.testapplication.core.service.FirebaseServiceImpl;
 import com.example.testapplication.core.service.OrderService;
-import com.example.testapplication.core.service.ServiceEnum;
-import com.example.testapplication.core.service.ServiceFactory;
-import com.example.testapplication.shared.callback.OnComplete;
-import com.example.testapplication.shared.pojo.CustomTask;
+import com.example.testapplication.core.service.OrderServiceImpl;
 import com.example.testapplication.shared.pojo.Order;
 import com.example.testapplication.ui.views.OrderPageView;
 
@@ -19,7 +16,7 @@ public class OrderPagePresenter {
 
     public OrderPagePresenter(OrderPageView view){
         if(orderService == null) {
-            orderService = (OrderService) ServiceFactory.INSTANCE.create(ServiceEnum.ORDER);
+            orderService = new OrderServiceImpl();
         }
         this.firebaseService = new FirebaseServiceImpl();
         this.view = view;

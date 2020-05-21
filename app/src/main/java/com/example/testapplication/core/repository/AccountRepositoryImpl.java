@@ -9,7 +9,7 @@ import java.util.List;
 
 import io.realm.Realm;
 
-class AccountRepositoryImpl implements AccountRepository {
+public class AccountRepositoryImpl implements AccountRepository {
     private final String TAG = "AccountRepositoryImpl";
 
     @Override

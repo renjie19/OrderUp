@@ -1,9 +1,8 @@
 package com.example.testapplication.ui.presenter;
 
+import com.example.testapplication.core.service.AccountServiceImpl;
 import com.example.testapplication.core.service.FirebaseService;
 import com.example.testapplication.core.service.FirebaseServiceImpl;
-import com.example.testapplication.core.service.ServiceEnum;
-import com.example.testapplication.core.service.ServiceFactory;
 import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.core.service.AccountService;
 import com.example.testapplication.ui.views.AccountManagementViews;
@@ -14,7 +13,7 @@ public class AccountManagementPresenter {
     private FirebaseService firebaseService;
 
     public AccountManagementPresenter(AccountManagementViews view) {
-        this.service = (AccountService) ServiceFactory.INSTANCE.create(ServiceEnum.ACCOUNT);
+        this.service = new AccountServiceImpl();
         this.firebaseService = new FirebaseServiceImpl();
         this.view = view;
     }

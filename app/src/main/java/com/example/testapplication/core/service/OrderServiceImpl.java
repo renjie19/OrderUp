@@ -1,15 +1,14 @@
 package com.example.testapplication.core.service;
 
 import com.example.testapplication.core.repository.OrderRepository;
-import com.example.testapplication.core.repository.RepositoryEnum;
-import com.example.testapplication.core.repository.RepositoryFactory;
+import com.example.testapplication.core.repository.OrderRepositoryImpl;
 import com.example.testapplication.shared.pojo.Order;
 
-class OrderServiceImpl implements OrderService {
+public class OrderServiceImpl implements OrderService {
     private OrderRepository repository;
 
     public OrderServiceImpl() {
-        this.repository = (OrderRepository) RepositoryFactory.INSTANCE.create(RepositoryEnum.ORDER);
+        this.repository = new OrderRepositoryImpl();
     }
 
     @Override

@@ -1,8 +1,7 @@
 package com.example.testapplication.core.service;
 
 import com.example.testapplication.core.repository.AccountRepository;
-import com.example.testapplication.core.repository.RepositoryEnum;
-import com.example.testapplication.core.repository.RepositoryFactory;
+import com.example.testapplication.core.repository.AccountRepositoryImpl;
 import com.example.testapplication.shared.callback.CallBack;
 import com.example.testapplication.shared.pojo.Account;
 import com.example.testapplication.shared.pojo.Client;
@@ -20,12 +19,12 @@ import java.util.Map;
 
 import io.realm.RealmList;
 
-class AccountServiceImpl implements AccountService {
+public class AccountServiceImpl implements AccountService {
     private AccountRepository repository;
     private final String TAG = getClass().getSimpleName();
 
     public AccountServiceImpl() {
-        this.repository = (AccountRepository) RepositoryFactory.INSTANCE.create(RepositoryEnum.ACCOUNT);
+        this.repository = new AccountRepositoryImpl();
     }
 
     @Override
