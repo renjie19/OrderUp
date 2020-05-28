@@ -15,6 +15,43 @@
       },
       "oauth_client": [
         {
+          "client_id": "664861647239-0b3t2n3cqkr37i59ou4b8a2u4u6f818e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.testapplication",
+            "certificate_hash": "50a1adba9090fa4fd582f6a6e3316052c5a8c86b"
+          }
+        },
+        {
+          "client_id": "664861647239-5revi2gt9c1jdpberlo04cuq7c2m5dr3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJpzqGl6sbUYWvr4QjhoN0fIj--pIXLyI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "664861647239-5revi2gt9c1jdpberlo04cuq7c2m5dr3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:664861647239:android:0e074f6295bcce8fc47322",
+        "android_client_info": {
+          "package_name": "com.renjie.orderupv2"
+        }
+      },
+      "oauth_client": [
+        {
           "client_id": "664861647239-5revi2gt9c1jdpberlo04cuq7c2m5dr3.apps.googleusercontent.com",
           "client_type": 3
         }
