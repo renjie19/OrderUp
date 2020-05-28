@@ -17,6 +17,9 @@ class AuthService {
   }
 
   // sign out
+  void signOut() {
+    _firebaseAuth.signOut();
+  }
 
   // sign up
   Future signUp(String email, String password) async {
@@ -27,5 +30,10 @@ class AuthService {
     } catch (e) {
       print('signup error $e');
     }
+  }
+
+  // get user onAuthChange
+  Stream<FirebaseUser> get user {
+    return _firebaseAuth.onAuthStateChanged;
   }
 }

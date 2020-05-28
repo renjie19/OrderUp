@@ -31,6 +31,7 @@ dependencies:
   firebase_auth: ^0.16.1
   cloud_firestore: ^0.13.6
   flutter_spinkit: "^4.1.2"
+  provider: ^4.1.2
 
 dev_dependencies:
   flutter_test:
@@ -65,7 +66,7 @@ flutter:
   fonts:
      - family: Fredoka
        fonts:
-         - asset: lib/assets/fonts/
+         - asset: lib/assets/fonts/FredokaOne-Regular.ttf
 
   #   - family: Trajan Pro
   #     fonts:

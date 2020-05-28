@@ -92,7 +92,7 @@ class _LoginState extends State<Login> {
                           if (_loginKey.currentState.validate()) {
                             setState(() => _isLoading = true);
                             // login
-                            await _authService.signUp(_email, _password);
+                            await _authService.signIn(_email, _password);
                             setState(() => _isLoading = false);
                           }
                         },
