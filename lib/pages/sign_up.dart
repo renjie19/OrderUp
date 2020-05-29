@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:orderupv2/pages/loading.dart';
+import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/shared/constants.dart';

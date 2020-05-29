@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orderupv2/components/logo.dart';
-import 'package:orderupv2/pages/loading.dart';
+import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/pages/sign_up.dart';
 import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/services/auth_service.dart';
