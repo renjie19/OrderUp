@@ -10,7 +10,7 @@ class ClientItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
       child: Card(
         child: ListTile(
           title: Center(child: Text('${client.firstName} ${client.lastName}')),

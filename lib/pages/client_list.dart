@@ -4,14 +4,14 @@ import 'package:orderupv2/shared/models/account.dart';
 import 'package:provider/provider.dart';
 
 class ClientList extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
-
-    List _clients = [];
     final account = Provider.of<Account>(context);
-    _clients = account == null ? [] : account.clients;
+    List _clients = account == null ? [] : account.clients;
 
     return ListView.builder(
+      padding: EdgeInsets.only(top: 20),
       itemBuilder: (context, position) {
         return ClientItem(_clients[position]);
       },

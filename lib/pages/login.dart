@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orderupv2/components/logo.dart';
 import 'package:orderupv2/pages/loading.dart';
+import 'package:orderupv2/pages/sign_up.dart';
 import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/shared/constants.dart';
@@ -107,7 +108,7 @@ class _LoginState extends State<Login> {
                       ),
                       OutlineButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, "/signUp");
+                          Navigator.pushNamed(context, '/signUp');
                         },
                         child: Text(
                           "SIGN UP",

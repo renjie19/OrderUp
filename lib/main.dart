@@ -14,9 +14,10 @@ class OrderUp extends StatelessWidget {
       value: AuthService().user,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Wrapper(),
+        initialRoute: '/',
         routes: {
-          "/signUp" : (context) => SignUp(),
+          '/' : (context) => Wrapper(),
+          '/signUp' : (context) => SignUp(),
         },
       ),
     );

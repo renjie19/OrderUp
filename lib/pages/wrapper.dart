@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:orderupv2/pages/loading.dart';
 import 'package:orderupv2/pages/login.dart';
+import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +15,7 @@ class Wrapper extends StatelessWidget {
     return user == null
         ? Login()
         : StreamProvider<Account>.value(
-            value: null,
+            value: AccountService(uid: user.uid).userData,
             child: Home(user.uid),
           );
   }
