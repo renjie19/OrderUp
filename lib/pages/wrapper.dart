@@ -16,7 +16,7 @@ class Wrapper extends StatelessWidget {
         ? Login()
         : StreamProvider<Account>.value(
             value: null,
-            child: Home(id: user.uid),
+            child: Home(user.uid),
           );
   }
 }
