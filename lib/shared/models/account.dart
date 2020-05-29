@@ -1,4 +1,5 @@
-import 'dart:core';
+/**/import 'package:orderupv2/shared/models/client.dart';
+import 'package:orderupv2/shared/models/order.dart';
 
 class Account {
   String id;
@@ -7,8 +8,8 @@ class Account {
   String location;
   String email;
   String contactNo;
-  List clients;
-  List orders;
+  List<Client> clients;
+  List<Order> orders;
 
   Account({this.id, this.firstName, this.lastName, this.location, this.email,
       this.contactNo, this.clients, this.orders});
