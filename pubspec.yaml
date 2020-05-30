@@ -32,6 +32,7 @@ dependencies:
   cloud_firestore: ^0.13.6
   flutter_spinkit: "^4.1.2"
   provider: ^4.1.2
+  flutter_vector_icons: ^0.2.1
 
 dev_dependencies:
   flutter_test:

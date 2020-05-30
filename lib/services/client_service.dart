@@ -14,7 +14,7 @@ class ClientService {
       DocumentSnapshot snapshot = await _usersCollectionReference.document(id).get();
       clients.add(Client(
         id: id,
-        firstName: snapshot["firstName"],
+        firstName: snapshot['firstName'],
         lastName: snapshot["lastName"],
         location: snapshot["location"],
         email: snapshot["email"],

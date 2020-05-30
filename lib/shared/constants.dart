@@ -18,4 +18,4 @@ const textInputDecoration = InputDecoration(
 );
 
 const primaryColor = Color.fromRGBO(40, 123, 192, 1);
-const highlightColor = Colors.deepOrange;
+const highlightColor = Colors.amber;

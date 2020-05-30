@@ -34,8 +34,8 @@ class Home extends StatelessWidget {
                 ),
                 title: Text("ORDERUP"),
                 bottom: TabBar(
-                  indicatorColor: highlightColor[900],
-                  labelColor: highlightColor[900],
+                  indicatorColor: highlightColor,
+                  labelColor: highlightColor,
                   unselectedLabelColor: Colors.white,
                   tabs: <Widget>[
                     Tab(
