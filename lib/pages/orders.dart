@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:orderupv2/mixins/date_formatter.dart';
+import 'package:orderupv2/components/client_info_card.dart';
+import 'package:orderupv2/components/order_list_view.dart';
 import 'package:orderupv2/shared/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/client.dart';
@@ -19,76 +22,76 @@ class Orders extends StatefulWidget {
 
 class _OrdersState extends State<Orders> {
   List<Order> orderList;
+  bool isSelected = false;
+  bool toReceive = false;
+
+  final List<Map<String, Object>> type = [
+    {'label': 'Deliver', 'icon': Feather.truck},
+    {'label': 'Receive', 'icon': Feather.box}
+  ];
 
   @override
   Widget build(BuildContext context) {
     filterOrderByClient(Provider.of<Account>(context));
-    return Scaffold(
-      backgroundColor: primaryColor,
-      appBar: AppBar(
-        title: ListTile(
-          contentPadding: EdgeInsets.fromLTRB(10, 10, 0, 5),
-          leading: CircleAvatar(
-            backgroundColor: Colors.white,
-            child: Icon(
-              Icons.person,
-              size: 35,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: primaryColor,
+        body: Column(
+          children: <Widget>[
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                Expanded(child: ClientInfoCard(widget.client)),
+              ],
             ),
-          ),
-          title: Text(
-            '${widget.client.firstName} ${widget.client.lastName}',
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                fontFamily: 'Fredoka'),
-          ),
-          subtitle: Text(
-            widget.client.location,
-            style: TextStyle(
-              fontFamily: 'Fredoka',
-              fontSize: 18,
-              fontWeight: FontWeight.bold
+            Wrap(
+              spacing: 30,
+              children: List<Widget>.generate(type.length, (int index) {
+                return ChoiceChip(
+                  elevation: 5,
+                  pressElevation: 30,
+                  selectedColor: highlightColor[700],
+                  backgroundColor: Colors.grey,
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  avatar: Icon(
+                    type[index]['icon'],
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    type[index]["label"],
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5),
+                  ),
+                  selected: index % 2 != 0 ? isSelected : !isSelected,
+                  onSelected: (value) => onTypeSelect(index),
+                );
+              }),
             ),
-          ),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add_circle_outline),
-            onPressed: () {},
-          )
-        ],
-      ),
-      body: Container(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        height: double.maxFinite,
-        child: ListView.builder(
-          itemBuilder: (context, position) {
-            var order = orderList[position];
-            return Card(
-                child: ListTile(
-              leading: getAppropriateIcon(order, widget.client),
-              title: Text(
-                DateFormatter.toDateString(order.date),
+            Expanded(
+              child: OrderListView(
+                filterByType(orderList, toReceive),
+                toReceive ? Feather.box : Feather.truck,
               ),
-              trailing: Text(order.status),
-            ));
-          },
-          itemCount: orderList.length,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Icon getAppropriateIcon(Order order, Client client) {
-    return Icon(
-      order.from == client.id
-          ? FontAwesome.truck
-          : FontAwesome.shopping_cart,
-      color: order.from == widget.client.id
-          ? highlightColor[900]
-          : primaryColor,
-    );
+  List<Order> filterByType(List<Order> orders, bool toReceive) {
+    return orders
+        .where(
+            (order) => (toReceive ? order.to : order.from) == widget.client.id)
+        .toList();
   }
 
   void filterOrderByClient(Account account) {
@@ -103,4 +106,12 @@ class _OrdersState extends State<Orders> {
       }
     });
   }
+
+  void onTypeSelect(index) {
+    setState(() {
+      isSelected = index % 2 != 0;
+      toReceive = index % 2 != 0;
+    });
+  }
 }
+
