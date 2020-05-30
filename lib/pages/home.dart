@@ -11,11 +11,13 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final account = Provider.of<Account>(context);
-    final List<Widget> pages = [
-      Container(),
-      Container(),
-      ClientList(),
+    final List<Widget> pages = [Container(), Container(), ClientList()];
+    final List<Map<String, Object>> tabs = [
+      {'icon': Icon(Icons.assessment), 'text': 'Summary'},
+      {'icon': Icon(Icons.event_note), 'text': 'Report'},
+      {'icon': Icon(Icons.people), 'text': 'Clients'},
     ];
+
     return account == null
         ? Loading(message: 'Getting User Data')
         : DefaultTabController(
@@ -34,33 +36,19 @@ class Home extends StatelessWidget {
                 ),
                 title: Text("ORDERUP"),
                 bottom: TabBar(
-                  indicatorColor: highlightColor,
-                  labelColor: highlightColor,
+                  indicatorColor: highlightColor[500],
+                  labelColor: highlightColor[500],
                   unselectedLabelColor: Colors.white,
-                  tabs: <Widget>[
-                    Tab(
-                      icon: Icon(Icons.assessment),
-                      text: 'Summary',
-                      iconMargin: EdgeInsets.only(bottom: 2),
-                    ),
-                    Tab(
-                      icon: Icon(Icons.event_note),
-                      text: 'Reports',
-                      iconMargin: EdgeInsets.only(bottom: 2),
-                    ),
-                    Tab(
-                      icon: Icon(Icons.people),
-                      text: 'Clients',
-                      iconMargin: EdgeInsets.only(bottom: 2),
-                    ),
-                  ],
+                  tabs: List<Widget>.generate(tabs.length, (index) {
+                    return Tab(
+                        icon: tabs[index]['icon'],
+                        text: tabs[index]['text'],
+                        iconMargin: EdgeInsets.only(bottom: 2));
+                  }),
                 ),
                 actions: <Widget>[
                   IconButton(
-                      icon: Icon(
-                        Icons.exit_to_app,
-                        color: Colors.white,
-                      ),
+                      icon: Icon(Icons.exit_to_app, color: Colors.white),
                       onPressed: () {
                         showDialog(
                             context: context,

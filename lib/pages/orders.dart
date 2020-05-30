@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:orderupv2/components/client_info_card.dart';
@@ -52,7 +51,7 @@ class _OrdersState extends State<Orders> {
             ),
             Wrap(
               spacing: 30,
-              children: List<Widget>.generate(type.length, (int index) {
+              children: List<Widget>.generate(type.length, (index) {
                 return ChoiceChip(
                   elevation: 5,
                   pressElevation: 30,
