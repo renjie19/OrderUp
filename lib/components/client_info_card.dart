@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:orderupv2/pages/shop_page.dart';
 import 'package:orderupv2/shared/constants.dart';
 import 'package:orderupv2/shared/models/client.dart';
 
@@ -59,6 +60,12 @@ class _ClientInfoCardState extends State<ClientInfoCard> {
             ),
             onPressed: () {
               // todo show order create page
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return ShopPage();
+                  },
+
+              ));
             },
           ),
         ],

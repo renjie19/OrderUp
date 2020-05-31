@@ -25,8 +25,8 @@ class ClientItem extends StatelessWidget {
           title: Center(child: Text('${client.firstName} ${client.lastName}')),
           onTap: () {
             //proceed to client page
-            Navigator.push(context, PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) {
               return StreamProvider<Account>.value(
                   value: AccountService(uid: account.id).userData,
                   child: Orders(client, orders));

@@ -76,8 +76,8 @@ class _OrdersState extends State<Orders> {
             ),
             Expanded(
               child: OrderListView(
-                filterByType(orderList, toReceive),
-                toReceive ? Feather.box : Feather.truck,
+                orders: filterByType(orderList, toReceive),
+                iconData: toReceive ? Feather.box : Feather.truck,
               ),
             ),
           ],
@@ -113,4 +113,3 @@ class _OrdersState extends State<Orders> {
     });
   }
 }
-

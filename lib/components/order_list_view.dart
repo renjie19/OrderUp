@@ -7,7 +7,7 @@ import 'package:orderupv2/shared/models/order.dart';
 class OrderListView extends StatelessWidget {
  final List<Order> orders;
  final IconData iconData;
- OrderListView(this.orders, this.iconData);
+ OrderListView({this.orders, this.iconData});
 
   @override
   Widget build(BuildContext context) {
