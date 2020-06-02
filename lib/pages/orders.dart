@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:orderupv2/components/client_info_card.dart';
 import 'package:orderupv2/components/order_list_view.dart';
+import 'package:orderupv2/pages/shop_page.dart';
 import 'package:orderupv2/shared/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/client.dart';
@@ -11,7 +12,7 @@ import 'package:provider/provider.dart';
 
 class Orders extends StatefulWidget {
   final Client client;
-  final List<Order> orders;
+  List<Order> orders;
 
   Orders(this.client, this.orders);
 
@@ -33,57 +34,41 @@ class _OrdersState extends State<Orders> {
   Widget build(BuildContext context) {
     filterOrderByClient(Provider.of<Account>(context));
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: primaryColor,
-        body: Column(
-          children: <Widget>[
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+        child: Scaffold(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            expandedHeight: 200,
+            floating: false,
+            pinned: true,
+            bottom: PreferredSize(
+              preferredSize: Size(double.maxFinite, 50),
+              child: typeWidget(),
+            ),
+            flexibleSpace: ClientInfoCard(widget.client),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Feather.shopping_bag,
+                  color: Colors.white,
                 ),
-                Expanded(child: ClientInfoCard(widget.client)),
-              ],
-            ),
-            Wrap(
-              spacing: 30,
-              children: List<Widget>.generate(type.length, (index) {
-                return ChoiceChip(
-                  elevation: 5,
-                  pressElevation: 30,
-                  selectedColor: highlightColor[700],
-                  backgroundColor: Colors.grey,
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  avatar: Icon(
-                    type[index]['icon'],
-                    color: Colors.white,
-                  ),
-                  label: Text(
-                    type[index]["label"],
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5),
-                  ),
-                  selected: index % 2 != 0 ? isSelected : !isSelected,
-                  onSelected: (value) => onTypeSelect(index),
-                );
-              }),
-            ),
-            Expanded(
-              child: OrderListView(
-                orders: filterByType(orderList, toReceive),
-                iconData: toReceive ? Feather.box : Feather.truck,
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return ShopPage(widget.client);
+                    },
+                  ));
+                },
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+          OrderListView(
+            orders: filterByType(orderList, toReceive),
+            iconData: toReceive ? Feather.box : Feather.truck,
+          ),
+        ],
       ),
-    );
+    ));
   }
 
   List<Order> filterByType(List<Order> orders, bool toReceive) {
@@ -111,5 +96,34 @@ class _OrdersState extends State<Orders> {
       isSelected = index % 2 != 0;
       toReceive = index % 2 != 0;
     });
+  }
+  
+  Widget typeWidget() {
+    return Wrap(
+      spacing: 30,
+      children: List<Widget>.generate(type.length, (index) {
+        return ChoiceChip(
+
+          elevation: 5,
+          pressElevation: 30,
+          selectedColor: highlightColor[700],
+          backgroundColor: Colors.grey,
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          avatar: Icon(
+            type[index]['icon'],
+            color: Colors.white,
+          ),
+          label: Text(
+            type[index]["label"],
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.5),
+          ),
+          selected: index % 2 != 0 ? isSelected : !isSelected,
+          onSelected: (value) => onTypeSelect(index),
+        );
+      }),
+    );
   }
 }

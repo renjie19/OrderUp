@@ -10,7 +10,7 @@ class AccountService {
   CollectionReference _userCollection;
   
   String uid;
-  Account _account;
+  static Account account;
 
   AccountService({this.uid}) {
     _userCollection = _fireStore.collection("Users");
@@ -18,7 +18,7 @@ class AccountService {
 
   Future<Account> _mapToAccount(DocumentSnapshot snapshot) async{
     if(snapshot != null && snapshot.exists) {
-      _account = Account(
+      account =  Account(
         id: uid,
         firstName: snapshot["firstName"],
         lastName: snapshot["lastName"],
@@ -29,7 +29,7 @@ class AccountService {
         orders:  await _orderService.orders(snapshot['orders']),
       );
     }
-    return _account;
+    return account;
   }
 
   // get account

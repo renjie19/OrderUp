@@ -5,29 +5,69 @@ import 'package:orderupv2/shared/constants.dart';
 import 'package:orderupv2/shared/models/order.dart';
 
 class OrderListView extends StatelessWidget {
- final List<Order> orders;
- final IconData iconData;
- OrderListView({this.orders, this.iconData});
+  final List<Order> orders;
+  final IconData iconData;
+
+  OrderListView({this.orders, this.iconData});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      itemBuilder: (context, position) {
-        var order = orders[position];
-        return Card(
-            child: ListTile(
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+            (context, position) {
+          return ListTile(
+            onTap: (){},
               leading: Icon(
                 iconData,
                 color: highlightColor[900],
               ),
               title: Text(
-                DateFormatter.toDateString(order.date),
+                DateFormatter.toDateString(orders[position].date),
               ),
-              trailing: Text(order.status),
-            ));
-      },
-      itemCount: orders.length,
+              trailing: Text(orders[position].status),
+          );
+        },
+        childCount: orders.length,
+      ),
     );
+//    return SliverList(
+//      delegate: SliverChildBuilderDelegate((context, position) {
+//          var order = orders[position];
+//          return Card(
+//              child: ListTile(
+//                onTap: () {},
+//                leading: Icon(
+//                  iconData,
+//                  color: highlightColor[900],
+//                ),
+//                title: Text(
+//                  DateFormatter.toDateString(order.date),
+//                ),
+//                trailing: Text(order.status),
+//              ));
+//        },
+//        childCount: orders.length,
+//      ),
+//    );
+
+//    return ListView.builder(
+//      padding: EdgeInsets.symmetric(horizontal: 10),
+//      itemBuilder: (context, position) {
+//        var order = orders[position];
+//        return Card(
+//            child: ListTile(
+//              onTap: (){},
+//              leading: Icon(
+//                iconData,
+//                color: highlightColor[900],
+//              ),
+//              title: Text(
+//                DateFormatter.toDateString(order.date),
+//              ),
+//              trailing: Text(order.status),
+//            ));
+//      },
+//      itemCount: orders.length,
+//    );
   }
 }
