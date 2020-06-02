@@ -55,7 +55,7 @@ class _OrdersState extends State<Orders> {
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(
                     builder: (context) {
-                      return ShopPage(widget.client);
+                      return ShopPage(widget.client, Order());
                     },
                   ));
                 },

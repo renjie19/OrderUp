@@ -1,10 +1,12 @@
+import 'package:orderupv2/shared/models/item.dart';
+
 class Order {
   String to;
   String from;
   String id;
   int date;
   bool forPayment;
-  List items;
+  List<Item> items;
   String status;
   double total;
 

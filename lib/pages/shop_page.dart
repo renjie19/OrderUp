@@ -1,26 +1,33 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:orderupv2/components/item_create.dart';
 import 'package:orderupv2/components/order_info_card.dart';
 import 'package:orderupv2/shared/constants.dart';
 import 'package:orderupv2/shared/models/client.dart';
+import 'package:orderupv2/shared/models/item.dart';
+import 'package:orderupv2/shared/models/order.dart';
 
 class ShopPage extends StatefulWidget {
   final Client client;
+  final Order order;
 
-  ShopPage(this.client);
+  final createItemKey = GlobalKey<FormState>();
+
+  ShopPage(this.client, this.order);
 
   @override
   _ShopPageState createState() => _ShopPageState();
 }
 
 class _ShopPageState extends State<ShopPage> {
+  Order order;
+
   @override
   Widget build(BuildContext context) {
-    List<String> list = [];
-    //test data
-    for (int x = 0; x < 20; x++) {
-      list.add('Item $x');
-    }
+    order = widget.order == null ? Order() : widget.order;
+    List<Item> list = order.items ?? [];
 
     return Scaffold(
       backgroundColor: primaryColor,
@@ -65,17 +72,22 @@ class _ShopPageState extends State<ShopPage> {
             Positioned(
               bottom: 23,
               child: FloatingActionButton(
-                isExtended: true,
+                elevation: 0,
+                shape: CircleBorder(
+                    side: BorderSide(width: 4, color: primaryColor)
+                ),
                 tooltip: 'Add Item',
                 splashColor: primaryColor,
                 backgroundColor: Colors.white,
-                elevation: 5,
                 child: Icon(
                   Icons.add,
                   size: 20,
                   color: primaryColor,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  // show dialog create item dialog
+                  displayCreateDialog(Item());
+                },
               ),
             ),
           ],
@@ -84,7 +96,7 @@ class _ShopPageState extends State<ShopPage> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            OrderInfoCard(widget.client),
+            OrderInfoCard(),
             Expanded(
               child: ListView.separated(
                 padding: EdgeInsets.all(8),
@@ -92,12 +104,13 @@ class _ShopPageState extends State<ShopPage> {
                   return Container(
                     color: Colors.white,
                     child: ListTile(
-                      onTap: (){},
-                      title: Text(list[position]),
+                      onTap: () {},
+                      title: Text('${list[position]}'),
                     ),
                   );
                 },
-                separatorBuilder: (context, position) => Divider(height: 1,thickness: 1, color: Colors.black,),
+                separatorBuilder: (context, position) =>
+                    Divider(height: 1, thickness: 1, color: Colors.black,),
                 itemCount: list.length,
               ),
             ),
@@ -105,5 +118,31 @@ class _ShopPageState extends State<ShopPage> {
         ),
       ),
     );
+  }
+
+  void displayCreateDialog(Item selectedItem) async{
+    Item item = selectedItem == null ? Item() : selectedItem;
+    Item result = await showModalBottomSheet(context: context, builder: (context) {
+      return Container(
+        padding: EdgeInsets.all(10),
+        child: ItemCreate(item),
+      );
+    });
+    print('result');
+    print(result);
+    print(result.name);
+    print(result.quantity);
+    print(result.price);
+    print(result.package);
+
+    if(result != null) {
+      if(order.items == null) {
+        order.items = List<Item>();
+      }
+      setState(() {
+        order.items.add(result);
+      });
+    }
+
   }
 }

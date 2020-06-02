@@ -6,5 +6,5 @@ class Item {
   int quantity;
   double price;
 
-  Item({@required this.name, @required this.package, @required this.quantity, @required this.price});
+  Item({this.name, this.package, this.quantity, this.price});
 }

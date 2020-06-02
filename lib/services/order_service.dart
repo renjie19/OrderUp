@@ -3,8 +3,7 @@ import 'package:orderupv2/shared/models/item.dart';
 import 'package:orderupv2/shared/models/order.dart';
 
 class OrderService {
-  static Firestore _fireStore = Firestore.instance;
-  CollectionReference _orderCollectionReference = _fireStore.collection("Orders");
+  static final CollectionReference _orderCollectionReference = Firestore.instance.collection("Orders");
 
   // getOrders
   Future<List<Order>> orders(orderIds) async {
@@ -31,6 +30,10 @@ class OrderService {
       ));
     }
     return orders;
+  }
+
+  static String generateOrderId() {
+    return _orderCollectionReference.document().documentID;
   }
 
   // update order
