@@ -25,5 +25,8 @@ class ClientService {
   }
 
   // update client (add order id)
+  Future addClientOrders(String orderId, String clientId) async{
+    await _usersCollectionReference.document(clientId).updateData({'orders': FieldValue.arrayUnion([orderId])});
+  }
 
 }

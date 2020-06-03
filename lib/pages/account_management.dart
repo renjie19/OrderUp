@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orderupv2/components/info_card.dart';
-import 'package:orderupv2/shared/constants.dart';
+import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
 
 class AccountManagement extends StatefulWidget {

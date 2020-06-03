@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:orderupv2/shared/constants.dart';
+import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/item.dart';
 
 class ItemCreate extends StatefulWidget {
   final Item item;
+  final Function onContinue;
 
-  ItemCreate(this.item);
+  ItemCreate(this.item, this.onContinue);
 
   @override
   _CreateItemState createState() => _CreateItemState(item);
@@ -21,7 +22,7 @@ class _CreateItemState extends State<ItemCreate> {
   @override
   Widget build(BuildContext context) {
     itemSelected.quantity =
-        itemSelected.quantity == null ? 0 : itemSelected.quantity;
+        itemSelected.quantity == null ? 1 : itemSelected.quantity;
     itemSelected.price = itemSelected.price == null ? 0 : itemSelected.price;
     return Form(
       key: _createItemKey,
@@ -31,6 +32,7 @@ class _CreateItemState extends State<ItemCreate> {
             initialValue: itemSelected.name,
             decoration: textInputDecoration.copyWith(hintText: 'Name'),
             onChanged: (value) => itemSelected.name = value,
+            validator: (value) => itemSelected.name == null ? 'Required' : null,
           ),
           Row(
             children: <Widget>[
@@ -38,7 +40,9 @@ class _CreateItemState extends State<ItemCreate> {
                 icon: Icon(Feather.minus),
                 onPressed: () {
                   setState(() {
-                    itemSelected.quantity -= 1;
+                    if(itemSelected.quantity > 0) {
+                      itemSelected.quantity -= 1;
+                    }
                   });
                 },
               ),
@@ -53,9 +57,9 @@ class _CreateItemState extends State<ItemCreate> {
               ),
               Expanded(
                 child: TextFormField(
-                  initialValue: itemSelected.package ?? 'pc(s)',
+                  initialValue: itemSelected.package ?? '',
                   decoration:
-                      textInputDecoration.copyWith(hintText: 'Packaging'),
+                      textInputDecoration.copyWith(hintText: 'pc(s)'),
                   onChanged: (value) => itemSelected.package = value
                 ),
               ),
@@ -75,9 +79,29 @@ class _CreateItemState extends State<ItemCreate> {
             children: <Widget>[
               FlatButton(
                 onPressed: () {
-                  Navigator.pop(context, itemSelected);
+                  Navigator.pop(context);
                 },
-                child: Text('SUBMIT'),
+                child: Text('CANCEL'),
+              ),
+              FlatButton(
+                onPressed: () {
+                  if(_createItemKey.currentState.validate()) {
+                    setState(() => itemSelected.package = 'pc(s)');
+                    Navigator.pop(context, itemSelected);
+                    widget.onContinue();
+                  }
+                },
+                child: Text('ADD AND CONTINUE'),
+              ),
+              FlatButton(
+                color: Colors.blue,
+                onPressed: () {
+                  if(_createItemKey.currentState.validate()) {
+                    setState(() => itemSelected.package = 'pc(s)');
+                    Navigator.pop(context, itemSelected);
+                  }
+                },
+                child: Text('FINISH'),
               ),
             ],
           )

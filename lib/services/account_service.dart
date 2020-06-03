@@ -53,5 +53,9 @@ class AccountService {
     });
   }
 
+  Future addToOrderList(String orderId) async{
+    await _userCollection.document(account.id).updateData({'orders': FieldValue.arrayUnion([orderId])});
+  }
+
   // update account
 }

@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/services/auth_service.dart';
-import 'package:orderupv2/shared/constants.dart';
+import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
 
 class SignUp extends StatefulWidget {

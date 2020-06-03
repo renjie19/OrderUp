@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:orderupv2/mixins/date_formatter.dart';
-import 'package:orderupv2/shared/constants.dart';
+import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/order.dart';
 
 class OrderListView extends StatelessWidget {
@@ -14,17 +14,20 @@ class OrderListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-            (context, position) {
+        (context, position) {
           return ListTile(
-            onTap: (){},
-              leading: Icon(
-                iconData,
-                color: highlightColor[900],
-              ),
-              title: Text(
-                DateFormatter.toDateString(orders[position].date),
-              ),
-              trailing: Text(orders[position].status),
+            onTap: () {},
+            leading: Icon(
+              iconData,
+              color: highlightColor[900],
+            ),
+            title: Text(
+              DateFormatter.toDateString(orders[position].date),
+            ),
+            subtitle: Text(
+              DateFormatter.toTimeString(orders[position].date),
+            ),
+            trailing: Text(orders[position].status),
           );
         },
         childCount: orders.length,

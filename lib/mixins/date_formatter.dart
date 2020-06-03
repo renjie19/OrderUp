@@ -1,8 +1,15 @@
+import 'package:date_time_format/date_time_format.dart';
+
 class DateFormatter {
 
   static String toDateString(int date) {
     DateTime time = DateTime.fromMillisecondsSinceEpoch(date);
-    return '${month(time.month/**/)} ${time.day.toString()}, ${time.year.toString()}';
+    return '${month(time.month)} ${time.day.toString()}, ${time.year.toString()}';
+  }
+
+  static String toTimeString(int date) {
+    DateTime time = DateTime.fromMillisecondsSinceEpoch(date);
+    return DateTimeFormat.format(time, format: 'h:i A');
   }
 
   static String month(month) {
