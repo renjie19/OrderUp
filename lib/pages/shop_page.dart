@@ -38,6 +38,7 @@ class _ShopPageState extends State<ShopPage> {
     accountService = AccountService();
     order = widget.order ?? Order();
     order.items = order.items ?? [];
+    order.total = order.total ?? 0;
     progressDialog = initProgressDialog();
 
     return Scaffold(
@@ -170,7 +171,7 @@ class _ShopPageState extends State<ShopPage> {
     order = buildOrder(order);
     progressDialog.update(message: 'Creating your order');
     //todo change to update if for update
-    Order result = widget.isUpdate ? await OrderService().create(order) : await OrderService().update(order) ;
+    Order result = widget.isUpdate ? await OrderService().update(order) : await OrderService().create(order) ;
     if (result != null) {
       progressDialog.update(message: 'Sending to client');
       await accountService.addToOrderList(result.id);
@@ -200,7 +201,7 @@ class _ShopPageState extends State<ShopPage> {
         order.items = List<Item>();
       }
       setState(() {
-        itemIndex == null
+        itemIndex < 0
             ? order.items.add(result)
             : order.items[itemIndex] = result;
         order.items.forEach((element) => order.total += element.price);

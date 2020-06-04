@@ -15,7 +15,7 @@ class OrderService {
           await _orderCollectionReference.document(id).get();
       List<Item> itemList = [];
       List items = snapshot['items'];
-      for(Map<String, Object> item in items) {
+      for (Map<String, Object> item in items) {
         itemList.add(Item(
             name: item['name'],
             package: item['packaging'],
@@ -47,11 +47,17 @@ class OrderService {
       return null;
     });
   }
-  
+
   // todo add catch clause
   Future update(Order order) async {
-    _orderCollectionReference.document(order.id)
-        .updateData(_mapOrder(order));
+    return await _orderCollectionReference
+        .document(order.id)
+        .updateData(_mapOrder(order))
+        .then((value) => order)
+        .catchError((onError) {
+      print('Order Update Error: $onError');
+      return null;
+    });
   }
 
   static String generateOrderId() {
@@ -80,6 +86,4 @@ class OrderService {
     };
     return orderMap;
   }
-
-
 }

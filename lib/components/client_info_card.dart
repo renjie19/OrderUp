@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:orderupv2/pages/shop_page.dart';
 import 'package:orderupv2/shared/models/client.dart';
-import 'package:provider/provider.dart';
 
 class ClientInfoCard extends StatelessWidget {
   final Client client;

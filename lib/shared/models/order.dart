@@ -5,7 +5,7 @@ class Order {
   String from;
   String id;
   int date;
-  bool forPayment;
+  bool forPayment = false;
   List<Item> items;
   String status;
   double total;

@@ -44,6 +44,7 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
           body: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
+                elevation: 20,
                 expandedHeight: 200,
                 floating: false,
                 pinned: true,
@@ -144,10 +145,13 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
   @override
   void runFunction(Object object) {
     Order order = object;
-    if(order != null) {
+    if(order != null && account != null) {
       setState(() {
+        var copy = account.orders.where((element) => element.id == order.id).first;
+        var index = account.orders.indexOf(copy);
+        print('index: $index');
         print(order.status);
-        account.orders.add(order);
+        index < 0 ? account.orders.add(order) : account.orders[index] = order;
       });
     }
   }
