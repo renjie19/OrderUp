@@ -204,6 +204,7 @@ class _ShopPageState extends State<ShopPage> {
         itemIndex < 0
             ? order.items.add(result)
             : order.items[itemIndex] = result;
+        order.total = 0;
         order.items.forEach((element) => order.total += element.price);
       });
     }
@@ -217,7 +218,7 @@ class _ShopPageState extends State<ShopPage> {
     newOrder.date = order.date ?? DateTime.now().millisecondsSinceEpoch;
     newOrder.forPayment = order.forPayment ?? false;
     newOrder.items = order.items;
-    newOrder.total = order.total ?? 0;
+    newOrder.total = 0;
     newOrder.items.forEach((item) => newOrder.total += item.price);
     newOrder.status = newOrder.total == 0
         ? StatusConstant.PENDING
