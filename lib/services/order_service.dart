@@ -32,9 +32,6 @@ class OrderService {
           to: snapshot['to'],
           from: snapshot['from']));
     }
-    orders.sort((o1, o2) {
-      return o2.date.compareTo(o1.date);
-    });
     return orders;
   }
 

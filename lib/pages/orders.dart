@@ -25,6 +25,7 @@ class _OrdersState extends State<Orders> {
   List<Order> orderList;
   bool isSelected = false;
   bool toReceive = false;
+  Account account;
 
   final List<Map<String, Object>> type = [
     {'label': 'Deliver', 'icon': Feather.truck},
@@ -33,7 +34,8 @@ class _OrdersState extends State<Orders> {
 
   @override
   Widget build(BuildContext context) {
-    filterOrderByClient(Provider.of<Account>(context));
+    account = Provider.of<Account>(context);
+    filterOrderByClient(account);
     return SafeArea(
         child: Scaffold(
           body: CustomScrollView(
@@ -53,12 +55,18 @@ class _OrdersState extends State<Orders> {
                       Feather.shopping_bag,
                       color: Colors.white,
                     ),
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(
+                    onPressed: () async {
+                      Order order = await Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
                           return ShopPage(widget.client, Order());
                         },
                       ));
+                      if(order != null) {
+                        print('adding order');
+                        setState(() {
+                          account.orders.add(order);
+                        });
+                      }
                     },
                   ),
                 ],
@@ -72,6 +80,7 @@ class _OrdersState extends State<Orders> {
         ));
   }
 
+  /// for filtering order based on type
   List<Order> filterByType(List<Order> orders, bool toReceive) {
     return orders
         .where(
@@ -79,6 +88,7 @@ class _OrdersState extends State<Orders> {
         .toList();
   }
 
+  /// for filtering new update from stream
   void filterOrderByClient(Account account) {
     setState(() {
       if (account != null) {

@@ -8,7 +8,11 @@ class OrderListView extends StatelessWidget {
   final List<Order> orders;
   final IconData iconData;
 
-  OrderListView({this.orders, this.iconData});
+  OrderListView({this.orders, this.iconData}) {
+    this.orders.sort((o1,o2) {
+      return o2.date.compareTo(o1.date);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

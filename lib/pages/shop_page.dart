@@ -157,7 +157,7 @@ class _ShopPageState extends State<ShopPage> {
       progressDialog.update(message: 'Finishing up');
       await ClientService().addClientOrders(result.id, result.to);
       progressDialog.hide();
-      Navigator.pop(context);
+      Navigator.pop(context, result);
     }
     progressDialog.hide();
   }
