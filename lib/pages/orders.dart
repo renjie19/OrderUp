@@ -57,7 +57,7 @@ class _OrdersState extends State<Orders> {
                     onPressed: () async {
                       Order order = await Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return ShopPage(widget.client, Order());
+                          return ShopPage(widget.client, Order(), isUpdate: false);
                         },
                       ));
                       if(order != null) {

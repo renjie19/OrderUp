@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:orderupv2/components/item_create.dart';
+import 'package:orderupv2/mixins/date_formatter.dart';
 import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/services/client_service.dart';
 import 'package:orderupv2/services/order_service.dart';
@@ -12,13 +13,13 @@ import 'package:orderupv2/shared/models/client.dart';
 import 'package:orderupv2/shared/models/item.dart';
 import 'package:orderupv2/shared/models/order.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'package:provider/provider.dart';
 
 class ShopPage extends StatefulWidget {
   final Client client;
   final Order order;
+  final bool isUpdate;
 
-  ShopPage(this.client, this.order);
+  ShopPage(this.client, this.order, {@required this.isUpdate});
 
   @override
   _ShopPageState createState() => _ShopPageState();
@@ -79,9 +80,8 @@ class _ShopPageState extends State<ShopPage> {
               child: FlatButton(
                 disabledColor: Colors.grey,
                 padding: EdgeInsets.symmetric(vertical: 12),
-                onPressed: order.items.length <= 0
-                    ? null
-                    : () => sendOrder(order),
+                onPressed:
+                    order.items.length <= 0 ? null : () => sendOrder(order),
                 child: Icon(
                   Icons.send,
                   size: 28,
@@ -95,6 +95,32 @@ class _ShopPageState extends State<ShopPage> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
+            Container(
+              child: !widget.isUpdate
+                  ? null
+                  : Card( // todo extract to another widget
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Center(child: Text('ORDER INFO', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),),
+                            Text('Order Id'),
+                            Text(order.id, style: TextStyle(fontWeight: FontWeight.bold),),
+                            SizedBox(height: 10),
+                            Text('Date'),
+                            Text(DateFormatter.toDateString(order.date), style: TextStyle(fontWeight: FontWeight.bold),),
+                            SizedBox(height: 10),
+                            Text('Time'),
+                            Text(DateFormatter.toTimeString(order.date), style: TextStyle(fontWeight: FontWeight.bold),),
+                            SizedBox(height: 10),
+                            Text('Status'),
+                            Text(order.status, style: TextStyle(fontWeight: FontWeight.bold),),
+                          ],
+                        ),
+                      ),
+                    ),
+            ),
             Expanded(
               child: ListView.separated(
                 padding: EdgeInsets.all(8),
@@ -151,7 +177,7 @@ class _ShopPageState extends State<ShopPage> {
     order = buildOrder(order);
     progressDialog.update(message: 'Creating your order');
     Order result = await OrderService().create(order);
-    if(result != null) {
+    if (result != null) {
       progressDialog.update(message: 'Sending to client');
       await accountService.addToOrderList(result.id);
       progressDialog.update(message: 'Finishing up');

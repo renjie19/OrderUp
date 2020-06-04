@@ -27,7 +27,7 @@ class OrderListView extends StatelessWidget {
               // show shop page
               Order order = await Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
-                  return ShopPage(client, orders[position]);
+                  return ShopPage(client, orders[position], isUpdate: true);
                 },
               ));
 //              if(order != null) {
