@@ -4,7 +4,6 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:orderupv2/components/client_info_card.dart';
 import 'package:orderupv2/components/order_list_view.dart';
 import 'package:orderupv2/pages/shop_page.dart';
-import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/client.dart';
@@ -13,7 +12,7 @@ import 'package:provider/provider.dart';
 
 class Orders extends StatefulWidget {
   final Client client;
-  List<Order> orders;
+  final List<Order> orders;
 
   Orders(this.client, this.orders);
 

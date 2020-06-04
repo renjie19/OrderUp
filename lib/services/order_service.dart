@@ -12,16 +12,19 @@ class OrderService {
   // getOrders
   Future<List<Order>> orders(orderIds) async {
     List<Order> orders = [];
-    List<Item> itemList = [];
+
     for (String id in orderIds) {
       DocumentSnapshot snapshot =
           await _orderCollectionReference.document(id).get();
-      Map<String, Object> item = snapshot.data;
-      itemList.add(Item(
-          name: item['name'],
-          package: item['packaging'],
-          price: item['price'],
-          quantity: item['quantity']));
+      List<Item> itemList = [];
+      List items = snapshot['items'];
+      for(Map<String, Object> item in items) {
+        itemList.add(Item(
+            name: item['name'],
+            package: item['packaging'],
+            price: item['price'],
+            quantity: item['quantity']));
+      }
       orders.add(Order(
           id: snapshot['id'],
           date: snapshot['date'],
