@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:orderupv2/components/item_create.dart';
+import 'package:orderupv2/components/order_info_card.dart';
 import 'package:orderupv2/mixins/date_formatter.dart';
 import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/services/client_service.dart';
@@ -96,31 +97,15 @@ class _ShopPageState extends State<ShopPage> {
         child: Column(
           children: <Widget>[
             Container(
-              child: !widget.isUpdate
-                  ? null
-                  : Card( // todo extract to another widget
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Center(child: Text('ORDER INFO', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),),
-                            Text('Order Id'),
-                            Text(order.id, style: TextStyle(fontWeight: FontWeight.bold),),
-                            SizedBox(height: 10),
-                            Text('Date'),
-                            Text(DateFormatter.toDateString(order.date), style: TextStyle(fontWeight: FontWeight.bold),),
-                            SizedBox(height: 10),
-                            Text('Time'),
-                            Text(DateFormatter.toTimeString(order.date), style: TextStyle(fontWeight: FontWeight.bold),),
-                            SizedBox(height: 10),
-                            Text('Status'),
-                            Text(order.status, style: TextStyle(fontWeight: FontWeight.bold),),
-                          ],
-                        ),
-                      ),
-                    ),
-            ),
+                child: !widget.isUpdate
+                    ? null
+                    : OrderInfoCard(
+                        orderId: order.id,
+                        date: DateFormatter.toDateString(order.date),
+                        time: DateFormatter.toTimeString(order.date),
+                        status: order.status,
+                        total: '${order.total}',
+                      )),
             Expanded(
               child: ListView.separated(
                 padding: EdgeInsets.all(8),
@@ -172,7 +157,6 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   void sendOrder(Order order) async {
-    // show loading screen
     progressDialog.show();
     order = buildOrder(order);
     progressDialog.update(message: 'Creating your order');
@@ -195,7 +179,8 @@ class _ShopPageState extends State<ShopPage> {
         builder: (context) {
           return Container(
             padding: EdgeInsets.all(10),
-            child: ItemCreate(item, () => showCreateSheet(Item())),
+            child: ItemCreate(item, () => showCreateSheet(Item()),
+                widget.order.status == StatusConstant.PENDING),
           );
         });
 

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
@@ -5,12 +7,13 @@ import 'package:orderupv2/components/client_info_card.dart';
 import 'package:orderupv2/components/order_list_view.dart';
 import 'package:orderupv2/pages/shop_page.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
+import 'package:orderupv2/shared/custom_callback.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/client.dart';
 import 'package:orderupv2/shared/models/order.dart';
 import 'package:provider/provider.dart';
 
-class Orders extends StatefulWidget {
+class Orders extends StatefulWidget{
   final Client client;
   final List<Order> orders;
 
@@ -18,9 +21,10 @@ class Orders extends StatefulWidget {
 
   @override
   _OrdersState createState() => _OrdersState();
+
 }
 
-class _OrdersState extends State<Orders> {
+class _OrdersState extends State<Orders> implements CustomCallBack {
   List<Order> orderList;
   bool isSelected = false;
   bool toReceive = false;
@@ -61,7 +65,6 @@ class _OrdersState extends State<Orders> {
                         },
                       ));
                       if(order != null) {
-                        print('adding order');
                         setState(() {
                           account.orders.add(order);
                         });
@@ -135,4 +138,15 @@ class _OrdersState extends State<Orders> {
       }),
     );
   }
+
+  @override
+  void runFunction(Object object) {
+    var order = object;
+    if(order != null) {
+      setState(() {
+        account.orders.add(order);
+      });
+    }
+  }
 }
+

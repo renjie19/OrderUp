@@ -1,48 +1,65 @@
 import 'package:flutter/material.dart';
-import 'package:orderupv2/mixins/date_formatter.dart';
-import 'package:orderupv2/services/order_service.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 class OrderInfoCard extends StatelessWidget {
   final String orderId;
+  final String date;
+  final String time;
+  final String status;
+  final String total;
 
-  OrderInfoCard({this.orderId});
+  OrderInfoCard({
+    @required this.orderId,
+    @required this.date,
+    @required this.time,
+    @required this.status,
+    @required this.total
+  });
 
   @override
   Widget build(BuildContext context) {
-    String id = orderId;
-    if(orderId == null) {
-      id = OrderService.generateOrderId();
-    }
-
-    return Container(
-      width: double.maxFinite,
-      padding: EdgeInsets.all(8),
-      color: Colors.white,
-      child: Column(
-        children: <Widget>[
-          Text(
-            'Order Info',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+    return Card(
+      // todo extract to another widget
+      child: Container(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Center(
+              child: Text('ORDER INFO',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             ),
-          ),
-          SizedBox(height: 8),
-          Container(
-            padding: EdgeInsets.all(8),
-            alignment: Alignment.topLeft,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Text('Order Id'),
+            Text(
+              orderId,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 5),
+            Text('Date'),
+            Text(
+              date,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 5),
+            Text('Time'),
+            Text(
+              time,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                Text('Order Id: $id'),
+                Text('Total: '),
+                Icon(Feather.dollar_sign, size: 18,),
                 Text(
-                    'Date: ${DateFormatter.toDateString(DateTime.now().millisecondsSinceEpoch)}'),
-                // todo add a time getter from millis
-                Text('Time: 03:00 PM')
+                  total,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ],
-            ),
-          ),
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
