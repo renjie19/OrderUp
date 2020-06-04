@@ -111,34 +111,43 @@ class _ShopPageState extends State<ShopPage> {
                 padding: EdgeInsets.all(8),
                 itemBuilder: (context, position) {
                   var item = order.items[position];
-                  return Container(
-                    color: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(flex: 2, child: Text(item.name)),
-                        Icon(Feather.dollar_sign),
-                        Expanded(flex: 1, child: Text('${item.price}')),
-                        IconButton(
-                          icon: Icon(Feather.minus),
-                          onPressed: () => setState(() {
-                            item.quantity > 0 ? item.quantity -= 1 : item.quantity = 0;
-                            if (item.quantity <= 0 && !widget.isUpdate) {
-                              order.items.remove(item);
-                            }
-                          }),
-                          iconSize: 18,
-                          color: Colors.red[700],
+                  return Card(
+                    shape: RoundedRectangleBorder(),
+                    margin: EdgeInsets.symmetric(vertical: 0),
+                    child: InkWell(
+                      onTap: () => showCreateSheet(item),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(flex: 2, child: Text(item.name)),
+                            Icon(Feather.dollar_sign),
+                            Expanded(flex: 1, child: Text('${item.price}')),
+                            IconButton(
+                              icon: Icon(Feather.minus),
+                              onPressed: () => setState(() {
+                                item.quantity > 0
+                                    ? item.quantity -= 1
+                                    : item.quantity = 0;
+                                if (item.quantity <= 0 && !widget.isUpdate) {
+                                  order.items.remove(item);
+                                }
+                              }),
+                              iconSize: 18,
+                              color: Colors.red[700],
+                            ),
+                            Text('${item.quantity}'),
+                            IconButton(
+                              icon: Icon(Feather.plus),
+                              onPressed: () =>
+                                  setState(() => item.quantity += 1),
+                              iconSize: 18,
+                              color: Colors.red[700],
+                            ),
+                            Text('${item.package}'),
+                          ],
                         ),
-                        Text('${item.quantity}'),
-                        IconButton(
-                          icon: Icon(Feather.plus),
-                          onPressed: () => setState(() => item.quantity += 1),
-                          iconSize: 18,
-                          color: Colors.red[700],
-                        ),
-                        Text('${item.package}'),
-                      ],
+                      ),
                     ),
                   );
                 },
@@ -160,7 +169,8 @@ class _ShopPageState extends State<ShopPage> {
     progressDialog.show();
     order = buildOrder(order);
     progressDialog.update(message: 'Creating your order');
-    Order result = await OrderService().create(order);
+    //todo change to update if for update
+    Order result = widget.isUpdate ? await OrderService().create(order) : await OrderService().update(order) ;
     if (result != null) {
       progressDialog.update(message: 'Sending to client');
       await accountService.addToOrderList(result.id);
@@ -174,12 +184,13 @@ class _ShopPageState extends State<ShopPage> {
 
   void showCreateSheet(Item selectedItem) async {
     Item item = selectedItem == null ? Item() : selectedItem;
+    var itemIndex = order.items.indexOf(item);
     Item result = await showModalBottomSheet(
         context: context,
         builder: (context) {
           return Container(
             padding: EdgeInsets.all(10),
-            child: ItemCreate(item, () => showCreateSheet(Item()),
+            child: ItemCreate(item, () => showCreateSheet(itemIndex == null ? Item() : order.items[itemIndex + 1] ?? Item()),
                 widget.order.status == StatusConstant.PENDING),
           );
         });
@@ -189,7 +200,10 @@ class _ShopPageState extends State<ShopPage> {
         order.items = List<Item>();
       }
       setState(() {
-        order.items.add(result);
+        itemIndex == null
+            ? order.items.add(result)
+            : order.items[itemIndex] = result;
+        order.items.forEach((element) => order.total += element.price);
       });
     }
   }
@@ -197,14 +211,16 @@ class _ShopPageState extends State<ShopPage> {
   Order buildOrder(Order order) {
     Order newOrder = Order();
     newOrder.id = order.id ?? OrderService.generateOrderId();
-    newOrder.from = AccountService.account.id;
-    newOrder.to = widget.client.id;
-    newOrder.date = DateTime.now().millisecondsSinceEpoch;
-    newOrder.status = order.status ?? StatusConstant.PENDING;
+    newOrder.from = order.from ?? AccountService.account.id;
+    newOrder.to = order.to ?? widget.client.id;
+    newOrder.date = order.date ?? DateTime.now().millisecondsSinceEpoch;
     newOrder.forPayment = order.forPayment ?? false;
     newOrder.items = order.items;
     newOrder.total = order.total ?? 0;
     newOrder.items.forEach((item) => newOrder.total += item.price);
+    newOrder.status = newOrder.total == 0
+        ? StatusConstant.PENDING
+        : StatusConstant.FOR_DELIVERY;
     return newOrder;
   }
 

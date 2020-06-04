@@ -47,6 +47,13 @@ class OrderInfoCard extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 5),
+            SizedBox(height: 5),
+            Text('Status'),
+            Text(
+              status,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[

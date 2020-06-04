@@ -1,7 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:orderupv2/services/account_service.dart';
-import 'package:orderupv2/services/client_service.dart';
 import 'package:orderupv2/shared/models/item.dart';
 import 'package:orderupv2/shared/models/order.dart';
 
@@ -43,19 +40,25 @@ class OrderService {
     DocumentReference orderDocumentReference =
         _orderCollectionReference.document();
     order.id = orderDocumentReference.documentID;
-    return await orderDocumentReference.setData(mapOrder(order)).then((value) {
+    return await orderDocumentReference.setData(_mapOrder(order)).then((value) {
       return order;
     }).catchError((error) {
       print('order create error: $error');
       return null;
     });
   }
+  
+  // todo add catch clause
+  Future update(Order order) async {
+    _orderCollectionReference.document(order.id)
+        .updateData(_mapOrder(order));
+  }
 
   static String generateOrderId() {
     return _orderCollectionReference.document().documentID;
   }
 
-  Map<String, Object> mapOrder(Order order) {
+  Map<String, Object> _mapOrder(Order order) {
     List<Map<String, Object>> items = [];
     for (Item item in order.items) {
       items.add({
@@ -78,6 +81,5 @@ class OrderService {
     return orderMap;
   }
 
-// update order
 
 }

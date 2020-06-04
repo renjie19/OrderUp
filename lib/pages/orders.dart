@@ -74,8 +74,10 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
                 ],
               ),
               OrderListView(
+                client: widget.client,
                 orders: filterByType(orderList, toReceive),
                 iconData: toReceive ? Feather.box : Feather.truck,
+                callBack: this,
               ),
             ],
           ),
@@ -141,9 +143,10 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
 
   @override
   void runFunction(Object object) {
-    var order = object;
+    Order order = object;
     if(order != null) {
       setState(() {
+        print(order.status);
         account.orders.add(order);
       });
     }
