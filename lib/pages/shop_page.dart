@@ -122,8 +122,8 @@ class _ShopPageState extends State<ShopPage> {
                         IconButton(
                           icon: Icon(Feather.minus),
                           onPressed: () => setState(() {
-                            item.quantity -= 1;
-                            if (item.quantity <= 0) {
+                            item.quantity > 0 ? item.quantity -= 1 : item.quantity = 0;
+                            if (item.quantity <= 0 && !widget.isUpdate) {
                               order.items.remove(item);
                             }
                           }),
