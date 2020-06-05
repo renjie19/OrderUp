@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:orderupv2/components/item_create.dart';
+import 'package:orderupv2/components/create_item_tab.dart';
 import 'package:orderupv2/components/order_info_card.dart';
 import 'package:orderupv2/mixins/date_formatter.dart';
 import 'package:orderupv2/services/account_service.dart';
@@ -196,7 +196,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
         builder: (context) {
           return Container(
             padding: EdgeInsets.all(10),
-            child: ItemCreate(
+            child: CreateItemTab(
               item: item,
               onContinue: () => showCreateSheet(
                 itemIndex < 0 ? Item() : order.items[itemIndex + 1] ?? Item(),

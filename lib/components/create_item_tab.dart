@@ -3,18 +3,18 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/item.dart';
 
-class ItemCreate extends StatefulWidget {
+class CreateItemTab extends StatefulWidget {
   final Item item;
   final Function onContinue;
   final bool editablePrice;
 
-  ItemCreate({this.item, this.onContinue, this.editablePrice});
+  CreateItemTab({this.item, this.onContinue, this.editablePrice});
 
   @override
   _CreateItemState createState() => _CreateItemState(item);
 }
 
-class _CreateItemState extends State<ItemCreate> {
+class _CreateItemState extends State<CreateItemTab> {
   final _createItemKey = GlobalKey<FormState>();
   Item itemSelected;
 

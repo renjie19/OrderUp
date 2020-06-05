@@ -19,7 +19,6 @@ class OrderInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      // todo extract to another widget
       child: Container(
         padding: EdgeInsets.all(10),
         child: Column(

@@ -26,18 +26,20 @@ class OrderListView extends StatelessWidget {
         (context, position) {
           return ListTile(
             onTap: () async {
-              Order order = await Navigator.push(context, MaterialPageRoute(
-                builder: (context) {
-                  var order = orders[position];
-                  return PurchaseTab(
-                    client,
-                    order,
-                    isUpdate: true,
-                    isPriceEditable: order.from == client.id,
-                  );
-                },
-              ));
-
+              Order order = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    var order = orders[position];
+                    return PurchaseTab(
+                      client,
+                      order,
+                      isUpdate: true,
+                      isPriceEditable: order.from == client.id,
+                    );
+                  },
+                ),
+              );
               /// called to return the updated object to the order list page
               if (order != null) {
                 callBack.run(order);
