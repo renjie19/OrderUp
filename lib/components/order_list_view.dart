@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orderupv2/mixins/date_formatter.dart';
-import 'package:orderupv2/pages/shop_page.dart';
+import 'package:orderupv2/pages/purchase_tab.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/custom_callback.dart';
 import 'package:orderupv2/shared/models/client.dart';
@@ -14,7 +14,7 @@ class OrderListView extends StatelessWidget {
 
   OrderListView({this.orders, this.iconData, this.client, this.callBack}) {
     /// for sorting of orders by latest date
-    this.orders.sort((o1,o2) {
+    this.orders.sort((o1, o2) {
       return o2.date.compareTo(o1.date);
     });
   }
@@ -25,15 +25,22 @@ class OrderListView extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         (context, position) {
           return ListTile(
-            onTap: () async{
-              /// shows shop page
+            onTap: () async {
               Order order = await Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
-                  return ShopPage(client, orders[position], isUpdate: true);
+                  var order = orders[position];
+                  return PurchaseTab(
+                    client,
+                    order,
+                    isUpdate: true,
+                    isPriceEditable: order.from == client.id,
+                  );
                 },
               ));
-              if(order != null) {
-                callBack.runFunction(order);
+
+              /// called to return the updated object to the order list page
+              if (order != null) {
+                callBack.run(order);
               }
             },
             leading: Icon(

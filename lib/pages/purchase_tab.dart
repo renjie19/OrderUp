@@ -15,18 +15,20 @@ import 'package:orderupv2/shared/models/item.dart';
 import 'package:orderupv2/shared/models/order.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
-class ShopPage extends StatefulWidget {
+class PurchaseTab extends StatefulWidget {
   final Client client;
   final Order order;
   final bool isUpdate;
+  final bool isPriceEditable;
 
-  ShopPage(this.client, this.order, {@required this.isUpdate});
+  PurchaseTab(this.client, this.order,
+      {@required this.isUpdate, @required this.isPriceEditable});
 
   @override
-  _ShopPageState createState() => _ShopPageState();
+  _PurchaseTabState createState() => _PurchaseTabState();
 }
 
-class _ShopPageState extends State<ShopPage> {
+class _PurchaseTabState extends State<PurchaseTab> {
   bool isLoading = false;
   Order order;
   ProgressDialog progressDialog;
@@ -98,15 +100,16 @@ class _ShopPageState extends State<ShopPage> {
         child: Column(
           children: <Widget>[
             Container(
-                child: !widget.isUpdate
-                    ? null
-                    : OrderInfoCard(
-                        orderId: order.id,
-                        date: DateFormatter.toDateString(order.date),
-                        time: DateFormatter.toTimeString(order.date),
-                        status: order.status,
-                        total: '${order.total}',
-                      )),
+              child: !widget.isUpdate
+                  ? null
+                  : OrderInfoCard(
+                      orderId: order.id,
+                      date: DateFormatter.toDateString(order.date),
+                      time: DateFormatter.toTimeString(order.date),
+                      status: order.status,
+                      total: '${order.total}',
+                    ),
+            ),
             Expanded(
               child: ListView.separated(
                 padding: EdgeInsets.all(8),
@@ -126,6 +129,8 @@ class _ShopPageState extends State<ShopPage> {
                             Expanded(flex: 1, child: Text('${item.price}')),
                             IconButton(
                               icon: Icon(Feather.minus),
+                              iconSize: 18,
+                              color: Colors.red[700],
                               onPressed: () => setState(() {
                                 item.quantity > 0
                                     ? item.quantity -= 1
@@ -134,8 +139,6 @@ class _ShopPageState extends State<ShopPage> {
                                   order.items.remove(item);
                                 }
                               }),
-                              iconSize: 18,
-                              color: Colors.red[700],
                             ),
                             Text('${item.quantity}'),
                             IconButton(
@@ -170,8 +173,10 @@ class _ShopPageState extends State<ShopPage> {
     progressDialog.show();
     order = buildOrder(order);
     progressDialog.update(message: 'Creating your order');
-    //todo change to update if for update
-    Order result = widget.isUpdate ? await OrderService().update(order) : await OrderService().create(order) ;
+    Order result = widget.isUpdate
+        ? await OrderService().update(order)
+        : await OrderService().create(order);
+
     if (result != null) {
       progressDialog.update(message: 'Sending to client');
       await accountService.addToOrderList(result.id);
@@ -191,8 +196,13 @@ class _ShopPageState extends State<ShopPage> {
         builder: (context) {
           return Container(
             padding: EdgeInsets.all(10),
-            child: ItemCreate(item, () => showCreateSheet(itemIndex == null ? Item() : order.items[itemIndex + 1] ?? Item()),
-                widget.order.status == StatusConstant.PENDING),
+            child: ItemCreate(
+              item: item,
+              onContinue: () => showCreateSheet(
+                itemIndex < 0 ? Item() : order.items[itemIndex + 1] ?? Item(),
+              ),
+              editablePrice: widget.isPriceEditable,
+            ),
           );
         });
 

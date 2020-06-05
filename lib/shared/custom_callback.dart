@@ -1,3 +1,3 @@
 abstract class CustomCallBack {
-  void runFunction(Object object);
+  void run(Object object);
 }

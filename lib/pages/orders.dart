@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:orderupv2/components/client_info_card.dart';
 import 'package:orderupv2/components/order_list_view.dart';
-import 'package:orderupv2/pages/shop_page.dart';
+import 'package:orderupv2/pages/purchase_tab.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/custom_callback.dart';
 import 'package:orderupv2/shared/models/account.dart';
@@ -62,7 +62,7 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
                     onPressed: () async {
                       Order order = await Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return ShopPage(widget.client, Order(), isUpdate: false);
+                          return PurchaseTab(widget.client, Order(), isUpdate: false, isPriceEditable: false,);
                         },
                       ));
                       if(order != null) {
@@ -143,7 +143,7 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
   }
 
   @override
-  void runFunction(Object object) {
+  void run(Object object) {
     Order order = object;
     if(order != null && account != null) {
       setState(() {

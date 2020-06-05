@@ -8,7 +8,7 @@ class ItemCreate extends StatefulWidget {
   final Function onContinue;
   final bool editablePrice;
 
-  ItemCreate(this.item, this.onContinue, this.editablePrice);
+  ItemCreate({this.item, this.onContinue, this.editablePrice});
 
   @override
   _CreateItemState createState() => _CreateItemState(item);
