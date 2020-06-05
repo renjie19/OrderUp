@@ -6,6 +6,7 @@ import 'package:orderupv2/components/create_item_tab.dart';
 import 'package:orderupv2/components/order_info_card.dart';
 import 'package:orderupv2/mixins/date_formatter.dart';
 import 'package:orderupv2/services/account_service.dart';
+import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/services/client_service.dart';
 import 'package:orderupv2/services/order_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
@@ -32,12 +33,11 @@ class _PurchaseTabState extends State<PurchaseTab> {
   bool isLoading = false;
   Order order;
   ProgressDialog progressDialog;
-  AccountService accountService;
+  final AccountService _accountService = AccountServiceImpl();
 
   @override
   Widget build(BuildContext context) {
     // todo move to a single method
-    accountService = AccountService();
     order = widget.order ?? Order();
     order.items = order.items ?? [];
     order.total = order.total ?? 0;
@@ -179,7 +179,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
 
     if (result != null) {
       progressDialog.update(message: 'Sending to client');
-      await accountService.addToOrderList(result.id);
+      await _accountService.addToOrderList(result.id);
       progressDialog.update(message: 'Finishing up');
       await ClientService().addClientOrders(result.id, result.to);
       progressDialog.hide();
@@ -223,7 +223,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
   Order buildOrder(Order order) {
     Order newOrder = Order();
     newOrder.id = order.id ?? OrderService.generateOrderId();
-    newOrder.from = order.from ?? AccountService.account.id;
+    newOrder.from = order.from ?? AccountServiceImpl.account.id;
     newOrder.to = order.to ?? widget.client.id;
     newOrder.date = order.date ?? DateTime.now().millisecondsSinceEpoch;
     newOrder.forPayment = order.forPayment ?? false;

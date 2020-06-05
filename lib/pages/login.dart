@@ -4,6 +4,7 @@ import 'package:orderupv2/components/logo.dart';
 import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/pages/sign_up.dart';
 import 'package:orderupv2/services/account_service.dart';
+import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 
@@ -16,7 +17,6 @@ class _LoginState extends State<Login> {
   final _loginKey = GlobalKey<FormState>();
 
   final AuthService _authService = AuthService();
-  final AccountService _accountService = AccountService();
 
   String _email;
   String _password;
@@ -95,6 +95,7 @@ class _LoginState extends State<Login> {
                             // login
                             var result = await _authService.signIn(_email, _password);
                             setState(() => _isLoading = false);
+                            // todo show error message of var
                           }
                         },
                         child: Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orderupv2/pages/orders.dart';
 import 'package:orderupv2/services/account_service.dart';
+import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/client.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +28,7 @@ class ClientItem extends StatelessWidget {
             Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
               return StreamProvider<Account>.value(
-                  value: AccountService(uid: account.id).userData,
+                  value: AccountServiceImpl().userData,
                   child: Orders(client, orders));
             }));
           },

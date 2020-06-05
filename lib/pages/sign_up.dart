@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:orderupv2/components/loading.dart';
-import 'package:orderupv2/services/account_service.dart';
+import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
@@ -15,7 +15,7 @@ class _SignUpState extends State<SignUp> {
   final _signUpKey = GlobalKey<FormState>();
 
   final AuthService _authService = AuthService();
-  final AccountService _accountService = AccountService();
+  final AccountServiceImpl _accountService = AccountServiceImpl();
   bool _isLoading = false;
   String _loadingMessage = "Please Wait";
   Account _account = Account();
@@ -132,7 +132,7 @@ class _SignUpState extends State<SignUp> {
 
   Future saveUserInfo() async {
     showLoading("Finishing Up");
-    await _accountService.registerAccount(_account);
+    await _accountService.create(_account);
   }
 
   Future registerEmailAndPassword() async {
