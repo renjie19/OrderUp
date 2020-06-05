@@ -32,7 +32,8 @@ class OrderListView extends StatelessWidget {
               var selectedOrder = orders[position];
               var isFromCurrentUser = selectedOrder.from == client.id;
               var isStillPending = selectedOrder.status == StatusConstant.PENDING;
-              Order order = isFromCurrentUser || isStillPending
+              var isPaid = selectedOrder.status == StatusConstant.PAID;
+              Order order = (isFromCurrentUser || isStillPending) && !isPaid
                   ? await showPurchaseTab(context, selectedOrder)
                   : await showReceiptPreview(context, selectedOrder);
 

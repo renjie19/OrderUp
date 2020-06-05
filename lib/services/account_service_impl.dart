@@ -21,6 +21,7 @@ class AccountServiceImpl implements AccountService {
     if (_instance == null) {
       _instance = AccountServiceImpl._internal(uid: id);
     }
+    _instance.uid = id;
     return _instance;
   }
 

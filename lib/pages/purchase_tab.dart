@@ -43,23 +43,25 @@ class _PurchaseTabState extends State<PurchaseTab> {
     order.total = order.total ?? 0;
     progressDialog = initProgressDialog();
 
+    var isForPayment = order.forPayment ?? false;
+
     return Scaffold(
       backgroundColor: primaryColor,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         elevation: 0,
         shape: CircleBorder(side: BorderSide(width: 3, color: primaryColor)),
-        tooltip: 'Add Item',
+        tooltip: isForPayment ? 'Paid' : 'Add Item',
         splashColor: primaryColor,
         backgroundColor: Colors.white,
         child: Icon(
-          Icons.add,
+          isForPayment ? Feather.dollar_sign : Icons.add,
           size: 20,
           color: primaryColor,
         ),
         onPressed: () {
           // show dialog create item dialog
-          showCreateSheet(Item());
+          isForPayment ? updateOrderToPaid() : showCreateSheet(Item());
         },
       ),
       bottomNavigationBar: BottomAppBar(
@@ -84,8 +86,9 @@ class _PurchaseTabState extends State<PurchaseTab> {
               child: FlatButton(
                 disabledColor: Colors.grey,
                 padding: EdgeInsets.symmetric(vertical: 12),
-                onPressed:
-                    order.items.length <= 0 ? null : () => sendOrder(order),
+                onPressed: order.items.length <= 0
+                    ? null
+                    : () => sendOrder(buildOrder(order)),
                 child: Icon(
                   Icons.send,
                   size: 28,
@@ -171,7 +174,6 @@ class _PurchaseTabState extends State<PurchaseTab> {
 
   void sendOrder(Order order) async {
     progressDialog.show();
-    order = buildOrder(order);
     progressDialog.update(message: 'Creating your order');
     Order result = widget.isUpdate
         ? await OrderService().update(order)
@@ -233,6 +235,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
     newOrder.status = newOrder.total == 0
         ? StatusConstant.PENDING
         : StatusConstant.FOR_DELIVERY;
+    newOrder.forPayment = newOrder.status == StatusConstant.FOR_DELIVERY;
     return newOrder;
   }
 
@@ -250,5 +253,12 @@ class _PurchaseTabState extends State<PurchaseTab> {
       message: 'Please Wait',
     );
     return dialog;
+  }
+
+  void updateOrderToPaid() {
+    Order paidOrder = buildOrder(order);
+    paidOrder.status = StatusConstant.PAID;
+    paidOrder.forPayment = true;
+    sendOrder(paidOrder);
   }
 }
