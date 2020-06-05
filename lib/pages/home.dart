@@ -3,8 +3,10 @@ import 'package:orderupv2/components/custom_alert_dialog.dart';
 import 'package:orderupv2/pages/account_management.dart';
 import 'package:orderupv2/pages/client_list.dart';
 import 'package:orderupv2/components/loading.dart';
+import 'package:orderupv2/pages/summary_tab.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
+import 'package:orderupv2/shared/constants/status_constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +14,11 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final account = Provider.of<Account>(context);
-    final List<Widget> pages = [Container(), Container(), ClientList()];
+    final List<Widget> pages = [
+      SummaryTab(account != null ? account.orders : []),
+      Container(),
+      ClientList()
+    ];
     final List<Map<String, Object>> tabs = [
       {'icon': Icon(Icons.assessment), 'text': 'Summary'},
       {'icon': Icon(Icons.event_note), 'text': 'Report'},
