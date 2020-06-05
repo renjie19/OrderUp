@@ -7,18 +7,21 @@ class OrderInfoCard extends StatelessWidget {
   final String time;
   final String status;
   final String total;
+  final double elevation;
 
   OrderInfoCard({
     @required this.orderId,
     @required this.date,
     @required this.time,
     @required this.status,
-    @required this.total
+    @required this.total,
+    this.elevation
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: elevation ?? 2,
       child: Container(
         padding: EdgeInsets.all(10),
         child: Column(

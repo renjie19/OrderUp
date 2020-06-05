@@ -50,6 +50,13 @@ class AccountServiceImpl implements AccountService {
     return null;
   }
 
+  @override
+  Future addToOrderList(String orderId) async {
+    await _userCollection.document(account.id).updateData({
+      'orders': FieldValue.arrayUnion([orderId])
+    });
+  }
+
   Future<Account> _mapToAccount(DocumentSnapshot snapshot) async {
     if (snapshot != null && snapshot.exists) {
       account = Account(
@@ -66,9 +73,5 @@ class AccountServiceImpl implements AccountService {
     return account;
   }
 
-  Future addToOrderList(String orderId) async {
-    await _userCollection.document(account.id).updateData({
-      'orders': FieldValue.arrayUnion([orderId])
-    });
-  }
+
 }
