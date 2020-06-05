@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:orderupv2/components/logout_alert.dart';
+import 'package:orderupv2/components/custom_alert_dialog.dart';
 import 'package:orderupv2/pages/account_management.dart';
 import 'package:orderupv2/pages/client_list.dart';
 import 'package:orderupv2/components/loading.dart';
+import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:provider/provider.dart';
@@ -53,7 +54,16 @@ class Home extends StatelessWidget {
                         showDialog(
                             context: context,
                             barrierDismissible: false,
-                            builder: (context) => LogOutDialog());
+                            builder: (context) => CustomAlertDialog(
+                                title: Text('LOGOUT'),
+                                content: Text(
+                                    'You are logging out.\nAre You Sure?',
+                                    textAlign: TextAlign.center),
+                                onNo: () => Navigator.pop(context),
+                                onYes: () {
+                                  Navigator.pop(context);
+                                  AuthService().signOut();
+                                }));
                       }),
                 ],
               ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orderupv2/components/logo.dart';
 import 'package:orderupv2/components/loading.dart';
+import 'package:orderupv2/mixins/alert_message.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 
@@ -128,34 +129,7 @@ class _LoginState extends State<Login> {
 
   void showErrorMessage(PlatformException result, BuildContext context) {
     if (result != null) {
-      Flushbar(
-        borderRadius: 5,
-        padding: EdgeInsets.all(5),
-        margin: EdgeInsets.all(5),
-        backgroundColor: Colors.redAccent,
-        duration: Duration(seconds: 3),
-        flushbarPosition: FlushbarPosition.TOP,
-        titleText: Center(
-          child: Text(
-            'Error',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        messageText: Center(
-          child: Text(
-            getError(result),
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.bold
-            ),
-          ),
-        ),
-      ).show(context);
+      AlertMessage.show('Error', getError(result), true, context);
     }
   }
 

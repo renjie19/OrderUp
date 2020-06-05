@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:orderupv2/components/create_item_tab.dart';
+import 'package:orderupv2/components/custom_alert_dialog.dart';
 import 'package:orderupv2/components/order_info_card.dart';
+import 'package:orderupv2/mixins/alert_message.dart';
 import 'package:orderupv2/mixins/date_formatter.dart';
 import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/services/account_service_impl.dart';
@@ -86,9 +88,8 @@ class _PurchaseTabState extends State<PurchaseTab> {
               child: FlatButton(
                 disabledColor: Colors.grey,
                 padding: EdgeInsets.symmetric(vertical: 12),
-                onPressed: order.items.length <= 0
-                    ? null
-                    : () => sendOrder(buildOrder(order)),
+                onPressed:
+                    order.items.length <= 0 ? null : () => showAlertDialog(),
                 child: Icon(
                   Icons.send,
                   size: 28,
@@ -186,6 +187,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
       await ClientService().addClientOrders(result.id, result.to);
       progressDialog.hide();
       Navigator.pop(context, result);
+      AlertMessage.show('Success', 'Order Sent', false, context);
     }
     progressDialog.hide();
   }
@@ -260,5 +262,22 @@ class _PurchaseTabState extends State<PurchaseTab> {
     paidOrder.status = StatusConstant.PAID;
     paidOrder.forPayment = true;
     sendOrder(paidOrder);
+  }
+
+  showAlertDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => CustomAlertDialog(
+          title: Text('Finalizing Order'),
+          content: Text(
+              'Are you sure with your order? \nYou can\'t modify once status is changed',
+              textAlign: TextAlign.center),
+          onNo: () => Navigator.pop(context),
+          onYes: () {
+            Navigator.pop(context);
+            sendOrder(buildOrder(order));
+          }),
+    );
   }
 }
