@@ -29,18 +29,7 @@ class OrderListView extends StatelessWidget {
         (context, position) {
           return ListTile(
             onTap: () async {
-              var selectedOrder = orders[position];
-              var isFromCurrentUser = selectedOrder.from == client.id;
-              var isStillPending = selectedOrder.status == StatusConstant.PENDING;
-              var isPaid = selectedOrder.status == StatusConstant.PAID;
-              Order order = (isFromCurrentUser || isStillPending) && !isPaid
-                  ? await showPurchaseTab(context, selectedOrder)
-                  : await showReceiptPreview(context, selectedOrder);
-
-              /// called to return the updated object to the selectedOrder list page
-              if (order != null) {
-                callBack.run(order);
-              }
+              await onOrderSelect(position, context);
             },
             leading: Icon(
               iconData,
@@ -58,6 +47,21 @@ class OrderListView extends StatelessWidget {
         childCount: orders.length,
       ),
     );
+  }
+
+  Future onOrderSelect(int position, BuildContext context) async {
+    var selectedOrder = orders[position];
+    var isFromCurrentUser = selectedOrder.from == client.id;
+    var isStillPending = selectedOrder.status == StatusConstant.PENDING;
+    var isPaid = selectedOrder.status == StatusConstant.PAID;
+    Order order = (isFromCurrentUser || isStillPending) && !isPaid
+        ? await showPurchaseTab(context, selectedOrder)
+        : await showReceiptPreview(context, selectedOrder);
+    
+    /// called to return the updated object to the Order list page
+    if (order != null) {
+      callBack.run(order);
+    }
   }
 
   Future<Order> showPurchaseTab(BuildContext context, Order selectedOrder) {

@@ -1,10 +1,8 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orderupv2/components/logo.dart';
 import 'package:orderupv2/components/loading.dart';
-import 'package:orderupv2/pages/sign_up.dart';
-import 'package:orderupv2/services/account_service.dart';
-import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 
@@ -74,7 +72,8 @@ class _LoginState extends State<Login> {
                                         color: Colors.grey,
                                       ),
                                       onPressed: () {
-                                        setState(() => _isVisible = !_isVisible);
+                                        setState(
+                                            () => _isVisible = !_isVisible);
                                       })),
                               validator: (value) {
                                 // todo add check for valid email format
@@ -92,10 +91,10 @@ class _LoginState extends State<Login> {
                         onPressed: () async {
                           if (_loginKey.currentState.validate()) {
                             setState(() => _isLoading = true);
-                            // login
-                            var result = await _authService.signIn(_email, _password);
+                            var result =
+                                await _authService.signIn(_email, _password);
                             setState(() => _isLoading = false);
-                            // todo show error message of var
+                            showErrorMessage(result, context);
                           }
                         },
                         child: Text(
@@ -125,5 +124,54 @@ class _LoginState extends State<Login> {
               ),
             ),
           );
+  }
+
+  void showErrorMessage(PlatformException result, BuildContext context) {
+    if (result != null) {
+      Flushbar(
+        borderRadius: 5,
+        padding: EdgeInsets.all(5),
+        margin: EdgeInsets.all(5),
+        backgroundColor: Colors.redAccent,
+        duration: Duration(seconds: 3),
+        flushbarPosition: FlushbarPosition.TOP,
+        titleText: Center(
+          child: Text(
+            'Error',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        messageText: Center(
+          child: Text(
+            getError(result),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold
+            ),
+          ),
+        ),
+      ).show(context);
+    }
+  }
+
+  String getError(PlatformException result) {
+    print(result.code);
+    switch (result.code) {
+      case 'ERROR_INVALID_EMAIL':
+        return 'INVALID EMAIL';
+      case 'ERROR_USER_NOT_FOUND':
+        return 'EMAIL DOES NOT EXIST';
+      case 'ERROR_WRONG_PASSWORD':
+        return 'WRONG PASSWORD';
+      case 'ERROR_TOO_MANY_REQUESTS':
+        return 'TRIED MULTIPLE TIMES. TRY AGAIN LATER';
+      default:
+        return '${result.code}\n{result.message}';
+    }
   }
 }
