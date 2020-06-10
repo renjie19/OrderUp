@@ -43,7 +43,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
     order = widget.order ?? Order();
     order.items = order.items ?? [];
     order.total = order.total ?? 0;
-    progressDialog = initProgressDialog();
+    progressDialog = _initProgressDialog();
 
     var isForPayment = order.forPayment ?? false;
 
@@ -52,7 +52,6 @@ class _PurchaseTabState extends State<PurchaseTab> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         elevation: 0,
-        shape: CircleBorder(side: BorderSide(width: 3, color: primaryColor)),
         tooltip: isForPayment ? 'Paid' : 'Add Item',
         splashColor: primaryColor,
         backgroundColor: Colors.white,
@@ -63,43 +62,10 @@ class _PurchaseTabState extends State<PurchaseTab> {
         ),
         onPressed: () {
           // show dialog create item dialog
-          isForPayment ? updateOrderToPaid() : showCreateSheet(Item());
+          isForPayment ? _updateOrderToPaid() : _showCreateSheet(Item());
         },
       ),
-      bottomNavigationBar: BottomAppBar(
-        // bottom options
-        color: highlightColor,
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: FlatButton(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Icon(
-                  Feather.x,
-                  size: 28,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            Expanded(
-              child: FlatButton(
-                disabledColor: Colors.grey,
-                padding: EdgeInsets.symmetric(vertical: 12),
-                onPressed:
-                    order.items.length <= 0 ? null : () => showAlertDialog(),
-                child: Icon(
-                  Icons.send,
-                  size: 28,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: _getBottomBar(),
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -114,85 +80,37 @@ class _PurchaseTabState extends State<PurchaseTab> {
                       total: '${order.total}',
                     ),
             ),
-            Expanded(
-              child: ListView.separated(
-                padding: EdgeInsets.all(8),
-                itemBuilder: (context, position) {
-                  var item = order.items[position];
-                  return Card(
-                    shape: RoundedRectangleBorder(),
-                    margin: EdgeInsets.symmetric(vertical: 0),
-                    child: InkWell(
-                      onTap: () => showCreateSheet(item),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(flex: 2, child: Text(item.name)),
-                            Icon(Feather.dollar_sign),
-                            Expanded(flex: 1, child: Text('${item.price}')),
-                            IconButton(
-                              icon: Icon(Feather.minus),
-                              iconSize: 18,
-                              color: Colors.red[700],
-                              onPressed: () => setState(() {
-                                item.quantity > 0
-                                    ? item.quantity -= 1
-                                    : item.quantity = 0;
-                                if (item.quantity <= 0 && !widget.isUpdate) {
-                                  order.items.remove(item);
-                                }
-                              }),
-                            ),
-                            Text('${item.quantity}'),
-                            IconButton(
-                              icon: Icon(Feather.plus),
-                              onPressed: () =>
-                                  setState(() => item.quantity += 1),
-                              iconSize: 18,
-                              color: Colors.red[700],
-                            ),
-                            Text('${item.package}'),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-                separatorBuilder: (context, position) => Divider(
-                  height: 1,
-                  thickness: 1,
-                  color: Colors.black,
-                ),
-                itemCount: order.items.length,
-              ),
-            ),
+            _getItemList(),
           ],
         ),
       ),
     );
   }
 
-  void sendOrder(Order order) async {
-    progressDialog.show();
-    progressDialog.update(message: 'Creating your order');
-    Order result = widget.isUpdate
-        ? await OrderService().update(order)
-        : await OrderService().create(order);
+  void _sendOrder(Order order) async {
+    try {
+      progressDialog.show();
+      progressDialog.update(message: 'Creating your order');
+      Order result = widget.isUpdate
+          ? await OrderService().update(order)
+          : await OrderService().create(order);
 
-    if (result != null) {
-      progressDialog.update(message: 'Sending to client');
-      await _accountService.addToOrderList(result.id);
-      progressDialog.update(message: 'Finishing up');
-      await ClientService().addClientOrders(result.id, result.to);
+      if (result != null) {
+        progressDialog.update(message: 'Sending to client');
+        await _accountService.addToOrderList(result.id);
+        progressDialog.update(message: 'Finishing up');
+        await ClientService().addClientOrders(result.id, result.to);
+        progressDialog.hide();
+        Navigator.pop(context, result);
+        AlertMessage.show('Order Sent', false, context);
+      }
+    } catch (error) {
       progressDialog.hide();
-      Navigator.pop(context, result);
-      AlertMessage.show('Success', 'Order Sent', false, context);
+      AlertMessage.show(error, true, context);
     }
-    progressDialog.hide();
   }
 
-  void showCreateSheet(Item selectedItem) async {
+  _showCreateSheet(Item selectedItem) async {
     Item item = selectedItem == null ? Item() : selectedItem;
     var itemIndex = order.items.indexOf(item);
     Item result = await showModalBottomSheet(
@@ -202,7 +120,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
             padding: EdgeInsets.all(10),
             child: CreateItemTab(
               item: item,
-              onContinue: () => showCreateSheet(
+              onContinue: () => _showCreateSheet(
                 itemIndex < 0 ? Item() : order.items[itemIndex + 1] ?? Item(),
               ),
               editablePrice: widget.isPriceEditable,
@@ -241,12 +159,13 @@ class _PurchaseTabState extends State<PurchaseTab> {
     return newOrder;
   }
 
-  ProgressDialog initProgressDialog() {
+  ProgressDialog _initProgressDialog() {
     ProgressDialog dialog = ProgressDialog(
       context,
       type: ProgressDialogType.Normal,
       isDismissible: true,
     );
+
     dialog.style(
       progressWidget: SpinKitWave(
         color: Colors.blue,
@@ -257,14 +176,14 @@ class _PurchaseTabState extends State<PurchaseTab> {
     return dialog;
   }
 
-  void updateOrderToPaid() {
+  _updateOrderToPaid() {
     Order paidOrder = buildOrder(order);
     paidOrder.status = StatusConstant.PAID;
     paidOrder.forPayment = true;
-    sendOrder(paidOrder);
+    _sendOrder(paidOrder);
   }
 
-  showAlertDialog() {
+  _showAlertDialog() {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -276,8 +195,101 @@ class _PurchaseTabState extends State<PurchaseTab> {
           onNo: () => Navigator.pop(context),
           onYes: () {
             Navigator.pop(context);
-            sendOrder(buildOrder(order));
+            _sendOrder(buildOrder(order));
           }),
+    );
+  }
+
+  _getBottomBar() {
+    return BottomAppBar(
+      // bottom options
+      color: highlightColor,
+      shape: CircularNotchedRectangle(),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: IconButton(
+              padding: EdgeInsets.symmetric(vertical: 12),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Feather.x,
+                size: 28,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          Expanded(
+            child: IconButton(
+              icon: Icon(
+                Icons.send,
+                size: 28,
+              ),
+              padding: EdgeInsets.symmetric(vertical: 12),
+              disabledColor: Colors.grey[600],
+              color: Colors.white,
+              onPressed:
+                  order.items.length <= 0 ? null : () => _showAlertDialog(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _getItemList() {
+    return Expanded(
+      child: ListView.separated(
+        padding: EdgeInsets.all(8),
+        itemBuilder: (context, position) {
+          var item = order.items[position];
+          return Card(
+            shape: RoundedRectangleBorder(),
+            margin: EdgeInsets.symmetric(vertical: 0),
+            child: InkWell(
+              onTap: () => _showCreateSheet(item),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(flex: 2, child: Text(item.name)),
+                    Icon(Feather.dollar_sign),
+                    Expanded(flex: 1, child: Text('${item.price}')),
+                    IconButton(
+                      icon: Icon(Feather.minus),
+                      iconSize: 18,
+                      color: Colors.red[700],
+                      onPressed: () => setState(() {
+                        item.quantity > 0
+                            ? item.quantity -= 1
+                            : item.quantity = 0;
+                        if (item.quantity <= 0 && !widget.isUpdate) {
+                          order.items.remove(item);
+                        }
+                      }),
+                    ),
+                    Text('${item.quantity}'),
+                    IconButton(
+                      icon: Icon(Feather.plus),
+                      onPressed: () => setState(() => item.quantity += 1),
+                      iconSize: 18,
+                      color: Colors.red[700],
+                    ),
+                    Text('${item.package}'),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+        separatorBuilder: (context, position) => Divider(
+          height: 1,
+          thickness: 1,
+          color: Colors.black,
+        ),
+        itemCount: order.items.length,
+      ),
     );
   }
 }

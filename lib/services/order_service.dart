@@ -56,7 +56,6 @@ class OrderService {
         .then((value) => order)
         .catchError((onError) {
       print('Order Update Error: $onError');
-      return null;
     });
   }
 

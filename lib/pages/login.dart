@@ -56,6 +56,7 @@ class _LoginState extends State<Login> {
                               validator: (value) {
                                 return value.isEmpty ? "Required" : null;
                               },
+                              textInputAction: TextInputAction.next ,
                             ),
                             SizedBox(height: 10),
                             TextFormField(
@@ -129,7 +130,7 @@ class _LoginState extends State<Login> {
 
   void showErrorMessage(PlatformException result, BuildContext context) {
     if (result != null) {
-      AlertMessage.show('Error', getError(result), true, context);
+      AlertMessage.show(getError(result), true, context);
     }
   }
 

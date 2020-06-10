@@ -100,7 +100,7 @@ class _CreateItemState extends State<CreateItemTab> {
                 FlatButton(
                   onPressed: () {
                     if (_createItemKey.currentState.validate()) {
-                      setState(() => itemSelected.package = 'pc(s)');
+                      setState(() => itemSelected.package = itemSelected.package ?? 'pc(s)');
                       Navigator.pop(context, itemSelected);
                       widget.onContinue();
                     }
@@ -111,7 +111,7 @@ class _CreateItemState extends State<CreateItemTab> {
                   color: Colors.blue,
                   onPressed: () {
                     if (_createItemKey.currentState.validate()) {
-                      setState(() => itemSelected.package = 'pc(s)');
+                      setState(() => itemSelected.package = itemSelected.package ?? 'pc(s)');
                       Navigator.pop(context, itemSelected);
                     }
                   },
