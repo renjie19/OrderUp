@@ -15,17 +15,35 @@ class SummaryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, Object>> itemSummary = summarizeOrders(orders ?? []);
-    return Scaffold(
-      body: ListView.builder(
-          itemCount: itemSummary.length,
-          itemBuilder: (context, index) {
-            var item = itemSummary[index];
-            return ListTile(
-              onTap: (){},
-              title: Text(item['name']),
-              trailing: Text('${item['quantity']} '),
-            );
-          }
+    return Container(
+      child: Card(
+        child: Column(
+          children: <Widget>[
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18
+              ),
+            ),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                  maxHeight: itemSummary.isEmpty
+                      ? double.minPositive + 56
+                      : itemSummary.length * 56.0),
+              child: ListView.builder(
+                  itemCount: itemSummary.length,
+                  itemBuilder: (context, index) {
+                    var item = itemSummary[index];
+                    return ListTile(
+                      onTap: () {},
+                      title: Text(item['name']),
+                      trailing: Text('${item['quantity']} '),
+                    );
+                  }),
+            ),
+          ],
+        ),
       ),
     );
   }

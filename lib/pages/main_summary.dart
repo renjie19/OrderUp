@@ -16,29 +16,16 @@ class MainSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     var orders = account != null ? account.orders : [];
     return Scaffold(
-      body: Container(),
-//      body: Container(
-//        color: primaryColor,
-//        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-//        child: Column(
-//          children: <Widget>[
-//            Expanded(
-//              child: Card(
-//                child: SummaryTab(
-//                    _filterOrdersForDelivery(orders, account),
-//                    'For Delivery'),
-//              ),
-//            ),
-//            Expanded(
-//              child: Card(
-//                child: SummaryTab(
-//                    _filterOrdersToBeReceived(orders, account),
-//                    'For Delivery'),
-//              ),
-//            ),
-//          ],
-//        ),
-//      ),
+      body: Container(
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+        color: Colors.blue,
+        child: Column(
+          children: <Widget>[
+            SummaryTab(_filterOrdersForDelivery(orders ?? [], account), 'For Delivery'),
+            SummaryTab(_filterOrdersToBeReceived(orders ?? [], account), 'To Be Received'),
+          ],
+        ),
+      ),
     );
   }
 
