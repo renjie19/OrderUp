@@ -55,7 +55,7 @@ class SummaryTab extends StatelessWidget {
         child: Center(
           child: Text(
             '$count',
-            style: _getTextStyle().copyWith(fontSize: 40),
+            style: _getTextStyle().copyWith(fontSize: 30),
           ),
         ),
       ),

@@ -51,7 +51,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
       backgroundColor: primaryColor,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        elevation: 0,
+        elevation: 10,
         tooltip: isForPayment ? 'Paid' : 'Add Item',
         splashColor: primaryColor,
         backgroundColor: Colors.white,
@@ -62,7 +62,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
         ),
         onPressed: () {
           // show dialog create item dialog
-          isForPayment ? _updateOrderToPaid() : _showCreateSheet(Item());
+          isForPayment ? _showConfirmPayment() : _showCreateSheet(Item());
         },
       ),
       bottomNavigationBar: _getBottomBar(),
@@ -163,7 +163,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
     ProgressDialog dialog = ProgressDialog(
       context,
       type: ProgressDialogType.Normal,
-      isDismissible: true,
+      isDismissible: false,
     );
 
     dialog.style(
@@ -181,6 +181,23 @@ class _PurchaseTabState extends State<PurchaseTab> {
     paidOrder.status = StatusConstant.PAID;
     paidOrder.forPayment = true;
     _sendOrder(paidOrder);
+  }
+
+  _showConfirmPayment() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => CustomAlertDialog(
+          title: Text('Confirm Payment'),
+          content: Text(
+              'Confirm that the order is paid',
+              textAlign: TextAlign.center),
+          onNo: () => Navigator.pop(context),
+          onYes: () {
+            Navigator.pop(context);
+            _updateOrderToPaid();
+          }),
+    );
   }
 
   _showAlertDialog() {

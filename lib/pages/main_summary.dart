@@ -18,14 +18,17 @@ class MainSummary extends StatelessWidget {
     var orders = account != null ? account.orders : [];
     return Scaffold(
       body: Container(
+        height: double.maxFinite,
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-        color: Colors.blue,
-        child: Column(
-          children: <Widget>[
-            SummaryTab(orders, account),
-            SummaryListTab(_filterOrdersForDelivery(orders ?? [], account), 'Items To Delivery'),
-            SummaryListTab(_filterOrdersToBeReceived(orders ?? [], account), 'To Be Received'),
-          ],
+        color: primaryColor,
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              SummaryTab(orders, account),
+              SummaryListTab(_filterOrdersForDelivery(orders ?? [], account), 'Items To Delivery'),
+              SummaryListTab(_filterOrdersToBeReceived(orders ?? [], account), 'To Be Received'),
+            ],
+          ),
         ),
       ),
     );

@@ -24,21 +24,27 @@ class SummaryListTab extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             itemSummary.isEmpty
-                ? ListTile(title: Center(child: Text('None')),)
+                ? ListTile(
+                    title: Center(child: Text('None')),
+                  )
                 : ConstrainedBox(
                     constraints: BoxConstraints(
                         maxHeight: itemSummary.isEmpty
                             ? double.minPositive + 56
-                            : itemSummary.length * 56.0),
-                    child: ListView.builder(
-                        itemCount: itemSummary.length,
-                        itemBuilder: (context, index) {
-                          var item = itemSummary[index];
-                          return ListTile(
-                            title: Text(item['name']),
-                            trailing: Text('${item['quantity']} '),
-                          );
-                        }),
+                            : 170),
+                    child: ListView.separated(
+                      itemCount: itemSummary.length,
+                      itemBuilder: (context, index) {
+                        var item = itemSummary[index];
+                        return ListTile(
+                          title: Text(item['name']),
+                          trailing: Text('${item['quantity']} '),
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return Divider(height: .5, indent: 10,);
+                      },
+                    ),
                   ),
           ],
         ),
