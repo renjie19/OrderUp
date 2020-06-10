@@ -4,13 +4,11 @@ import 'package:orderupv2/pages/account_management.dart';
 import 'package:orderupv2/pages/client_list.dart';
 import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/pages/main_summary.dart';
-import 'file:///C:/Users/Renjie/Desktop/personal_projects/OrderUp/lib/components/summary_tab.dart';
+import 'file:///C:/Users/Renjie/Desktop/personal_projects/OrderUp/lib/components/summary_list_tab.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
-import 'package:orderupv2/shared/models/order.dart';
 import 'package:provider/provider.dart';
-import 'package:orderupv2/shared/constants/status_constants.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -18,12 +16,10 @@ class Home extends StatelessWidget {
     final account = Provider.of<Account>(context);
     final List<Widget> pages = [
       MainSummary(account: account),
-      Container(),
       ClientList()
     ];
     final List<Map<String, Object>> tabs = [
       {'icon': Icon(Icons.assessment), 'text': 'Summary'},
-      {'icon': Icon(Icons.event_note), 'text': 'Report'},
       {'icon': Icon(Icons.people), 'text': 'Clients'},
     ];
 

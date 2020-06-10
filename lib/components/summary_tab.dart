@@ -1,82 +1,82 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:orderupv2/services/account_service.dart';
-import 'package:orderupv2/services/account_service_impl.dart';
-import 'package:orderupv2/shared/constants/constants.dart';
-import 'package:orderupv2/shared/models/item.dart';
+import 'package:orderupv2/shared/constants/status_constants.dart';
+import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/order.dart';
 
 class SummaryTab extends StatelessWidget {
   final List<Order> orders;
-  final AccountService _accountService = AccountServiceImpl();
-  final String title;
+  final Account account;
 
-  SummaryTab(this.orders, this.title);
+  SummaryTab(this.orders, this.account);
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, Object>> itemSummary = summarizeOrders(orders ?? []);
     return Container(
       child: Card(
-        child: Column(
-          children: <Widget>[
-            Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18
-              ),
-            ),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                  maxHeight: itemSummary.isEmpty
-                      ? double.minPositive + 56
-                      : itemSummary.length * 56.0),
-              child: ListView.builder(
-                  itemCount: itemSummary.length,
-                  itemBuilder: (context, index) {
-                    var item = itemSummary[index];
-                    return ListTile(
-                      onTap: () {},
-                      title: Text(item['name']),
-                      trailing: Text('${item['quantity']} '),
-                    );
-                  }),
-            ),
-          ],
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: 180,
+          ),
+          child: GridView.count(
+            padding: EdgeInsets.all(10),
+            shrinkWrap: true,
+            crossAxisCount: 2,
+            children: <Widget>[
+              _getReportTile('Number of stores to deliver', _countShopsToDeliver(orders)),
+              _getReportTile('Total amount to collect', '\$${_countTotalAmountToCollect(orders)}'),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  List<Map<String, Object>> summarizeOrders(List<Order> orders) {
-    Map<String, Object> summary = {};
-    for (Order order in orders) {
-      for (Item item in order.items) {
-        List<Item> value = summary['${item.name}-${item.package}'];
-        if (value == null) {
-          value = [];
-        }
-        value.add(item);
-        summary['${item.name}-${item.package}'] = value;
-      }
+  _countShopsToDeliver(List<Order> orders) {
+    if (account != null && orders != null) {
+      return _filterItemsForDelivery(orders).length;
     }
-    List<Map<String, Object>> list = [];
-    summary.forEach((key, value) {
-      List<Item> items = value;
-      int quantity = 0;
-      String name = '';
-      String package = '';
-
-      items.forEach((element) {
-        name = element.name;
-        quantity += element.quantity;
-        package = element.package;
-      });
-
-      if (quantity > 0) {
-        list.add({'name': name, 'quantity': '$quantity $package'});
-      }
-    });
-    return list;
+    return 0;
   }
+
+  List<Order> _filterItemsForDelivery(List<Order> orders) {
+    return orders
+        .where((element) {
+          return element.to == account.id &&
+              element.status == StatusConstant.FOR_DELIVERY;
+        }).toList();
+  }
+
+  _getReportTile(String s, count) {
+    return Card(
+      elevation: 3,
+      child: GridTile(
+        footer: Text(s, style: _getTextStyle(),textAlign: TextAlign.center,),
+        child: Center(
+          child: Text(
+            '$count',
+            style: _getTextStyle().copyWith(fontSize: 40),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // todo add filter to only delivery within the week
+  _countTotalAmountToCollect(List<Order> orders) {
+    var totalAmount = 0.0;
+    _filterItemsForDelivery(orders).forEach((element) {
+      totalAmount += element.total;
+    });
+    return totalAmount == 0 ? 0 : totalAmount;
+  }
+
+  TextStyle _getTextStyle() {
+    return TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    );
+  }
+
+
 }

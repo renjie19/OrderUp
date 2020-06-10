@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:orderupv2/components/summary_list_tab.dart';
 import 'package:orderupv2/components/summary_tab.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/constants/status_constants.dart';
@@ -21,8 +22,9 @@ class MainSummary extends StatelessWidget {
         color: Colors.blue,
         child: Column(
           children: <Widget>[
-            SummaryTab(_filterOrdersForDelivery(orders ?? [], account), 'For Delivery'),
-            SummaryTab(_filterOrdersToBeReceived(orders ?? [], account), 'To Be Received'),
+            SummaryTab(orders, account),
+            SummaryListTab(_filterOrdersForDelivery(orders ?? [], account), 'Items To Delivery'),
+            SummaryListTab(_filterOrdersToBeReceived(orders ?? [], account), 'To Be Received'),
           ],
         ),
       ),

@@ -17,12 +17,10 @@ class ReceiptPreview extends StatelessWidget {
     Client client = account.clients
         .where((client) => client.id == order.to || client.id == order.from)
         .first;
-    final highLightText = TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-    );
+
     return Scaffold(
       backgroundColor: primaryColor,
+      appBar: AppBar(backgroundColor: primaryColor, elevation: 0,),
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10),
@@ -34,7 +32,7 @@ class ReceiptPreview extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Center(child: Text('RECIPIENT INFO', style: highLightText.copyWith(fontSize: 18),)),
+                      Center(child: Text('RECIPIENT INFO', style: _getTextStyle().copyWith(fontSize: 18.0),)),
                       SizedBox(height: 5),
                       Row(
                         children: <Widget>[
@@ -43,7 +41,7 @@ class ReceiptPreview extends StatelessWidget {
                             order.to == account.id
                                 ? '${account.firstName} ${account.lastName}'
                                 : '${client.firstName} ${client.lastName}',
-                            style: highLightText,
+                            style: _getTextStyle(),
                           ),
                         ],
                       ),
@@ -55,7 +53,7 @@ class ReceiptPreview extends StatelessWidget {
                             order.from == account.id
                                 ? '${account.firstName} ${account.lastName}'
                                 : '${client.firstName} ${client.lastName}',
-                            style: highLightText,
+                            style: _getTextStyle(),
                           ),
                         ],
                       ),
@@ -67,7 +65,7 @@ class ReceiptPreview extends StatelessWidget {
                             order.from == account.id
                                 ? '${account.location}'
                                 : '${client.location}',
-                            style: highLightText,
+                            style: _getTextStyle(),
                           ),
                         ],
                       ),
@@ -112,6 +110,13 @@ class ReceiptPreview extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  _getTextStyle() {
+    return TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
     );
   }
 }
