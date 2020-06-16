@@ -74,5 +74,12 @@ class AccountServiceImpl implements AccountService {
     return account;
   }
 
+  @override
+  Future addClient(String id) async {
+    await _userCollection.document(account.id).updateData({
+      'clients' : FieldValue.arrayUnion([id])
+    });
+  }
+
 
 }

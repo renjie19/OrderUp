@@ -15,4 +15,6 @@ abstract class AccountService {
   // todo should be moved
   // add order to ids
   Future addToOrderList(String orderId);
+
+  Future addClient(String id);
 }

@@ -4,7 +4,6 @@ import 'package:orderupv2/pages/account_management.dart';
 import 'package:orderupv2/pages/client_list.dart';
 import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/pages/main_summary.dart';
-import 'file:///C:/Users/Renjie/Desktop/personal_projects/OrderUp/lib/components/summary_list_tab.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';

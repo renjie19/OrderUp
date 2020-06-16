@@ -36,7 +36,8 @@ dependencies:
   progress_dialog: ^1.2.3
   date_time_format: ^1.0.0+4
   flushbar: ^1.10.4
-
+  qr_flutter: ^3.1.0
+  flutter_barcode_scanner: ^1.0.1
 
 dev_dependencies:
   flutter_test:
