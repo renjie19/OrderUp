@@ -25,7 +25,7 @@ class AuthService {
     try {
       AuthResult result = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-      return result.user.uid;
+      result.user.uid;
     } catch (e) {
       print('signup error $e');
     }

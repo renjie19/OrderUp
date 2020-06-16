@@ -32,7 +32,7 @@ class _LoginState extends State<Login> {
     return _isLoading
         ? Loading(message: _loadingMessage)
         : Scaffold(
-            backgroundColor: primaryColor,
+            backgroundColor: primaryColor[700],
             body: SafeArea(
               child: SingleChildScrollView(
                 child: Container(
@@ -56,6 +56,7 @@ class _LoginState extends State<Login> {
                               validator: (value) {
                                 return value.isEmpty ? "Required" : null;
                               },
+                              keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next ,
                             ),
                             SizedBox(height: 10),
@@ -104,7 +105,7 @@ class _LoginState extends State<Login> {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
-                            color: primaryColor,
+                            color: primaryColor[700],
                           ),
                         ),
                       ),
