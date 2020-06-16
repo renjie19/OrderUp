@@ -19,8 +19,8 @@ class ReceiptPreview extends StatelessWidget {
         .first;
 
     return Scaffold(
-      backgroundColor: primaryColor,
-      appBar: AppBar(backgroundColor: primaryColor, elevation: 0,),
+      backgroundColor: primaryColor[700],
+      appBar: AppBar(backgroundColor: primaryColor[700], elevation: 0,),
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10),
@@ -106,6 +106,7 @@ class ReceiptPreview extends StatelessWidget {
                   },
                 ),
               ),
+              SizedBox(height: 10)
             ],
           ),
         ),

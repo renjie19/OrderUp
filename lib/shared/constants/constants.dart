@@ -17,5 +17,7 @@ const textInputDecoration = InputDecoration(
   ),
 );
 
-const primaryColor = Color.fromRGBO(40, 123, 192, 1);
+const primaryColor = Colors.blue;
 const highlightColor = Colors.amber;
+const highlightColorSecondary = Colors.white;
+const disabledColor = Colors.grey;

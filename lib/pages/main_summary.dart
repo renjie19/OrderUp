@@ -20,7 +20,7 @@ class MainSummary extends StatelessWidget {
       body: Container(
         height: double.maxFinite,
         padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-        color: primaryColor,
+        color: primaryColor[800],
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[

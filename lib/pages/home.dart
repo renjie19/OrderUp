@@ -29,6 +29,7 @@ class Home extends StatelessWidget {
             child: Scaffold(
               backgroundColor: primaryColor,
               appBar: AppBar(
+                backgroundColor: primaryColor[700],
                 leading: IconButton(
                   icon: Icon(Icons.account_circle),
                   onPressed: () {

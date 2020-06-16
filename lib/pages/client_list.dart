@@ -14,7 +14,7 @@ class ClientList extends StatelessWidget {
     List _clients = account == null ? [] : account.clients;
 
     return Scaffold(
-      backgroundColor: primaryColor,
+      backgroundColor: primaryColor[800],
       body: ListView.builder(
         padding: EdgeInsets.only(top: 20),
         itemBuilder: (context, position) {
@@ -23,13 +23,14 @@ class ClientList extends StatelessWidget {
         itemCount: _clients.length,
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: highlightColorSecondary,
         onPressed: (){
           Navigator.push(context, MaterialPageRoute(
               builder: (context) {
                 return QrPage(account.id);
               }));
         },
-        child: Icon(Feather.user_plus),
+        child: Icon(Feather.user_plus, color: primaryColor[700],),
       ),
     );
   }

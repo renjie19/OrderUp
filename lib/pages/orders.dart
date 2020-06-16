@@ -44,6 +44,7 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
           body: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
+                backgroundColor: primaryColor[700],
                 elevation: 20,
                 expandedHeight: 200,
                 floating: false,

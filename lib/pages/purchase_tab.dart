@@ -48,7 +48,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
     var isForPayment = order.forPayment ?? false;
 
     return Scaffold(
-      backgroundColor: primaryColor,
+      backgroundColor: primaryColor[700],
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         elevation: 10,
@@ -58,7 +58,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
         child: Icon(
           isForPayment ? Feather.dollar_sign : Icons.add,
           size: 20,
-          color: primaryColor,
+          color: primaryColor[700],
         ),
         onPressed: () {
           // show dialog create item dialog
@@ -244,7 +244,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
                 size: 28,
               ),
               padding: EdgeInsets.symmetric(vertical: 12),
-              disabledColor: Colors.grey[600],
+              disabledColor: disabledColor[700],
               color: Colors.white,
               onPressed:
                   order.items.length <= 0 ? null : () => _showAlertDialog(),
