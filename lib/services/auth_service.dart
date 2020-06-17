@@ -28,6 +28,7 @@ class AuthService {
       result.user.uid;
     } catch (e) {
       print('signup error $e');
+      throw e;
     }
   }
 

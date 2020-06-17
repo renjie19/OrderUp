@@ -54,7 +54,7 @@ class _LoginState extends State<Login> {
                                 prefixIcon: Icon(Icons.email),
                               ),
                               validator: (value) {
-                                return value.isEmpty ? "Required" : null;
+                                return value.isEmpty ? 'Required' : null;
                               },
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next ,

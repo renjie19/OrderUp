@@ -6,6 +6,7 @@ import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
+import 'package:the_validator/the_validator.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -27,6 +28,7 @@ class _SignUpState extends State<SignUp> {
 
   int _currentStep = 0;
   bool _isComplete = false;
+  String _continueLabel = 'Continue';
 
   List<Step> _getSteps() {
     return [
@@ -39,15 +41,15 @@ class _SignUpState extends State<SignUp> {
           child: Column(
             children: <Widget>[
               TextFormField(
-                validator: (value) => _isNull(value),
-                decoration: InputDecoration(hintText: 'First Name'),
+                validator: (value) => _validateIfEmpty(value),
+                decoration: InputDecoration(labelText: 'First Name'),
                 initialValue: _account.firstName,
                 onChanged: (value) =>
                     setState(() => _account.firstName = value),
               ),
               TextFormField(
-                validator: (value) => _isNull(value),
-                decoration: InputDecoration(hintText: 'Last Name'),
+                validator: (value) => _validateIfEmpty(value),
+                decoration: InputDecoration(labelText: 'Last Name'),
                 initialValue: _account.lastName,
                 onChanged: (value) => setState(() => _account.lastName = value),
               ),
@@ -64,14 +66,14 @@ class _SignUpState extends State<SignUp> {
           child: Column(
             children: <Widget>[
               TextFormField(
-                validator: (value) => _isNull(value),
-                decoration: InputDecoration(hintText: 'Address'),
+                validator: (value) => _validateIfEmpty(value),
+                decoration: InputDecoration(labelText: 'Address'),
                 initialValue: _account.location,
                 onChanged: (value) => setState(() => _account.location = value),
               ),
               TextFormField(
-                validator: (value) => _isNull(value),
-                decoration: InputDecoration(hintText: 'Contact Number'),
+                validator: FieldValidator.number(noSymbols:true, message: 'Provide valid number'),
+                decoration: InputDecoration(labelText: 'Contact Number'),
                 initialValue: _account.contactNo,
                 onChanged: (value) =>
                     setState(() => _account.contactNo = value),
@@ -89,23 +91,23 @@ class _SignUpState extends State<SignUp> {
           child: Column(
             children: <Widget>[
               TextFormField(
-                validator: (value) => _isNull(value),
-                decoration: InputDecoration(hintText: 'Email'),
+                validator: FieldValidator.email(message: 'Provide valid email'),
+                decoration: InputDecoration(labelText: 'Email'),
                 initialValue: _account.email,
                 onChanged: (value) => setState(() => _account.email = value),
               ),
               TextFormField(
                 obscureText: true,
-                validator: (value) => _isNull(value),
-                decoration: InputDecoration(hintText: 'Password'),
+                validator: (value) => _validatePassword(value, _verifyPassword),
+                decoration: InputDecoration(labelText: 'Password'),
                 initialValue: _password,
                 onChanged: (value) => setState(() => _password = value),
               ),
               TextFormField(
                 // todo check if password and verify password are the same
                 obscureText: true,
-                validator: (value) => _isNull(value),
-                decoration: InputDecoration(hintText: 'Verify Password'),
+                validator: (value) => _validatePassword(value, _password),
+                decoration: InputDecoration(labelText: 'Verify Password'),
                 initialValue: _verifyPassword,
                 onChanged: (value) => setState(() => _verifyPassword = value),
               ),
@@ -124,6 +126,9 @@ class _SignUpState extends State<SignUp> {
 
   void _goTo(int step) {
     setState(() => _currentStep = step);
+
+    String label = _currentStep == _getSteps().length - 1 ? 'Finish' : 'Continue';
+    setState(() => _continueLabel = label);
   }
 
   void _cancel() {
@@ -139,12 +144,24 @@ class _SignUpState extends State<SignUp> {
     return _isLoading
         ? Loading(message: _loadingMessage)
         : Scaffold(
+            appBar: AppBar(
+              title: Text(
+                'Sign up Form',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18
+                ),
+              ),
+              centerTitle: true,
+            ),
             body: Stepper(
               steps: _getSteps(),
               currentStep: _currentStep,
               onStepContinue: () {
                 if (_validate(_currentStep)) {
-                  _isComplete ? _submit() : _next();
+                  _isComplete || _currentStep == _getSteps().length - 1
+                      ? _submit()
+                      : _next();
                 }
               },
               onStepCancel: _cancel,
@@ -153,110 +170,27 @@ class _SignUpState extends State<SignUp> {
                   _goTo(step);
                 }
               },
+              controlsBuilder: (BuildContext context,
+                  {VoidCallback onStepCancel, VoidCallback onStepContinue}) {
+                return Row(
+                  children: <Widget>[
+                    FlatButton(
+                      color: primaryColor,
+                      child: Text(
+                        _continueLabel,
+                        style: TextStyle(color: highlightColorSecondary),
+                      ),
+                      onPressed: onStepContinue,
+                    ),
+                    FlatButton(
+                      child: Text('Cancel'),
+                      onPressed: onStepCancel,
+                    ),
+                  ],
+                );
+              },
             ),
           );
-    // Scaffold(
-//            backgroundColor: primaryColor,
-//            body: SafeArea(
-//              child: SingleChildScrollView(
-//                child: Container(
-//                  padding: EdgeInsets.fromLTRB(20, 100, 20, 10),
-//                  child: Form(
-//                    key: _signUpKey,
-//                    child: Column(
-//                      crossAxisAlignment: CrossAxisAlignment.stretch,
-//                      children: <Widget>[
-//                        TextFormField(
-//                          onChanged: (value) => _account.firstName = value,
-//                          validator: (value) {
-//                            return validateIfEmpty(value);
-//                          },
-//                          decoration: textInputDecoration.copyWith(
-//                              hintText: "First Name"),
-//                        ),
-//                        SizedBox(height: 10),
-//                        TextFormField(
-//                          onChanged: (value) => _account.lastName = value,
-//                          validator: (value) {
-//                            return validateIfEmpty(value);
-//                          },
-//                          decoration:
-//                              textInputDecoration.copyWith(hintText: "Last Name"),
-//                        ),
-//                        SizedBox(height: 10),
-//                        TextFormField(
-//                          onChanged: (value) => _account.location = value,
-//                          validator: (value) {
-//                            return validateIfEmpty(value);
-//                          },
-//                          decoration:
-//                              textInputDecoration.copyWith(hintText: "Address"),
-//                        ),
-//                        SizedBox(height: 10),
-//                        TextFormField(
-//                          onChanged: (value) => _account.contactNo = value,
-//                          validator: (value) {
-//                            return validateIfEmpty(value);
-//                          },
-//                          decoration: textInputDecoration.copyWith(
-//                              hintText: "Contact Number"),
-//                          keyboardType: TextInputType.phone,
-//                        ),
-//                        SizedBox(height: 10),
-//                        TextFormField(
-//                          onChanged: (value) => _account.email = value.trim(),
-//                          validator: (value) {
-//                            return validateIfEmpty(value);
-//                          },
-//                          decoration:
-//                              textInputDecoration.copyWith(hintText: "Email"),
-//                          keyboardType: TextInputType.emailAddress,
-//                        ),
-//                        SizedBox(height: 10),
-//                        TextFormField(
-//                          obscureText: true,
-//                          onChanged: (value) => _password = value.trim(),
-//                          validator: (value) =>
-//                              verifyPassword(value, _verifyPassword),
-//                          decoration:
-//                              textInputDecoration.copyWith(hintText: "Password"),
-//                        ),
-//                        SizedBox(height: 10),
-//                        TextFormField(
-//                          obscureText: true,
-//                          onChanged: (value) => _verifyPassword = value.trim(),
-//                          validator: (value) => verifyPassword(value, _password),
-//                          decoration: textInputDecoration.copyWith(
-//                              hintText: "Verify Password"),
-//                        ),
-//                        SizedBox(height: 30),
-//                        RaisedButton(
-//                          padding: EdgeInsets.all(15),
-//                          color: Colors.white,
-//                          onPressed: () async {
-//                            if (_signUpKey.currentState.validate()) {
-//                              await registerEmailAndPassword();
-//                              await saveUserInfo();
-//                              showLoading("Account Created");
-//                              Navigator.canPop(context);
-//                            }
-//                          },
-//                          child: Text(
-//                            "SUBMIT",
-//                            style: TextStyle(
-//                              color: primaryColor,
-//                              fontWeight: FontWeight.bold,
-//                              fontSize: 18
-//                            ),
-//                          ),
-//                        ),
-//                      ],
-//                    ),
-//                  ),
-//                ),
-//              ),
-//            ),
-//          );
   }
 
   Future saveUserInfo() async {
@@ -264,10 +198,10 @@ class _SignUpState extends State<SignUp> {
     await _accountService.create(_account);
   }
 
-  Future registerEmailAndPassword()async {
+  Future registerEmailAndPassword() async {
     showLoading("Signing Up");
-    var id = await _authService.signUp(_account.email, _password);
-    _account.id = id;
+    var result = await _authService.signUp(_account.email, _password);
+    _account.id = result;
   }
 
   void hideLoading() {
@@ -281,7 +215,7 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
-  String verifyPassword(String value, String compareWith) {
+  String _validatePassword(String value, String compareWith) {
     if (value.isEmpty) {
       return "Required";
     } else if (value.length < 6) {
@@ -292,11 +226,7 @@ class _SignUpState extends State<SignUp> {
     return null;
   }
 
-  String validateIfEmpty(String value) => value.isEmpty ? "Required" : null;
-
-  String _isNull(String value) {
-    return value == null || value.trim().isEmpty ? 'Required' : null;
-  }
+  String _validateIfEmpty(String value) => value.isEmpty ? "Required" : null;
 
   bool _validate(int step) {
     try {
@@ -315,20 +245,6 @@ class _SignUpState extends State<SignUp> {
     }
   }
 
-  void _resetErrors(int step) {
-    switch (step) {
-      case 0:
-        _userInfoStep.currentState.reset();
-        break;
-      case 1:
-        _additionalInfoStep.currentState.reset();
-        break;
-      case 2:
-        _emailStep.currentState.reset();
-        break;
-    }
-  }
-
   _submit() async {
     try {
       await registerEmailAndPassword();
@@ -337,15 +253,14 @@ class _SignUpState extends State<SignUp> {
       Navigator.pop(context);
     } catch (e) {
       setState(() => _isLoading = false);
-      AlertMessage.show(e, true, context);
+      AlertMessage.show(e.message, true, context);
     }
   }
 
   StepState _getState(int step) {
-    if(_currentStep == step) {
+    if (_currentStep == step) {
       return StepState.editing;
-    } else if(_validate(step)) {
-      _resetErrors(step);
+    } else if (_validate(step)) {
       return StepState.complete;
     } else {
       return StepState.disabled;

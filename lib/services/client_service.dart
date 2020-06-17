@@ -12,14 +12,16 @@ class ClientService {
     List<Client> clients = [];
     for(String id in clientIds) {
       DocumentSnapshot snapshot = await _usersCollectionReference.document(id).get();
-      clients.add(Client(
-        id: id,
-        firstName: snapshot['firstName'],
-        lastName: snapshot["lastName"],
-        location: snapshot["location"],
-        email: snapshot["email"],
-        contactNo: snapshot["contactNo"],
-      ));
+      if(snapshot.exists) {
+        clients.add(Client(
+          id: id,
+          firstName: snapshot['firstName'],
+          lastName: snapshot["lastName"],
+          location: snapshot["location"],
+          email: snapshot["email"],
+          contactNo: snapshot["contactNo"],
+        ));
+      }
     }
     return clients;
   }

@@ -5,8 +5,11 @@ import 'package:orderupv2/pages/client_list.dart';
 import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/pages/main_summary.dart';
 import 'package:orderupv2/services/auth_service.dart';
+import 'package:orderupv2/services/client_service.dart';
+import 'package:orderupv2/services/order_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
+import 'package:orderupv2/shared/models/order.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
@@ -14,7 +17,9 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     final account = Provider.of<Account>(context);
     final List<Widget> pages = [
-      MainSummary(account: account),
+      StreamProvider<List<Order>>.value(
+          value: OrderService().orderUpdates,
+          child: MainSummary(account: account)),
       ClientList()
     ];
     final List<Map<String, Object>> tabs = [

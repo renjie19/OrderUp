@@ -1,4 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:orderupv2/pages/orders.dart';
+import 'package:orderupv2/services/account_service_impl.dart';
+import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/item.dart';
 import 'package:orderupv2/shared/models/order.dart';
 
@@ -19,7 +22,7 @@ class OrderService {
         itemList.add(Item(
             name: item['name'],
             package: item['packaging'],
-            price: item['price'],
+            price: double.tryParse('${item['price']}'),
             quantity: item['quantity']));
       }
       orders.add(Order(
@@ -28,7 +31,7 @@ class OrderService {
           forPayment: snapshot['forPayment'],
           items: itemList,
           status: snapshot['status'],
-          total: snapshot['total'],
+          total: double.tryParse('${snapshot['total']}'),
           to: snapshot['to'],
           from: snapshot['from']));
     }
@@ -84,5 +87,55 @@ class OrderService {
       'total': order.total
     };
     return orderMap;
+  }
+
+  Stream<List<Order>> get orderUpdates {
+    List<String> orders = [];
+    Account account = AccountServiceImpl.account;
+    if(account != null && account.orders != null) {
+      account.orders.forEach((element) => orders.add(element.id));
+      return _orderCollectionReference
+          .where('id', whereIn: [...orders])
+          .snapshots()
+          .map((snapshot) => _querySnapShotToOrderList(snapshot));
+    }
+    return null;
+  }
+
+  _querySnapShotToOrderList(QuerySnapshot snapshot) {
+    try {
+      List<Order> orders = [];
+      snapshot.documentChanges.forEach((element) {
+        orders.add(_mapToOrder(element.document.data));
+      });
+      print('Updating List of Orders: size(${orders.length})');
+      return orders;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  _mapToOrder(Map<String, Object> data) {
+    List items = data['items'];
+    Order order = Order(
+      id: data['id'],
+      date: data['date'],
+      forPayment: data['forPayment'],
+      items: [],
+      status: data['status'],
+      total: double.tryParse('${data['total']}'),
+      to: data['to'],
+      from: data['from']
+    );
+    for (Map<String, Object> itemMap in items) {
+      order.items.add(Item(
+        name: itemMap['name'],
+        package: itemMap['packaging'],
+        quantity: itemMap['quantity'],
+        price: double.tryParse('${itemMap['price']}')
+      ));
+    }
+    return order;
   }
 }

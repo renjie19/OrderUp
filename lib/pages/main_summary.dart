@@ -7,15 +7,20 @@ import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/constants/status_constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/order.dart';
+import 'package:provider/provider.dart';
 
 class MainSummary extends StatelessWidget {
   final Account account;
+
 
   MainSummary({this.account});
 
   @override
   Widget build(BuildContext context) {
+    var update = Provider.of<List<Order>>(context);
     var orders = account != null ? account.orders : [];
+    _updateSummary(update, orders);
+
     return Scaffold(
       body: Container(
         height: double.maxFinite,
@@ -52,5 +57,17 @@ class MainSummary extends StatelessWidget {
       }).toList();
     }
     return [];
+  }
+
+  void _updateSummary(List<Order> update, List<Order> orderList) {
+    if (update != null) {
+      update.forEach((orderUpdate) {
+        var result =
+        orderList.firstWhere((element) => orderUpdate.id == element.id);
+        result == null
+            ? orderList.add(orderUpdate)
+            : orderList[orderList.indexOf(result)] = orderUpdate;
+      });
+    }
   }
 }

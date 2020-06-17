@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:orderupv2/services/order_service.dart';
 import 'package:orderupv2/shared/constants/status_constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/order.dart';
+import 'package:provider/provider.dart';
 
 class SummaryTab extends StatelessWidget {
   final List<Order> orders;
@@ -23,8 +25,10 @@ class SummaryTab extends StatelessWidget {
             shrinkWrap: true,
             crossAxisCount: 2,
             children: <Widget>[
-              _getReportTile('Number of stores to deliver', _countShopsToDeliver(orders)),
-              _getReportTile('Total amount to collect', '\$${_countTotalAmountToCollect(orders)}'),
+              _getReportTile(
+                  'Number of stores to deliver', _countShopsToDeliver(orders)),
+              _getReportTile('Total amount to collect',
+                  '\$${_countTotalAmountToCollect(orders)}'),
             ],
           ),
         ),
@@ -40,18 +44,21 @@ class SummaryTab extends StatelessWidget {
   }
 
   List<Order> _filterItemsForDelivery(List<Order> orders) {
-    return orders
-        .where((element) {
-          return element.to == account.id &&
-              element.status == StatusConstant.FOR_DELIVERY;
-        }).toList();
+    return orders.where((element) {
+      return element.to == account.id &&
+          element.status == StatusConstant.FOR_DELIVERY;
+    }).toList();
   }
 
   _getReportTile(String s, count) {
     return Card(
       elevation: 3,
       child: GridTile(
-        footer: Text(s, style: _getTextStyle(),textAlign: TextAlign.center,),
+        footer: Text(
+          s,
+          style: _getTextStyle(),
+          textAlign: TextAlign.center,
+        ),
         child: Center(
           child: Text(
             '$count',
@@ -77,6 +84,4 @@ class SummaryTab extends StatelessWidget {
       fontWeight: FontWeight.bold,
     );
   }
-
-
 }
