@@ -1,4 +1,3 @@
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:orderupv2/components/logo.dart';
@@ -6,6 +5,7 @@ import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/mixins/alert_message.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
+import 'package:the_validator/the_validator.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -53,9 +53,7 @@ class _LoginState extends State<Login> {
                                 hintText: 'Email',
                                 prefixIcon: Icon(Icons.email),
                               ),
-                              validator: (value) {
-                                return value.isEmpty ? 'Required' : null;
-                              },
+                              validator: FieldValidator.email(message: 'Provide valid email'),
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next ,
                             ),
@@ -78,10 +76,7 @@ class _LoginState extends State<Login> {
                                         setState(
                                             () => _isVisible = !_isVisible);
                                       })),
-                              validator: (value) {
-                                // todo add check for valid email format
-                                return value.isEmpty ? "Required" : null;
-                              },
+                              validator: FieldValidator.required(message: 'Required'),
                             ),
                           ],
                         ),
