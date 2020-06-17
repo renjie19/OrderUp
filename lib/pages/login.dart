@@ -53,9 +53,10 @@ class _LoginState extends State<Login> {
                                 hintText: 'Email',
                                 prefixIcon: Icon(Icons.email),
                               ),
-                              validator: FieldValidator.email(message: 'Provide valid email'),
+                              validator: FieldValidator.email(
+                                  message: 'Provide valid email'),
                               keyboardType: TextInputType.emailAddress,
-                              textInputAction: TextInputAction.next ,
+                              textInputAction: TextInputAction.next,
                             ),
                             SizedBox(height: 10),
                             TextFormField(
@@ -76,7 +77,8 @@ class _LoginState extends State<Login> {
                                         setState(
                                             () => _isVisible = !_isVisible);
                                       })),
-                              validator: FieldValidator.required(message: 'Required'),
+                              validator:
+                                  FieldValidator.required(message: 'Required'),
                             ),
                           ],
                         ),

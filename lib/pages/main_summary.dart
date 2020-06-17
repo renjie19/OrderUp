@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 class MainSummary extends StatelessWidget {
   final Account account;
 
-
   MainSummary({this.account});
 
   @override
@@ -31,7 +30,7 @@ class MainSummary extends StatelessWidget {
             children: <Widget>[
               SummaryTab(orders, account),
               SummaryListTab(_filterOrdersForDelivery(orders ?? [], account), 'Items To Delivery'),
-              SummaryListTab(_filterOrdersToBeReceived(orders ?? [], account), 'To Be Received'),
+//              SummaryListTab(_filterOrdersToBeReceived(orders ?? [], account), 'To Be Received'),
             ],
           ),
         ),

@@ -17,9 +17,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     final account = Provider.of<Account>(context);
     final List<Widget> pages = [
-      StreamProvider<List<Order>>.value(
-          value: OrderService().orderUpdates,
-          child: MainSummary(account: account)),
+      MainSummary(account: account),
       ClientList()
     ];
     final List<Map<String, Object>> tabs = [
