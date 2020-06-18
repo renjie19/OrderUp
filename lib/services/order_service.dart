@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:orderupv2/components/notification.dart';
-import 'package:orderupv2/pages/orders.dart';
 import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/item.dart';
@@ -96,17 +94,17 @@ class OrderService {
     if(account != null && account.orders != null) {
       account.orders.forEach((element) => orders.add(element.id));
       return _orderCollectionReference
-          .where('id', whereIn: [...orders])
           .snapshots()
-          .map((snapshot) => _querySnapShotToOrderList(snapshot));
+          .map((snapshot) => _querySnapShotToOrderList(snapshot, orders));
     }
     return null;
   }
 
-  _querySnapShotToOrderList(QuerySnapshot snapshot) {
+  _querySnapShotToOrderList(QuerySnapshot snapshot, List<String> accountOrders) {
     try {
       List<Order> orders = [];
-      snapshot.documentChanges.forEach((element) {
+      var documentChanges = snapshot.documentChanges.where((element) => accountOrders.contains(element.document['id'])).toList();
+      documentChanges.forEach((element) {
         orders.add(_mapToOrder(element.document.data));
       });
       print('Updating List of Orders: size(${orders.length})');

@@ -94,10 +94,12 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
 
   /// for filtering new update from stream
   void filterOrderByClient(List<Order> orders) {
-    orders.forEach((order) {
-      var result = orderList.firstWhere((item) => item.id == order.id);
-      result == null ? orderList.add(order) : orderList[orderList.indexOf(result)] = order;
-    });
+    if(orders != null) {
+      orders.forEach((order) {
+        var result = orderList.firstWhere((item) => item.id == order.id);
+        result == null ? orderList.add(order) : orderList[orderList.indexOf(result)] = order;
+      });
+    }
   }
 
   void onTypeSelect(index) {
