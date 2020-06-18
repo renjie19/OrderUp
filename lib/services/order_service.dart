@@ -12,9 +12,10 @@ class OrderService {
   Future<List<Order>> orders(orderIds) async {
     List<Order> orders = [];
 
-    for (String id in orderIds) {
-      DocumentSnapshot snapshot =
-          await _orderCollectionReference.document(id).get();
+    var orderDocuments = await _orderCollectionReference.getDocuments();
+    var accountOrders = orderDocuments.documents.where((element) => orderIds.contains(element['id'])).toList();
+
+    for (DocumentSnapshot snapshot in accountOrders) {
       List<Item> itemList = [];
       List items = snapshot['items'];
       for (Map<String, Object> item in items) {

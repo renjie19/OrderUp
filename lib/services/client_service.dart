@@ -3,23 +3,29 @@ import 'package:orderupv2/shared/models/client.dart';
 
 class ClientService {
   static final Firestore _clientStore = Firestore.instance;
-  final CollectionReference _usersCollectionReference = _clientStore.collection("Users");
+  final CollectionReference _usersCollectionReference =
+      _clientStore.collection("Users");
 
   // get a client by id
 
   // get List of clients by id
-  Future<List<Client>> clients(clientIds) async{
+  Future clients(clientIds) async {
     List<Client> clients = [];
-    for(String id in clientIds) {
-      DocumentSnapshot snapshot = await _usersCollectionReference.document(id).get();
-      if(snapshot.exists) {
+
+    var result = await _usersCollectionReference.getDocuments();
+    List<DocumentSnapshot> clientDocuments = result.documents
+        .where((element) => clientIds.contains(element.documentID))
+        .toList();
+
+    for (DocumentSnapshot document in clientDocuments) {
+      if (document.exists) {
         clients.add(Client(
-          id: id,
-          firstName: snapshot['firstName'],
-          lastName: snapshot["lastName"],
-          location: snapshot["location"],
-          email: snapshot["email"],
-          contactNo: snapshot["contactNo"],
+          id: document['id'],
+          firstName: document['firstName'],
+          lastName: document["lastName"],
+          location: document["location"],
+          email: document["email"],
+          contactNo: document["contactNo"],
         ));
       }
     }
@@ -27,8 +33,9 @@ class ClientService {
   }
 
   // update client (add order id)
-  Future addClientOrders(String orderId, String clientId) async{
-    await _usersCollectionReference.document(clientId).updateData({'orders': FieldValue.arrayUnion([orderId])});
+  Future addClientOrders(String orderId, String clientId) async {
+    await _usersCollectionReference.document(clientId).updateData({
+      'orders': FieldValue.arrayUnion([orderId])
+    });
   }
-
 }

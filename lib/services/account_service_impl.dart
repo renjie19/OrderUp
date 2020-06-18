@@ -62,11 +62,11 @@ class AccountServiceImpl implements AccountService {
     if (snapshot != null && snapshot.exists) {
       account = Account(
         id: uid,
-        firstName: snapshot["firstName"],
-        lastName: snapshot["lastName"],
-        location: snapshot["location"],
-        email: snapshot["email"],
-        contactNo: snapshot["contactNo"],
+        firstName: snapshot['firstName'],
+        lastName: snapshot['lastName'],
+        location: snapshot['location'],
+        email: snapshot['email'],
+        contactNo: snapshot['contactNo'],
         clients: await _clientService.clients(snapshot['clients']),
         orders: await _orderService.orders(snapshot['orders']),
       );
