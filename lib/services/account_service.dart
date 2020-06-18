@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:orderupv2/shared/models/account.dart';
 
 abstract class AccountService {
