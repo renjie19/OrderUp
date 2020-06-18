@@ -24,90 +24,96 @@ class ReceiptPreview extends StatelessWidget {
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            children: <Widget>[
-              Card(
-                child: Container(
-                  padding: EdgeInsets.all(5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Center(child: Text('RECIPIENT INFO', style: _getTextStyle().copyWith(fontSize: 18.0),)),
-                      SizedBox(height: 5),
-                      Row(
-                        children: <Widget>[
-                          Text('Ordered To: '),
-                          Text(
-                            order.to == account.id
-                                ? '${account.firstName} ${account.lastName}'
-                                : '${client.firstName} ${client.lastName}',
-                            style: _getTextStyle(),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 5),
-                      Row(
-                        children: <Widget>[
-                          Text('Delivery For: '),
-                          Text(
-                            order.from == account.id
-                                ? '${account.firstName} ${account.lastName}'
-                                : '${client.firstName} ${client.lastName}',
-                            style: _getTextStyle(),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 5),
-                      Row(
-                        children: <Widget>[
-                          Text('Deliver to location: '),
-                          Text(
-                            order.from == account.id
-                                ? '${account.location}'
-                                : '${client.location}',
-                            style: _getTextStyle(),
-                          ),
-                        ],
-                      ),
-                    ],
+          child: Card(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Center(child: Text('Receipt Info', style: _getTextStyle().copyWith(fontSize: 18.0),)),
+                        SizedBox(height: 5),
+                        Row(
+                          children: <Widget>[
+                            Text('Ordered To: '),
+                            Text(
+                              order.to == account.id
+                                  ? '${account.firstName} ${account.lastName}'
+                                  : '${client.firstName} ${client.lastName}',
+                              style: _getTextStyle(),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Row(
+                          children: <Widget>[
+                            Text('Delivery For: '),
+                            Text(
+                              order.from == account.id
+                                  ? '${account.firstName} ${account.lastName}'
+                                  : '${client.firstName} ${client.lastName}',
+                              style: _getTextStyle(),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5),
+                        Row(
+                          children: <Widget>[
+                            Text('Deliver to location: '),
+                            Text(
+                              order.from == account.id
+                                  ? '${account.location}'
+                                  : '${client.location}',
+                              style: _getTextStyle(),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              OrderInfoCard(
-                orderId: order.id,
-                date: DateFormatter.toDateString(order.date),
-                time: DateFormatter.toTimeString(order.date),
-                total: '${order.total}',
-                status: order.status,
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: order.items.length,
-                  itemBuilder: (context, position) {
-                    var item = order.items[position];
-                    return Container(
-                      margin: EdgeInsets.symmetric(horizontal: 5),
-                      color: Colors.white,
-                      padding: EdgeInsets.all(10),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 2,
-                            child: Text(item.name),
+                  Divider(color: Colors.black),
+                  OrderInfoCard(
+                    orderId: order.id,
+                    date: DateFormatter.toDateString(order.date),
+                    time: DateFormatter.toTimeString(order.date),
+                    total: '${order.total}',
+                    status: order.status,
+                  ),
+                  Divider(color: Colors.black),
+                  Text('Items', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: order.items.length,
+                      itemBuilder: (context, position) {
+                        var item = order.items[position];
+                        return Container(
+                          margin: EdgeInsets.symmetric(horizontal: 5),
+                          color: Colors.white,
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 2,
+                                child: Text(item.name),
+                              ),
+                              Text('${item.quantity}'),
+                              Text(item.package),
+                              Expanded(
+                                  flex: 1,
+                                  child: Center(child: Text('${item.price}')))
+                            ],
                           ),
-                          Text('${item.quantity}'),
-                          Text(item.package),
-                          Expanded(
-                              flex: 1,
-                              child: Center(child: Text('${item.price}')))
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 10)
+                ],
               ),
-              SizedBox(height: 10)
-            ],
+            ),
           ),
         ),
       ),
