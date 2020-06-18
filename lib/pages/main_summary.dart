@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:orderupv2/components/notification.dart';
 import 'package:orderupv2/components/summary_list_tab.dart';
 import 'package:orderupv2/components/summary_tab.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
@@ -59,7 +60,7 @@ class MainSummary extends StatelessWidget {
 
   void _updateSummary(List<Order> update, List<Order> orderList) {
     if (update != null) {
-      bool showNotif = update.length != orderList.length;
+      bool showNotif = update.isNotEmpty && update.length != orderList.length;
       update.forEach((orderUpdate) {
         var result =
         orderList.firstWhere((element) => orderUpdate.id == element.id);
@@ -68,17 +69,17 @@ class MainSummary extends StatelessWidget {
           showNotification(showNotif, true);
         } else {
           orderList[orderList.indexOf(result)] = orderUpdate;
-
           var forDelivery = orderUpdate.status == StatusConstant.FOR_DELIVERY;
           showNotification(showNotif && forDelivery, false);
         }
       });
+      update.clear();
     }
   }
 
   void showNotification(bool show, bool isNew) {
     if(show) {
-//      OrderNotification.show(isNew);
+      OrderNotification.show(isNew);
     }
   }
 }
