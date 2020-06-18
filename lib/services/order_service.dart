@@ -90,24 +90,26 @@ class OrderService {
   }
 
   Stream<List<Order>> get orderUpdates {
-    List<String> orders = [];
+    List<String> orderIds = [];
     Account account = AccountServiceImpl.account;
     if(account != null && account.orders != null) {
-      account.orders.forEach((element) => orders.add(element.id));
+      account.orders.forEach((order) => orderIds.add(order.id));
       return _orderCollectionReference
           .snapshots()
-          .map((snapshot) => _querySnapShotToOrderList(snapshot, orders));
+          .map((snapshot) => _querySnapShotToOrderList(snapshot, orderIds));
     }
     return null;
   }
 
-  _querySnapShotToOrderList(QuerySnapshot snapshot, List<String> accountOrders) {
+  _querySnapShotToOrderList(QuerySnapshot snapshot, List<String> orderIds) {
     try {
       List<Order> orders = [];
-      var documentChanges = snapshot.documentChanges.where((element) => accountOrders.contains(element.document['id'])).toList();
-      documentChanges.forEach((element) {
-        orders.add(_mapToOrder(element.document.data));
+      var filteredDocuments = snapshot.documentChanges.where((document) => orderIds.contains(document.document['id'])).toList();
+      
+      filteredDocuments.forEach((document) {
+        orders.add(_mapToOrder(document.document.data));
       });
+      
       print('Updating List of Orders: size(${orders.length})');
       return orders;
     } catch (e) {
