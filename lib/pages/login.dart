@@ -13,6 +13,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
   final _loginKey = GlobalKey<FormState>();
 
   final AuthService _authService = AuthService();
@@ -26,6 +27,11 @@ class _LoginState extends State<Login> {
 
   // for hiding and showing password
   bool _isVisible = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

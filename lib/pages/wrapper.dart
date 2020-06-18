@@ -19,10 +19,7 @@ class Wrapper extends StatelessWidget {
         : StreamProvider<Account>.value(
             /// required as need to initialize id for logged in user
             value: AccountServiceImpl(id: user.uid).userData,
-            child: StreamProvider<List<Order>>.value(
-              value: OrderService().orderUpdates,
-              child: Home(),
-            ),
+            child: Home(),
           );
   }
 }

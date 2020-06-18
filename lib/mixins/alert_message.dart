@@ -2,7 +2,7 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 
 class AlertMessage{
-  static show(String message, bool error, BuildContext context) {
+  AlertMessage.show(String message, bool error, BuildContext context) {
     Flushbar(
       borderRadius: 5,
       margin: EdgeInsets.symmetric(horizontal: 8),

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:orderupv2/components/notification.dart';
 import 'package:orderupv2/components/summary_list_tab.dart';
 import 'package:orderupv2/components/summary_tab.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
@@ -19,7 +20,6 @@ class MainSummary extends StatelessWidget {
     var update = Provider.of<List<Order>>(context);
     var orders = account != null ? account.orders : [];
     _updateSummary(update, orders);
-
     return Scaffold(
       body: Container(
         height: double.maxFinite,
@@ -29,8 +29,8 @@ class MainSummary extends StatelessWidget {
           child: Column(
             children: <Widget>[
               SummaryTab(orders, account),
+              //todo: add pending order counter
               SummaryListTab(_filterOrdersForDelivery(orders ?? [], account), 'Items To Delivery'),
-//              SummaryListTab(_filterOrdersToBeReceived(orders ?? [], account), 'To Be Received'),
             ],
           ),
         ),
@@ -60,13 +60,26 @@ class MainSummary extends StatelessWidget {
 
   void _updateSummary(List<Order> update, List<Order> orderList) {
     if (update != null) {
+      bool showNotif = update.length != orderList.length;
       update.forEach((orderUpdate) {
         var result =
         orderList.firstWhere((element) => orderUpdate.id == element.id);
-        result == null
-            ? orderList.add(orderUpdate)
-            : orderList[orderList.indexOf(result)] = orderUpdate;
+        if(result == null) {
+          orderList.add(orderUpdate);
+          showNotification(showNotif, true);
+        } else {
+          orderList[orderList.indexOf(result)] = orderUpdate;
+
+          var forDelivery = orderUpdate.status == StatusConstant.FOR_DELIVERY;
+          showNotification(showNotif && forDelivery, false);
+        }
       });
+    }
+  }
+
+  void showNotification(bool show, bool isNew) {
+    if(show) {
+      OrderNotification.show(isNew);
     }
   }
 }
