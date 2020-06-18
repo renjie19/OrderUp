@@ -37,16 +37,24 @@ class _PurchaseTabState extends State<PurchaseTab> {
   ProgressDialog progressDialog;
   final AccountService _accountService = AccountServiceImpl();
 
+
   @override
-  Widget build(BuildContext context) {
-    // todo move to a single method
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
     order = widget.order ?? Order();
     order.items = order.items ?? [];
     order.total = order.total ?? 0;
     progressDialog = _initProgressDialog();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     var isForPayment = order.forPayment ?? false;
-
     return Scaffold(
       backgroundColor: primaryColor[700],
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -65,7 +73,12 @@ class _PurchaseTabState extends State<PurchaseTab> {
           isForPayment ? _showConfirmPayment() : _showCreateSheet(Item());
         },
       ),
-      bottomNavigationBar: _getBottomBar(),
+      bottomNavigationBar: BottomAppBar(
+        // bottom options
+        color: highlightColor,
+        shape: CircularNotchedRectangle(),
+        child: _getBottomBar(),
+      ),
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -73,14 +86,16 @@ class _PurchaseTabState extends State<PurchaseTab> {
               child: !widget.isUpdate
                   ? null
                   : OrderInfoCard(
-                      orderId: order.id,
-                      date: DateFormatter.toDateString(order.date),
-                      time: DateFormatter.toTimeString(order.date),
-                      status: order.status,
-                      total: '${order.total}',
-                    ),
+                orderId: order.id,
+                date: DateFormatter.toDateString(order.date),
+                time: DateFormatter.toTimeString(order.date),
+                status: order.status,
+                total: '${order.total}',
+              ),
             ),
-            _getItemList(),
+            Expanded(
+              child: _getItemList(),
+            ),
           ],
         ),
       ),
@@ -101,7 +116,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
         progressDialog.update(message: 'Finishing up');
         await ClientService().addClientOrders(result.id, result.to);
         progressDialog.hide();
-        Navigator.pop(context, result);
+        Navigator.pop(context);
         AlertMessage.show('Order Sent', false, context);
       }
     } catch (error) {
@@ -120,9 +135,11 @@ class _PurchaseTabState extends State<PurchaseTab> {
             padding: EdgeInsets.all(10),
             child: CreateItemTab(
               item: item,
-              onContinue: () => _showCreateSheet(
-                itemIndex < 0 ? Item() : order.items[itemIndex + 1] ?? Item(),
-              ),
+              onContinue: () =>
+                  _showCreateSheet(
+                    itemIndex < 0 ? Item() : order.items[itemIndex + 1] ??
+                        Item(),
+                  ),
               editablePrice: widget.isPriceEditable,
             ),
           );
@@ -142,12 +159,14 @@ class _PurchaseTabState extends State<PurchaseTab> {
     }
   }
 
-  Order buildOrder(Order order) {
+  Order _buildOrder(Order order) {
     Order newOrder = Order();
     newOrder.id = order.id ?? OrderService.generateOrderId();
     newOrder.from = order.from ?? AccountServiceImpl.account.id;
     newOrder.to = order.to ?? widget.client.id;
-    newOrder.date = order.date ?? DateTime.now().millisecondsSinceEpoch;
+    newOrder.date = order.date ?? DateTime
+        .now()
+        .millisecondsSinceEpoch;
     newOrder.forPayment = order.forPayment ?? false;
     newOrder.items = order.items;
     newOrder.total = 0;
@@ -177,7 +196,7 @@ class _PurchaseTabState extends State<PurchaseTab> {
   }
 
   _updateOrderToPaid() {
-    Order paidOrder = buildOrder(order);
+    Order paidOrder = _buildOrder(order);
     paidOrder.status = StatusConstant.PAID;
     paidOrder.forPayment = true;
     _sendOrder(paidOrder);
@@ -187,16 +206,17 @@ class _PurchaseTabState extends State<PurchaseTab> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => CustomAlertDialog(
-          title: Text('Confirm Payment'),
-          content: Text(
-              'Confirm that the order is paid',
-              textAlign: TextAlign.center),
-          onNo: () => Navigator.pop(context),
-          onYes: () {
-            Navigator.pop(context);
-            _updateOrderToPaid();
-          }),
+      builder: (context) =>
+          CustomAlertDialog(
+              title: Text('Confirm Payment'),
+              content: Text(
+                  'Confirm that the order is paid',
+                  textAlign: TextAlign.center),
+              onNo: () => Navigator.pop(context),
+              onYes: () {
+                Navigator.pop(context);
+                _updateOrderToPaid();
+              }),
     );
   }
 
@@ -204,109 +224,107 @@ class _PurchaseTabState extends State<PurchaseTab> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => CustomAlertDialog(
-          title: Text('Finalizing Order'),
-          content: Text(
-              'Are you sure with your order? \nYou can\'t modify once status is changed',
-              textAlign: TextAlign.center),
-          onNo: () => Navigator.pop(context),
-          onYes: () {
-            Navigator.pop(context);
-            _sendOrder(buildOrder(order));
-          }),
+      builder: (context) =>
+          CustomAlertDialog(
+              title: Text('Finalizing Order'),
+              content: Text(
+                  'Are you sure with your order? \nYou can\'t modify once status is changed',
+                  textAlign: TextAlign.center),
+              onNo: () => Navigator.pop(context),
+              onYes: () {
+                Navigator.pop(context);
+                _sendOrder(_buildOrder(order));
+              }),
     );
   }
 
   _getBottomBar() {
-    return BottomAppBar(
-      // bottom options
-      color: highlightColor,
-      shape: CircularNotchedRectangle(),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: IconButton(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(
-                Feather.x,
-                size: 28,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          Expanded(
-            child: IconButton(
-              icon: Icon(
-                Icons.send,
-                size: 28,
-              ),
-              padding: EdgeInsets.symmetric(vertical: 12),
-              disabledColor: disabledColor[700],
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: IconButton(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Feather.x,
+              size: 28,
               color: Colors.white,
-              onPressed:
-                  order.items.length <= 0 ? null : () => _showAlertDialog(),
             ),
           ),
-        ],
-      ),
+        ),
+        Expanded(
+          child: IconButton(
+            icon: Icon(
+              Icons.send,
+              size: 28,
+            ),
+            padding: EdgeInsets.symmetric(vertical: 12),
+            disabledColor: disabledColor[700],
+            color: Colors.white,
+            onPressed:
+            order.items.length <= 0 ? null : () => _showAlertDialog(),
+          ),
+        ),
+      ],
     );
   }
 
   _getItemList() {
-    return Expanded(
-      child: ListView.separated(
-        padding: EdgeInsets.all(8),
-        itemBuilder: (context, position) {
-          var item = order.items[position];
-          return Card(
-            shape: RoundedRectangleBorder(),
-            margin: EdgeInsets.symmetric(vertical: 0),
-            child: InkWell(
-              onTap: () => _showCreateSheet(item),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(flex: 2, child: Text(item.name)),
-                    Icon(Feather.dollar_sign),
-                    Expanded(flex: 1, child: Text('${item.price}')),
-                    IconButton(
-                      icon: Icon(Feather.minus),
-                      iconSize: 18,
-                      color: Colors.red[700],
-                      onPressed: () => setState(() {
-                        item.quantity > 0
-                            ? item.quantity -= 1
-                            : item.quantity = 0;
-                        if (item.quantity <= 0 && !widget.isUpdate) {
-                          order.items.remove(item);
-                        }
-                      }),
-                    ),
-                    Text('${item.quantity}'),
-                    IconButton(
-                      icon: Icon(Feather.plus),
-                      onPressed: () => setState(() => item.quantity += 1),
-                      iconSize: 18,
-                      color: Colors.red[700],
-                    ),
-                    Text('${item.package}'),
-                  ],
-                ),
+    return ListView.separated(
+      padding: EdgeInsets.all(8),
+      itemBuilder: (context, position) {
+        var item = order.items[position];
+        return Card(
+          shape: RoundedRectangleBorder(),
+          margin: EdgeInsets.symmetric(vertical: 0),
+          child: InkWell(
+            onTap: () => _showCreateSheet(item),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: <Widget>[
+                  Expanded(flex: 2, child: Text(item.name)),
+                  Icon(Feather.dollar_sign),
+                  Expanded(flex: 1, child: Text('${item.price}')),
+                  IconButton(
+                    icon: Icon(Feather.minus),
+                    iconSize: 18,
+                    color: Colors.red[700],
+                    onPressed: () =>
+                        setState(() {
+                          item.quantity > 0
+                              ? item.quantity -= 1
+                              : item.quantity = 0;
+                          if (item.quantity <= 0 &&
+                              !widget.isUpdate) {
+                            order.items.remove(item);
+                          }
+                        }),
+                  ),
+                  Text('${item.quantity}'),
+                  IconButton(
+                    icon: Icon(Feather.plus),
+                    onPressed: () =>
+                        setState(() => item.quantity += 1),
+                    iconSize: 18,
+                    color: Colors.red[700],
+                  ),
+                  Text('${item.package}'),
+                ],
               ),
             ),
-          );
-        },
-        separatorBuilder: (context, position) => Divider(
-          height: 1,
-          thickness: 1,
-          color: Colors.black,
-        ),
-        itemCount: order.items.length,
-      ),
+          ),
+        );
+      },
+      separatorBuilder: (context, position) =>
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: Colors.black,
+          ),
+      itemCount: order.items.length,
     );
   }
 }

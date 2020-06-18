@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orderupv2/pages/orders.dart';
-import 'package:orderupv2/services/account_service.dart';
-import 'package:orderupv2/services/account_service_impl.dart';
-import 'package:orderupv2/shared/models/account.dart';
+import 'package:orderupv2/services/order_service.dart';
 import 'package:orderupv2/shared/models/client.dart';
+import 'package:orderupv2/shared/models/order.dart';
 import 'package:provider/provider.dart';
 
 class ClientItem extends StatelessWidget {
@@ -13,11 +12,6 @@ class ClientItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final account = Provider.of<Account>(context);
-    final orders = account.orders
-        .where((order) => order.to == client.id || order.from == client.id)
-        .toList();
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
       child: Card(
@@ -27,9 +21,9 @@ class ClientItem extends StatelessWidget {
             //proceed to client page
             Navigator.push(context, MaterialPageRoute(
                 builder: (context) {
-              return StreamProvider<Account>.value(
-                  value: AccountServiceImpl().userData,
-                  child: Orders(client, orders));
+              return StreamProvider<List<Order>>.value(
+                  value: OrderService().orderUpdates,
+                  child: Orders(client));
             }));
           },
         ),
