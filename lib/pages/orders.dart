@@ -41,7 +41,7 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
   @override
   Widget build(BuildContext context) {
     var orderUpdate = Provider.of<List<Order>>(context);
-    filterOrderByClient(orderUpdate);
+    orderList = _filterOrderByClient(orderUpdate);
     return SafeArea(
         child: Scaffold(
           body: CustomScrollView(
@@ -93,13 +93,14 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
   }
 
   /// for filtering new update from stream
-  void filterOrderByClient(List<Order> orders) {
+  List<Order> _filterOrderByClient(List<Order> orders) {
     if(orders != null) {
       orders.forEach((order) {
-        var result = orderList.firstWhere((item) => item.id == order.id);
+        var result = orderList.firstWhere((item) => order.id == item.id, orElse: () => null);
         result == null ? orderList.add(order) : orderList[orderList.indexOf(result)] = order;
       });
     }
+    return orderList;
   }
 
   void onTypeSelect(index) {
