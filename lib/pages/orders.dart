@@ -8,18 +8,18 @@ import 'package:orderupv2/components/order_list_view.dart';
 import 'package:orderupv2/pages/purchase_tab.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/custom_callback.dart';
+import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/client.dart';
 import 'package:orderupv2/shared/models/order.dart';
 import 'package:provider/provider.dart';
 
-class Orders extends StatefulWidget{
+class Orders extends StatefulWidget {
   final Client client;
 
   Orders(this.client);
 
   @override
   _OrdersState createState() => _OrdersState();
-
 }
 
 class _OrdersState extends State<Orders> implements CustomCallBack {
@@ -40,48 +40,55 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
 
   @override
   Widget build(BuildContext context) {
-    var orderUpdate = Provider.of<List<Order>>(context);
-    orderList = _filterOrderByClient(orderUpdate);
+    var account = Provider.of<Account>(context);
+    var orderUpdates = Provider.of<List<Order>>(context);
+    orderList = _filterOrderByClient(account);
+    orderList = _filterOrderUpdate(orderUpdates);
     return SafeArea(
         child: Scaffold(
-          body: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                backgroundColor: primaryColor[700],
-                elevation: 20,
-                expandedHeight: 200,
-                floating: false,
-                pinned: true,
-                bottom: PreferredSize(
-                  preferredSize: Size(double.maxFinite, 50),
-                  child: typeWidget(),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            backgroundColor: primaryColor[700],
+            elevation: 20,
+            expandedHeight: 200,
+            floating: false,
+            pinned: true,
+            bottom: PreferredSize(
+              preferredSize: Size(double.maxFinite, 50),
+              child: typeWidget(),
+            ),
+            flexibleSpace: ClientInfoCard(widget.client),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Feather.shopping_bag,
+                  color: Colors.white,
                 ),
-                flexibleSpace: ClientInfoCard(widget.client),
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                      Feather.shopping_bag,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return PurchaseTab(widget.client, Order(), isUpdate: false, isPriceEditable: false,);
-                        },
-                      ));
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return PurchaseTab(
+                        widget.client,
+                        Order(),
+                        isUpdate: false,
+                        isPriceEditable: false,
+                      );
                     },
-                  ),
-                ],
-              ),
-              OrderListView(
-                client: widget.client,
-                orders: filterByType(orderList, toReceive),
-                iconData: toReceive ? Feather.box : Feather.truck,
-                callBack: this,
+                  ));
+                },
               ),
             ],
           ),
-        ));
+          OrderListView(
+            client: widget.client,
+            orders: filterByType(orderList, toReceive),
+            iconData: toReceive ? Feather.box : Feather.truck,
+            callBack: this,
+          ),
+        ],
+      ),
+    ));
   }
 
   /// for filtering order based on type
@@ -93,12 +100,12 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
   }
 
   /// for filtering new update from stream
-  List<Order> _filterOrderByClient(List<Order> orders) {
-    if(orders != null) {
-      orders.forEach((order) {
-        var result = orderList.firstWhere((item) => order.id == item.id, orElse: () => null);
-        result == null ? orderList.add(order) : orderList[orderList.indexOf(result)] = order;
-      });
+  List<Order> _filterOrderByClient(Account account) {
+    if (account != null) {
+      return account.orders
+          .where((order) =>
+              order.to == widget.client.id || order.from == widget.client.id)
+          .toList();
     }
     return orderList;
   }
@@ -141,10 +148,11 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
   @override
   void run(Object object) {
     Order order = object;
-    if(order != null) {
+    if (order != null) {
       setState(() {
         var clientOrders = widget.client.orders;
-        var copy = clientOrders.where((element) => element.id == order.id).first;
+        var copy =
+            clientOrders.where((element) => element.id == order.id).first;
         var index = clientOrders.indexOf(copy);
         print('index: $index');
         print(order.status);
@@ -153,5 +161,16 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
     }
   }
 
+  List<Order> _filterOrderUpdate(List<Order> orderUpdates) {
+    if (orderUpdates != null) {
+      orderUpdates.forEach((order) {
+        var result = orderList.firstWhere((item) => order.id == item.id,
+            orElse: () => null);
+        result == null
+            ? orderList.add(order)
+            : orderList[orderList.indexOf(result)] = order;
+      });
+    }
+    return orderList;
+  }
 }
-

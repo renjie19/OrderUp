@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orderupv2/pages/orders.dart';
+import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/services/order_service.dart';
+import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/client.dart';
 import 'package:orderupv2/shared/models/order.dart';
 import 'package:provider/provider.dart';
@@ -19,12 +21,18 @@ class ClientItem extends StatelessWidget {
           title: Center(child: Text('${client.firstName} ${client.lastName}')),
           onTap: () {
             //proceed to client page
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) {
-              return StreamProvider<List<Order>>.value(
-                  value: OrderService().orderUpdates,
-                  child: Orders(client));
-            }));
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) {
+                return StreamProvider<Account>.value(
+                  value: AccountServiceImpl().userData,
+                  child: StreamProvider<List<Order>>.value(
+                    value: OrderService().orderUpdates,
+                    child: Orders(client),
+                  ),
+                );
+              }),
+            );
           },
         ),
       ),

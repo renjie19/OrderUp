@@ -44,7 +44,7 @@ class ClientList extends StatelessWidget {
 
     if (orders != null) {
       orders.forEach((orderUpdate) {
-        var match = account.orders.firstWhere((o) => o.id == orderUpdate.id);
+        var match = account.orders.firstWhere((order) => order.id == orderUpdate.id, orElse: () => null);
         match == null
             ? account.orders.add(orderUpdate)
             : account.orders[account.orders.indexOf(match)] = orderUpdate;
