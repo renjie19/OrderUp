@@ -8,3 +8,6 @@ firebase_core_web=/Users/joshua/.pub-cache/hosted/pub.dartlang.org/firebase_core
 flutter_barcode_scanner=/Users/joshua/.pub-cache/hosted/pub.dartlang.org/flutter_barcode_scanner-1.0.1/
 flutter_local_notifications=/Users/joshua/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-1.4.4+1/
 flutter_plugin_android_lifecycle=/Users/joshua/.pub-cache/hosted/pub.dartlang.org/flutter_plugin_android_lifecycle-1.0.8/
+shared_preferences=/Users/joshua/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.5.7+3/
+shared_preferences_macos=/Users/joshua/.pub-cache/hosted/pub.dartlang.org/shared_preferences_macos-0.0.1+10/
+shared_preferences_web=/Users/joshua/.pub-cache/hosted/pub.dartlang.org/shared_preferences_web-0.1.2+7/

@@ -8,6 +8,7 @@ class AccountServiceImpl implements AccountService {
   final _clientService = ClientService();
   final _orderService = OrderService();
   final CollectionReference _userCollection = Firestore.instance.collection("Users");
+  DocumentReference _userDocument;
 
   String uid;
   static Account account;
@@ -46,9 +47,13 @@ class AccountServiceImpl implements AccountService {
   }
 
   @override
-  Future update(Account account) {
-    // todo implement update logic
-    return null;
+  Future update(Account account) async {
+    return await _userCollection.document(uid).updateData({
+      "firstName": account.firstName,
+      "lastName": account.lastName,
+      "location": account.location,
+      "contactNo": account.contactNo,
+    }).then((value) => account);
   }
 
   @override

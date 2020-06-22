@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:orderupv2/components/custom_alert_dialog.dart';
+import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/pages/account_management.dart';
 import 'package:orderupv2/pages/client_list.dart';
-import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/pages/main_summary.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/services/order_service.dart';
@@ -31,15 +31,6 @@ class Home extends StatelessWidget {
                 backgroundColor: primaryColor,
                 appBar: AppBar(
                   backgroundColor: primaryColor[700],
-                  leading: IconButton(
-                    icon: Icon(Icons.account_circle),
-                    onPressed: () {
-                      Navigator.push(context, PageRouteBuilder(pageBuilder:
-                          (context, animation, secondaryAnimation) {
-                        return AccountManagement(account);
-                      }));
-                    },
-                  ),
                   title: Text("ORDERUP"),
                   bottom: TabBar(
                     indicatorColor: highlightColor[500],
@@ -53,6 +44,17 @@ class Home extends StatelessWidget {
                     }),
                   ),
                   actions: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.account_circle),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return AccountManagement(account);
+                          }),
+                        );
+                      },
+                    ),
                     IconButton(
                         icon: Icon(Icons.exit_to_app, color: Colors.white),
                         onPressed: () {
