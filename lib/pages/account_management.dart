@@ -86,13 +86,12 @@ class _AccountManagementState extends State<AccountManagement> {
                           Switch.adaptive(
                             value: status,
                             onChanged: (value) {
-                              print('status before: $status');
-                              preferences.setBool('status', !status);
-                              setState(() => status = !status);
+                              preferences.setBool('status', value);
+                              setState(() => status = value);
                             },
                             activeColor: highlightColor,
                           ),
-                          Text('Offline')
+                          Text('Offline',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,),)
                         ],
                       ),
                       SizedBox(height: 40),
@@ -104,7 +103,7 @@ class _AccountManagementState extends State<AccountManagement> {
                               Icons.edit,
                               size: 28,
                             ),
-                            Text('Edit')
+                            Text('Edit',)
                           ],
                         ),
                         onPressed: () => _showBottomBar(),
