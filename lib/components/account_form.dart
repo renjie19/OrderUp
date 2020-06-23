@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:orderupv2/bloc/account_bloc.dart';
 import 'package:orderupv2/components/custom_progress_dialog.dart';
+import 'package:orderupv2/event/account_event.dart';
 import 'package:orderupv2/mixins/alert_message.dart';
 import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/services/account_service_impl.dart';
@@ -9,8 +11,9 @@ import 'package:the_validator/the_validator.dart';
 
 class AccountForm extends StatefulWidget {
   final Account account;
+  final AccountManagementBloc bloc;
 
-  AccountForm(this.account);
+  AccountForm(this.account, this.bloc);
 
   @override
   _AccountFormState createState() => _AccountFormState();
@@ -72,10 +75,10 @@ class _AccountFormState extends State<AccountForm> {
                 FlatButton(
                   child: Text('SAVE'),
                   color: primaryColor,
-                  onPressed: () async {
+                  onPressed: () {
                     try {
                       if (accountFormKey.currentState.validate()) {
-                        await accountService.update(account);
+                        widget.bloc.add(AccountUpdate(account));
                         Navigator.pop(context, account);
                       }
                     } catch (e) {

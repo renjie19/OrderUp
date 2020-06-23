@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:orderupv2/bloc/account_bloc.dart';
 import 'package:orderupv2/components/custom_alert_dialog.dart';
 import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/pages/account_management.dart';
@@ -50,7 +52,9 @@ class Home extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) {
-                            return AccountManagement(account);
+                            return BlocProvider(
+                                create: (BuildContext context) => AccountManagementBloc(),
+                                child: AccountManagement());
                           }),
                         );
                       },
