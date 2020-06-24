@@ -1,4 +1,4 @@
-/**/import 'package:orderupv2/shared/models/client.dart';
+import 'package:orderupv2/shared/models/client.dart';
 import 'package:orderupv2/shared/models/order.dart';
 
 class Account {
