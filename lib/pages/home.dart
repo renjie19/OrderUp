@@ -51,11 +51,11 @@ class Home extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) {
-                            return BlocProvider(
+                          MaterialPageRoute(
+                            builder: (context) => BlocProvider(
                                 create: (context) => AccountManagementBloc(),
-                                child: AccountManagement());
-                          }),
+                                child: AccountManagement()),
+                          ),
                         );
                       },
                     ),

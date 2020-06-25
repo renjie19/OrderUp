@@ -2,7 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:orderupv2/bloc/purchase_bloc.dart';
 import 'package:orderupv2/components/client_info_card.dart';
 import 'package:orderupv2/components/order_list_view.dart';
 import 'package:orderupv2/pages/purchase_tab.dart';
@@ -66,16 +68,19 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return PurchaseTab(
-                        widget.client,
-                        Order(),
-                        isUpdate: false,
-                        isPriceEditable: false,
-                      );
-                    },
-                  ));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BlocProvider(
+                          create: (context) => PurchaseBloc(),
+                          child: PurchaseTab(
+                            widget.client,
+                            Order(),
+                            isUpdate: false,
+                            isPriceEditable: false,
+                          ),
+                        ),
+                      ));
                 },
               ),
             ],

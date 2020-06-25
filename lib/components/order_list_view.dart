@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:orderupv2/bloc/purchase_bloc.dart';
 import 'package:orderupv2/mixins/date_formatter.dart';
 import 'package:orderupv2/pages/purchase_tab.dart';
 import 'package:orderupv2/pages/receipt_preview.dart';
@@ -69,11 +71,14 @@ class OrderListView extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (context) {
-          return PurchaseTab(
-            client,
-            selectedOrder,
-            isUpdate: true,
-            isPriceEditable: selectedOrder.from == client.id,
+          return BlocProvider(
+            create: (context) => PurchaseBloc(order: selectedOrder),
+            child: PurchaseTab(
+              client,
+              selectedOrder,
+              isUpdate: true,
+              isPriceEditable: selectedOrder.from == client.id,
+            ),
           );
         },
       ),
