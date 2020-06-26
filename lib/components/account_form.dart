@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:orderupv2/bloc/account_bloc.dart';
 import 'package:orderupv2/components/custom_progress_dialog.dart';
 import 'package:orderupv2/event/account_event.dart';
 import 'package:orderupv2/mixins/alert_message.dart';
-import 'package:orderupv2/services/account_service.dart';
-import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:the_validator/the_validator.dart';
 
 class AccountForm extends StatefulWidget {
   final Account account;
-  final AccountBloc bloc;
 
-  AccountForm(this.account, this.bloc);
+  AccountForm(this.account);
 
   @override
   _AccountFormState createState() => _AccountFormState();
@@ -21,7 +19,6 @@ class AccountForm extends StatefulWidget {
 
 class _AccountFormState extends State<AccountForm> {
   Account account;
-  AccountService accountService;
   final accountFormKey = GlobalKey<FormState>();
   CustomProgressDialog dialog;
 
@@ -29,7 +26,6 @@ class _AccountFormState extends State<AccountForm> {
   void initState() {
     super.initState();
     account = widget.account;
-    accountService = AccountServiceImpl();
     dialog = CustomProgressDialog(context);
   }
 
@@ -78,8 +74,8 @@ class _AccountFormState extends State<AccountForm> {
                   onPressed: () {
                     try {
                       if (accountFormKey.currentState.validate()) {
-                        widget.bloc.add(AccountUpdate(account));
-                        Navigator.pop(context, account);
+                        BlocProvider.of<AccountBloc>(context).add(AccountUpdate(account));
+                        Navigator.pop(context);
                       }
                     } catch (e) {
                       AlertMessage.show(e.toString(), true, context);
