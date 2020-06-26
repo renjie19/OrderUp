@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:orderupv2/bloc/account_bloc.dart';
 import 'package:orderupv2/components/custom_progress_dialog.dart';
-import 'package:orderupv2/event/account_event.dart';
 import 'package:orderupv2/mixins/alert_message.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
@@ -74,8 +71,7 @@ class _AccountFormState extends State<AccountForm> {
                   onPressed: () {
                     try {
                       if (accountFormKey.currentState.validate()) {
-                        BlocProvider.of<AccountBloc>(context).add(AccountUpdate(account));
-                        Navigator.pop(context);
+                        Navigator.pop(context, account);
                       }
                     } catch (e) {
                       AlertMessage.show(e.toString(), true, context);

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:orderupv2/bloc/account_bloc.dart';
 import 'package:orderupv2/components/account_form.dart';
 import 'package:orderupv2/components/info_card.dart';
+import 'package:orderupv2/event/account_event.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/custom_callback.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -137,12 +138,14 @@ class _AccountManagementState extends State<AccountManagement>
   }
 
   _showBottomBar(account) async {
-    await showModalBottomSheet(
+    var result = await showModalBottomSheet(
         context: context,
         builder: (context) {
-          return BlocProvider(
-              create: (context) => bloc, child: AccountForm(account));
+          return AccountForm(account);
         });
+    if(result != null) {
+      bloc.add(AccountUpdate(result));
+    }
   }
 
   void _initSharedPreferences() async {
