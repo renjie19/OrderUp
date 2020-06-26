@@ -64,8 +64,7 @@ class _HomeState extends State<Home> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => BlocProvider(
-                                    create: (context) =>
-                                        BlocProvider.of<AccountBloc>(context),
+                                    create: (context) => AccountBloc(),
                                     child: AccountManagement()),
                               ),
                             );

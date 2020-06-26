@@ -30,6 +30,13 @@ class _AccountManagementState extends State<AccountManagement> implements Custom
     bloc = BlocProvider.of<AccountBloc>(context);
   }
 
+
+  @override
+  void dispose() {
+    super.dispose();
+    bloc.close();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder(
