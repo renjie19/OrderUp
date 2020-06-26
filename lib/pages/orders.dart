@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:orderupv2/bloc/order_list_bloc.dart';
 import 'package:orderupv2/bloc/purchase_bloc.dart';
 import 'package:orderupv2/components/client_info_card.dart';
 import 'package:orderupv2/components/order_list_view.dart';
@@ -28,6 +29,7 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
   List<Order> orderList;
   bool isSelected = false;
   bool toReceive = false;
+  OrderListBloc orderListBloc;
 
   final List<Map<String, Object>> type = [
     {'label': 'Deliver', 'icon': Feather.truck},
@@ -38,6 +40,7 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
   void initState() {
     super.initState();
     orderList = widget.client.orders;
+    orderListBloc = BlocProvider.of<OrderListBloc>(context);
   }
 
   @override
@@ -46,54 +49,63 @@ class _OrdersState extends State<Orders> implements CustomCallBack {
     var orderUpdates = Provider.of<List<Order>>(context);
     orderList = _filterOrderByClient(account);
     orderList = _filterOrderUpdate(orderUpdates);
-    return SafeArea(
-        child: Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            backgroundColor: primaryColor[700],
-            elevation: 20,
-            expandedHeight: 200,
-            floating: false,
-            pinned: true,
-            bottom: PreferredSize(
-              preferredSize: Size(double.maxFinite, 50),
-              child: typeWidget(),
-            ),
-            flexibleSpace: ClientInfoCard(widget.client),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Feather.shopping_bag,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BlocProvider(
-                          create: (context) => PurchaseBloc(),
-                          child: PurchaseTab(
-                            widget.client,
-                            Order(),
-                            isUpdate: false,
-                            isPriceEditable: false,
-                          ),
+    return BlocConsumer<OrderListBloc,List<Order>>(
+      listener: (context, orders){},
+      builder: (context, orders) {
+        orderList = orders;
+        return SafeArea(
+            child: Scaffold(
+              body: CustomScrollView(
+                slivers: <Widget>[
+                  SliverAppBar(
+                    backgroundColor: primaryColor[700],
+                    elevation: 20,
+                    expandedHeight: 200,
+                    floating: false,
+                    pinned: true,
+                    bottom: PreferredSize(
+                      preferredSize: Size(double.maxFinite, 50),
+                      child: typeWidget(),
+                    ),
+                    flexibleSpace: ClientInfoCard(widget.client),
+                    actions: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                          Feather.shopping_bag,
+                          color: Colors.white,
                         ),
-                      ));
-                },
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider<PurchaseBloc>(create: (context) => PurchaseBloc()),
+                                    BlocProvider<OrderListBloc>(create: (context) => orderListBloc),
+                                  ],
+                                  child: PurchaseTab(
+                                    widget.client,
+                                    Order(),
+                                    isUpdate: false,
+                                    isPriceEditable: false,
+                                  ),
+                                ),
+                              ));
+                        },
+                      ),
+                    ],
+                  ),
+                  OrderListView(
+                    client: widget.client,
+                    orders: filterByType(orderList, toReceive),
+                    iconData: toReceive ? Feather.box : Feather.truck,
+                    callBack: this,
+                  ),
+                ],
               ),
-            ],
-          ),
-          OrderListView(
-            client: widget.client,
-            orders: filterByType(orderList, toReceive),
-            iconData: toReceive ? Feather.box : Feather.truck,
-            callBack: this,
-          ),
-        ],
-      ),
-    ));
+            ));
+      }
+    );
   }
 
   /// for filtering order based on type

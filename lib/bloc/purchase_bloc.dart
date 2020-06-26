@@ -4,6 +4,7 @@ import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/services/client_service.dart';
 import 'package:orderupv2/services/order_service.dart';
+import 'package:orderupv2/shared/models/item.dart';
 import 'package:orderupv2/shared/models/order.dart';
 
 class PurchaseBloc extends Bloc<PurchaseEvent, Order> {
@@ -45,7 +46,7 @@ class PurchaseBloc extends Bloc<PurchaseEvent, Order> {
   Order _updateItem(Order newState, PurchaseItemUpdate event) {
     var index = newState.items.indexOf(event.item);
     if (index >= 0) {
-      newState.items[index] = event.item;
+      newState.items[index] = Item(name: event.item.name, package: event.item.package, quantity: event.item.quantity, price: event.item.price);
     }
     _updateTotal(newState);
     return _mapToNewObject(newState);
@@ -67,7 +68,7 @@ class PurchaseBloc extends Bloc<PurchaseEvent, Order> {
     if(newState != null) {
       await _accountService.addToOrderList(newState.id);
       await _clientService.addClientOrders(newState.id, newState.to);
-      event.onComplete();
+      event.onComplete(newState);
     }
     return _mapToNewObject(newState);
   }

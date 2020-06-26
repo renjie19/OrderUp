@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:orderupv2/bloc/account_bloc.dart';
+import 'package:orderupv2/bloc/order_list_bloc.dart';
 import 'package:orderupv2/components/notification.dart';
 import 'package:orderupv2/components/summary_list_tab.dart';
 import 'package:orderupv2/components/summary_tab.dart';
@@ -10,31 +13,50 @@ import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/order.dart';
 import 'package:provider/provider.dart';
 
-class MainSummary extends StatelessWidget {
-  final Account account;
+class MainSummary extends StatefulWidget {
 
-  MainSummary({this.account});
+  @override
+  _MainSummaryState createState() => _MainSummaryState();
+}
+
+class _MainSummaryState extends State<MainSummary> {
+  AccountBloc accountBloc;
+  OrderListBloc orderListBloc;
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    accountBloc.close();
+    orderListBloc.close();
+  }
 
   @override
   Widget build(BuildContext context) {
+    orderListBloc = BlocProvider.of<OrderListBloc>(context);
+    accountBloc = BlocProvider.of<AccountBloc>(context);
     var update = Provider.of<List<Order>>(context);
-    var orders = account != null ? account.orders : [];
-    _updateSummary(update, orders);
-    return Scaffold(
-      body: Container(
-        height: double.maxFinite,
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-        color: primaryColor[800],
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              SummaryTab(orders, account),
-              //todo: add pending order counter
-              SummaryListTab(_filterOrdersForDelivery(orders ?? [], account), 'Items To Delivery'),
-            ],
+    return BlocBuilder<OrderListBloc, List<Order>>(
+      bloc: orderListBloc,
+      builder: (context, orders) {
+        _updateSummary(update, orders);
+        return Scaffold(
+          body: Container(
+            height: double.maxFinite,
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+            color: primaryColor[800],
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  SummaryTab(orders, accountBloc.initialState),
+                  //todo: add pending order counter
+                  SummaryListTab(_filterOrdersForDelivery(orders ?? [], accountBloc.initialState), 'Items To Delivery'),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      }
     );
   }
 
@@ -68,9 +90,11 @@ class MainSummary extends StatelessWidget {
           orderList.add(orderUpdate);
           showNotification(showNotif, true);
         } else {
-          orderList[orderList.indexOf(result)] = orderUpdate;
-          var forDelivery = orderUpdate.status == StatusConstant.FOR_DELIVERY;
-          showNotification(showNotif && forDelivery, false);
+          if(result != orderUpdate) {
+            orderList[orderList.indexOf(result)] = orderUpdate;
+            var forDelivery = orderUpdate.status == StatusConstant.FOR_DELIVERY;
+            showNotification(showNotif && forDelivery, false);
+          }
         }
       });
       update.clear();

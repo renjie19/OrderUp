@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:orderupv2/bloc/base_bloc.dart';
 import 'package:orderupv2/event/account_event.dart';
 import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/services/account_service_impl.dart';
@@ -7,18 +6,11 @@ import 'package:orderupv2/shared/models/account.dart';
 
 
 
-class AccountManagementBloc extends Bloc<AccountEvent, Account> implements BaseBloc {
+class AccountBloc extends Bloc<AccountEvent, Account> {
   AccountService _service;
   
-  AccountManagementBloc(){
+  AccountBloc(){
     _service = AccountServiceImpl();
-  }
-  
-  
-  
-  @override
-  void dispose() {
-    // TODO: implement dispose
   }
 
   @override
@@ -35,6 +27,10 @@ class AccountManagementBloc extends Bloc<AccountEvent, Account> implements BaseB
     } else {
       throw Exception('Event not found');
     }
+  }
+
+  Stream<Account> get userData {
+    return _service.userData;
   }
 
   Account _mapToNewObject(result) {

@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:orderupv2/bloc/order_list_bloc.dart';
 import 'package:orderupv2/bloc/purchase_bloc.dart';
 import 'package:orderupv2/components/create_item_tab.dart';
 import 'package:orderupv2/components/custom_alert_dialog.dart';
 import 'package:orderupv2/components/order_info_card.dart';
+import 'package:orderupv2/event/order_list_event.dart';
 import 'package:orderupv2/event/purchase_event.dart';
 import 'package:orderupv2/mixins/alert_message.dart';
 import 'package:orderupv2/mixins/date_formatter.dart';
-import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/services/order_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
@@ -37,26 +38,28 @@ class _PurchaseTabState extends State<PurchaseTab> {
   bool isLoading = false;
   Order selectedOrder;
   ProgressDialog progressDialog;
-  final AccountService _accountService = AccountServiceImpl();
   PurchaseBloc bloc;
+  OrderListBloc orderListBloc;
 
   @override
   void dispose() {
     super.dispose();
     bloc.close();
+    orderListBloc.close();
   }
 
   @override
   void initState() {
     super.initState();
     progressDialog = _initProgressDialog();
+    orderListBloc = BlocProvider.of<OrderListBloc>(context);
   }
 
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<PurchaseBloc>(context);
     return BlocBuilder(
-        bloc: bloc,
+        bloc: BlocProvider.of<PurchaseBloc>(context),
         builder: (context, order) {
           selectedOrder = order;
           var isForPayment = order.forPayment ?? false;
@@ -113,9 +116,10 @@ class _PurchaseTabState extends State<PurchaseTab> {
     try {
       progressDialog.show();
       progressDialog.update(message: 'Please Wait');
-      bloc.add(PurchaseSendOrder(order: order, isUpdate: widget.isUpdate,onComplete: () {
+      bloc.add(PurchaseSendOrder(order: order, isUpdate: widget.isUpdate,onComplete: (newState) {
+        widget.isUpdate ? orderListBloc.add(OrderListUpdate(newState)) : orderListBloc.add(OrderListAdd(newState));
         progressDialog.hide();
-        Navigator.pop(context);
+        if(!widget.isUpdate) Navigator.pop(context);
         AlertMessage.show('Order Sent', false, context);
       }));
     } catch (error) {

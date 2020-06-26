@@ -1,6 +1,6 @@
 import 'package:orderupv2/shared/models/item.dart';
 
-class Order {
+class Order{
   String to;
   String from;
   String id;

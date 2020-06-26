@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 
-class Item {
+
+class Item{
   String name;
   String package;
   int quantity;

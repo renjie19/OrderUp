@@ -18,7 +18,7 @@ class AccountManagement extends StatefulWidget {
 class _AccountManagementState extends State<AccountManagement> implements CustomCallBack{
   SharedPreferences preferences;
   bool status = false;
-  AccountManagementBloc bloc;
+  AccountBloc bloc;
 
   _AccountManagementState() {
     _initSharedPreferences();
@@ -27,7 +27,7 @@ class _AccountManagementState extends State<AccountManagement> implements Custom
   @override
   void initState() {
     super.initState();
-    bloc = BlocProvider.of<AccountManagementBloc>(context);
+    bloc = BlocProvider.of<AccountBloc>(context);
   }
 
   @override

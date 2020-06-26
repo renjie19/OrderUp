@@ -11,7 +11,7 @@ import 'package:the_validator/the_validator.dart';
 
 class AccountForm extends StatefulWidget {
   final Account account;
-  final AccountManagementBloc bloc;
+  final AccountBloc bloc;
 
   AccountForm(this.account, this.bloc);
 
