@@ -26,6 +26,7 @@ class PurchaseSendOrder extends PurchaseEvent {
   final Order order;
   final bool isUpdate;
   final Function onComplete;
+  final Function onFail;
 
-  PurchaseSendOrder({@required this.order,@required  this.isUpdate, this.onComplete});
+  PurchaseSendOrder({@required this.order,@required  this.isUpdate, this.onComplete, this.onFail});
 }

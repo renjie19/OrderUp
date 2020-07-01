@@ -41,7 +41,7 @@ class OrderService {
   // create order
   Future create(Order order) async {
     DocumentReference orderDocumentReference =
-        _orderCollectionReference.document();
+        _orderCollectionReference.document(order.id);
     order.id = orderDocumentReference.documentID;
     return await orderDocumentReference.setData(_mapOrder(order)).then((value) {
       return order;

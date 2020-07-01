@@ -121,7 +121,12 @@ class _PurchaseTabState extends State<PurchaseTab> {
         progressDialog.hide();
         if(!widget.isUpdate) Navigator.pop(context);
         AlertMessage.show('Order Sent', false, context);
-      }));
+      },
+      onFail: (error){
+        progressDialog.hide();
+        AlertMessage.show(error, true, context);
+      }
+      ));
     } catch (error) {
       progressDialog.hide();
       AlertMessage.show(error, true, context);

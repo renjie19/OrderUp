@@ -4,14 +4,17 @@ import 'package:orderupv2/services/account_service.dart';
 import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/services/client_service.dart';
 import 'package:orderupv2/services/order_service.dart';
+import 'package:orderupv2/services/sender.dart';
 import 'package:orderupv2/shared/models/item.dart';
 import 'package:orderupv2/shared/models/order.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PurchaseBloc extends Bloc<PurchaseEvent, Order> {
   Order order;
   OrderService _orderService = OrderService();
   AccountService _accountService = AccountServiceImpl();
   ClientService _clientService = ClientService();
+  Sender sender;
 
   PurchaseBloc({this.order});
 
@@ -62,15 +65,10 @@ class PurchaseBloc extends Bloc<PurchaseEvent, Order> {
   }
 
   Future _sendOrder(Order newState, PurchaseSendOrder event) async {
-    newState = event.isUpdate
-        ? await _orderService.update(event.order)
-        : await _orderService.create(event.order);
-    if(newState != null) {
-      await _accountService.addToOrderList(newState.id);
-      await _clientService.addClientOrders(newState.id, newState.to);
-      event.onComplete(newState);
-    }
-    return _mapToNewObject(newState);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    Sender sender = preferences.getBool('status') ? OfflineSender() : OnlineSender();
+    var result = await sender.send(newState, event);
+    return _mapToNewObject(result);
   }
 
   void _updateTotal(Order newState) {
@@ -86,7 +84,7 @@ class PurchaseBloc extends Bloc<PurchaseEvent, Order> {
 
   _mapToNewObject(Order newState) {
     Order order = Order();
-    order.items = newState.items;
+    order.items = newState.items ?? [];
     order.total = newState.total;
     order.to = newState.to;
     order.from = newState.from;
