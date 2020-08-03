@@ -42,13 +42,6 @@ class _PurchaseTabState extends State<PurchaseTab> {
   OrderListBloc orderListBloc;
 
   @override
-  void dispose() {
-    super.dispose();
-    bloc.close();
-    orderListBloc.close();
-  }
-
-  @override
   void initState() {
     super.initState();
     progressDialog = _initProgressDialog();
@@ -119,7 +112,10 @@ class _PurchaseTabState extends State<PurchaseTab> {
       bloc.add(PurchaseSendOrder(order: order, isUpdate: widget.isUpdate,onComplete: (newState) {
         widget.isUpdate ? orderListBloc.add(OrderListUpdate(newState)) : orderListBloc.add(OrderListAdd(newState));
         progressDialog.hide();
-        if(!widget.isUpdate) Navigator.pop(context);
+        if(!widget.isUpdate) {
+          bloc.close();
+          Navigator.pop(context);
+        }
         AlertMessage.show('Order Sent', false, context);
       },
       onFail: (error){

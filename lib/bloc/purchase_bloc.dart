@@ -35,7 +35,10 @@ class PurchaseBloc extends Bloc<PurchaseEvent, Order> {
         yield _deleteItem(newState, event);
         break;
       case PurchaseSendOrder:
-        yield await _sendOrder(newState, event);
+        var result = await _sendOrder(newState, event);
+        if(result != null) {
+          yield result;
+        }
         break;
     }
   }
@@ -65,10 +68,14 @@ class PurchaseBloc extends Bloc<PurchaseEvent, Order> {
   }
 
   Future _sendOrder(Order newState, PurchaseSendOrder event) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    Sender sender = preferences.getBool('status') ? OfflineSender() : OnlineSender();
-    var result = await sender.send(newState, event);
-    return _mapToNewObject(result);
+    try{
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      Sender sender = preferences.getBool('status') ?? true ? OfflineSender() : OnlineSender();
+      var result = await sender.send(newState, event);
+      return _mapToNewObject(result);
+    } catch(e) {
+      event.onFail(e.toString());
+    }
   }
 
   void _updateTotal(Order newState) {
@@ -83,15 +90,18 @@ class PurchaseBloc extends Bloc<PurchaseEvent, Order> {
   }
 
   _mapToNewObject(Order newState) {
-    Order order = Order();
-    order.items = newState.items ?? [];
-    order.total = newState.total;
-    order.to = newState.to;
-    order.from = newState.from;
-    order.status = newState.status;
-    order.id = newState.id;
-    order.forPayment = newState.forPayment;
-    order.date = newState.date;
-    return order;
+    if(newState != null) {
+      Order order = Order();
+      order.items = newState.items ?? [];
+      order.total = newState.total;
+      order.to = newState.to;
+      order.from = newState.from;
+      order.status = newState.status;
+      order.id = newState.id;
+      order.forPayment = newState.forPayment;
+      order.date = newState.date;
+      return order;
+    }
+    return null;
   }
 }
