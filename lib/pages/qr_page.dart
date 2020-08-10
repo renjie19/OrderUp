@@ -7,10 +7,7 @@ import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QrPage extends StatelessWidget {
-  final String id;
   final AccountService service = AccountServiceImpl();
-
-  QrPage(this.id);
 
   Future scanQr(BuildContext context) async {
     try {
@@ -26,7 +23,6 @@ class QrPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(id);
     return Scaffold(
       appBar: AppBar(),
       backgroundColor: primaryColor,
@@ -35,7 +31,7 @@ class QrPage extends StatelessWidget {
         children: <Widget>[
           Center(
             child: QrImage(
-              data: id,
+              data: AccountServiceImpl.account.id,
               size: 250,
               backgroundColor: Colors.white,
             ),

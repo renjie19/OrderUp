@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:orderupv2/bloc/account_bloc.dart';
 import 'package:orderupv2/bloc/order_list_bloc.dart';
-import 'package:orderupv2/pages/qr_page.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/models/account.dart';
 import 'package:orderupv2/shared/models/client.dart';
@@ -87,7 +86,8 @@ class _ClientListState extends State<ClientList> {
               backgroundColor: highlightColorSecondary,
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return QrPage(account.id);
+//                  return QrPage(account.id);
+                return null;
                 }));
               },
               child: Icon(

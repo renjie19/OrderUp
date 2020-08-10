@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:orderupv2/bloc/account_bloc.dart';
+import 'package:orderupv2/bloc/client_list_bloc/client_list_bloc.dart';
 import 'package:orderupv2/bloc/order_list_bloc.dart';
 import 'package:orderupv2/components/custom_alert_dialog.dart';
 import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/pages/account_management.dart';
-import 'package:orderupv2/pages/client_list.dart';
 import 'package:orderupv2/pages/main_summary.dart';
+import 'package:orderupv2/pages/v2/clients_tab.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/services/order_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
@@ -23,7 +24,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final account = Provider.of<Account>(context);
-    final List<Widget> pages = [MainSummary(), ClientList()];
+    final List<Widget> pages = [MainSummary(), ClientsTab()];
     final List<Map<String, Object>> tabs = [
       {'icon': Icon(Icons.assessment), 'text': 'Summary'},
       {'icon': Icon(Icons.people), 'text': 'Clients'},
@@ -35,6 +36,7 @@ class _HomeState extends State<Home> {
             providers: [
               BlocProvider<OrderListBloc>(create: (context) => OrderListBloc()),
               BlocProvider<AccountBloc>(create: (context) => AccountBloc()),
+              BlocProvider<ClientListBloc>(create: (context) => ClientListBloc()),
             ],
             child: DefaultTabController(
                 length: pages.length,
