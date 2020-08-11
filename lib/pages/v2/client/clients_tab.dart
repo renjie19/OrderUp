@@ -5,7 +5,7 @@ import 'package:orderupv2/bloc/client_list_bloc/client_list_bloc.dart';
 import 'package:orderupv2/bloc/client_list_bloc/client_list_event.dart';
 import 'package:orderupv2/bloc/order_history_bloc/order_history_bloc.dart';
 import 'package:orderupv2/pages/qr_page.dart';
-import 'package:orderupv2/pages/v2/order_history.dart';
+import 'package:orderupv2/pages/v2/order/order_history.dart';
 import 'package:orderupv2/shared/models/client.dart';
 
 class ClientsTab extends StatefulWidget {

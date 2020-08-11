@@ -7,7 +7,7 @@ import 'package:orderupv2/components/custom_alert_dialog.dart';
 import 'package:orderupv2/components/loading.dart';
 import 'package:orderupv2/pages/account_management.dart';
 import 'package:orderupv2/pages/main_summary.dart';
-import 'package:orderupv2/pages/v2/clients_tab.dart';
+import 'package:orderupv2/pages/v2/client/clients_tab.dart';
 import 'package:orderupv2/services/auth_service.dart';
 import 'package:orderupv2/services/order_service.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
