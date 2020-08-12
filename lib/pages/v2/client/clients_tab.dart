@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:orderupv2/bloc/client_list_bloc/client_list_bloc.dart';
-import 'package:orderupv2/bloc/client_list_bloc/client_list_event.dart';
 import 'package:orderupv2/bloc/order_history_bloc/order_history_bloc.dart';
+import 'package:orderupv2/event/bloc_event.dart';
 import 'package:orderupv2/pages/qr_page.dart';
 import 'package:orderupv2/pages/v2/order/order_history.dart';
 import 'package:orderupv2/shared/models/client.dart';
@@ -61,7 +61,7 @@ class _ClientsTabState extends State<ClientsTab> {
     }));
 
     if( result != null ) {
-      bloc.add(ClientListEventAdd(result));
+      bloc.add(BlocEvent(event: Event.ADD, data: result));
       loadQrScannerPage();
     }
   }

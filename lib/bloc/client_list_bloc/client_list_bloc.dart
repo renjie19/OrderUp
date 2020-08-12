@@ -1,41 +1,41 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:orderupv2/event/bloc_event.dart';
 import 'package:orderupv2/services/account_service_impl.dart';
 import 'package:orderupv2/shared/models/client.dart';
 
-import 'client_list_event.dart';
-
-class ClientListBloc extends Bloc<ClientListEvents, List<Client>> {
-
+class ClientListBloc extends Bloc<BlocEvent<List<Client>>, List<Client>> {
   @override
   List<Client> get initialState => AccountServiceImpl.account.clients;
 
   @override
-  Stream<List<Client>> mapEventToState(ClientListEvents event) async* {
-   if(event.client != null || event is ClientListEventSet) {
-     switch(event.runtimeType) {
-       case ClientListEventAdd:
-         state.add(event.client);
-         yield state;
-         break;
-       case ClientListEventUpdate:
-         int index = state.indexWhere((client) => client.id == event.client.id);
-         if(index >= 0) {
-           state[index] = event.client;
-         }
-         yield state;
-         break;
-       case ClientListEventDelete:
-         int index = state.indexWhere((client) => client.id == event.client.id);
-         if(index >= 0) {
-           state.removeAt(index);
-         }
-         yield state;
-         break;
-       case ClientListEventSet:
-         yield (event as ClientListEventSet).clients;
-         break;
-     }
-   }
+  Stream<List<Client>> mapEventToState(BlocEvent<List<Client>> event) async* {
+    var list = state;
+    switch (event.getEvent()) {
+      case Event.ADD:
+        list.addAll(event.getData());
+        yield list;
+        break;
+      case Event.UPDATE:
+        for (Client clientData in event.getData()) {
+          int index = list.indexWhere((client) => client.id == clientData.id);
+          if (index >= 0) {
+            list[index] = clientData;
+          }
+        }
+        yield list;
+        break;
+      case Event.DELETE:
+        for (Client clientData in event.getData()) {
+          int index = list.indexWhere((client) => client.id == clientData.id);
+          if (index >= 0) {
+            list.removeAt(index);
+          }
+        }
+        yield list;
+        break;
+      case Event.SET:
+        yield event.getData();
+        break;
+    }
   }
-
 }

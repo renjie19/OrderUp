@@ -3,8 +3,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:orderupv2/bloc/order_history_bloc/order_history_bloc.dart';
-import 'package:orderupv2/bloc/order_history_bloc/order_history_events.dart';
 import 'package:orderupv2/bloc/purchase_bloc/puchase_bloc.dart';
+import 'package:orderupv2/event/bloc_event.dart';
 import 'package:orderupv2/pages/v2/purchase/purchase_tab.dart';
 import 'package:orderupv2/shared/constants/constants.dart';
 import 'package:orderupv2/shared/constants/status_constants.dart';
@@ -33,7 +33,8 @@ class _OrderHistoryState extends State<OrderHistory> implements CustomCallBack {
   bool sortAscending = false;
   int index = 0;
   String sortStatus = status[0];
-  String targetValue = target[0];
+  String sourceValue = target[0];
+  Event purchaseEvent;
 
   @override
   void dispose() {
@@ -47,15 +48,17 @@ class _OrderHistoryState extends State<OrderHistory> implements CustomCallBack {
     return BlocBuilder(
         bloc: bloc,
         builder: (context, orders) {
+          orders = sortOrdersBySource(this.sourceValue, client.id);
+          orders = sortOrdersByStatus(this.sortStatus, orders);
           return SafeArea(
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: Scaffold(
-                backgroundColor: primaryColor,
-                body: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Card(
+            child: Scaffold(
+              backgroundColor: primaryColor,
+              body: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    AspectRatio(
+                      aspectRatio: 10/4.5,
+                      child: Card(
                         elevation: 4,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
@@ -107,7 +110,7 @@ class _OrderHistoryState extends State<OrderHistory> implements CustomCallBack {
                                         style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
                                     DropdownButton(
                                         isDense: true,
-                                        value: targetValue,
+                                        value: sourceValue,
                                         items: List.generate(target.length,
                                             (index) {
                                           var targetType = target[index];
@@ -119,7 +122,7 @@ class _OrderHistoryState extends State<OrderHistory> implements CustomCallBack {
                                         }),
                                         onChanged: (value) {
                                           setState(
-                                              () => this.targetValue = value);
+                                              () => this.sourceValue = value);
                                           updateDataByFilter(client.id);
                                         })
                                   ]),
@@ -131,49 +134,55 @@ class _OrderHistoryState extends State<OrderHistory> implements CustomCallBack {
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Container(
-                            width: double.maxFinite,
-                            child: PaginatedDataTable(
-                              actions: [
-                                IconButton(
-                                  splashRadius: 25,
-                                  color: Colors.black,
-                                  icon: Icon(
-                                    FontAwesome.shopping_cart,
-                                  ),
-                                  onPressed: () => loadCreateOrderPage(null),
-                                )
-                              ],
-                              sortColumnIndex: this.index,
-                              sortAscending: this.sortAscending,
-                              rowsPerPage: ROWS_PER_PAGE,
-                              header: Row(
-                                children: [
-                                  Icon(FontAwesome.book, color: Colors.black,),
-                                  Text('ORDER RECORDS', style: TextStyle(fontStyle: FontStyle.italic),)
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: AspectRatio(
+                          aspectRatio: 20/29,
+                          child: SingleChildScrollView(
+                            child: Container(
+                              width: double.maxFinite,
+                              child: PaginatedDataTable(
+                                actions: [
+                                  IconButton(
+                                    splashRadius: 25,
+                                    color: Colors.black,
+                                    icon: Icon(
+                                      FontAwesome.shopping_cart,
+                                    ),
+                                    onPressed: () => loadCreateOrderPage(null),
+                                  )
                                 ],
+                                sortColumnIndex: this.index,
+                                sortAscending: this.sortAscending,
+                                rowsPerPage: ROWS_PER_PAGE,
+                                header: Row(
+                                  children: [
+                                    Icon(FontAwesome.book, color: Colors.black,),
+                                    Text('ORDER RECORDS', style: TextStyle(fontStyle: FontStyle.italic),)
+                                  ],
+                                ),
+                                source: OrderListDataSource(orders, this),
+                                columns: List.generate(columns.length, (index) {
+                                  return DataColumn(
+                                    numeric: index == 2,
+                                    onSort: (columnIndex, ascending) =>
+                                        sortData(columnIndex, ascending, orders),
+                                    label: Text(
+                                      columns[index],
+                                      style:
+                                          TextStyle(fontStyle: FontStyle.italic),
+                                    ),
+                                  );
+                                }),
                               ),
-                              source: OrderListDataSource(orders, this),
-                              columns: List.generate(columns.length, (index) {
-                                return DataColumn(
-                                  numeric: index == 2,
-                                  onSort: (columnIndex, ascending) =>
-                                      sortData(columnIndex, ascending, orders),
-                                  label: Text(
-                                    columns[index],
-                                    style:
-                                        TextStyle(fontStyle: FontStyle.italic),
-                                  ),
-                                );
-                              }),
                             ),
                           ),
                         ),
                       ),
-                    ]),
-              ),
+                    ),
+                  ]),
             ),
           );
         });
@@ -198,11 +207,11 @@ class _OrderHistoryState extends State<OrderHistory> implements CustomCallBack {
             : orders.sort((o1, o2) => o2.total.compareTo(o1.total));
         break;
     }
-    bloc.add(OrderHistorySet(orders));
+    bloc.add(BlocEvent(event: Event.SET, data: orders));
   }
 
   void updateDataByFilter(String id) {
-    var result = sortOrdersBySource(this.targetValue, id);
+    var result = sortOrdersBySource(this.sourceValue, id);
     result = sortOrdersByStatus(this.sortStatus, result);
     sortData(this.index, this.sortAscending, result);
   }
@@ -221,9 +230,9 @@ class _OrderHistoryState extends State<OrderHistory> implements CustomCallBack {
     if (source == 'ALL') {
       return bloc.initialState;
     } else if (source == 'USER') {
-      return bloc.initialState.where((order) => order.from == id).toList();
-    } else {
       return bloc.initialState.where((order) => order.to == id).toList();
+    } else {
+      return bloc.initialState.where((order) => order.from == id).toList();
     }
   }
 
@@ -236,11 +245,20 @@ class _OrderHistoryState extends State<OrderHistory> implements CustomCallBack {
 
   void loadCreateOrderPage(String orderId) async {
     print('Loading order $orderId');
-    var result = Navigator.push(context, MaterialPageRoute(builder: (context) {
+    setPurchaseTabEvent(orderId == null);
+    Order result = await Navigator.push(context, MaterialPageRoute(builder: (context) {
       return BlocProvider<PurchaseBloc>(
         create: (context) => PurchaseBloc(orderId, bloc.getClient().id),
         child: PurchaseTab(),
       );
     }));
+    if(result != null) {
+      bloc.add(BlocEvent(event: this.purchaseEvent, data: [result]));
+      setState(() => this.purchaseEvent = null);
+    }
+  }
+
+  void setPurchaseTabEvent(bool isNewOrder) {
+    setState(() => purchaseEvent = isNewOrder ? Event.ADD : Event.UPDATE);
   }
 }
