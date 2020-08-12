@@ -57,7 +57,7 @@ class _OrderHistoryState extends State<OrderHistory> implements CustomCallBack {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     AspectRatio(
-                      aspectRatio: 10/4.5,
+                      aspectRatio: 5/2,
                       child: Card(
                         elevation: 4,
                         child: Padding(
@@ -126,58 +126,48 @@ class _OrderHistoryState extends State<OrderHistory> implements CustomCallBack {
                                           updateDataByFilter(client.id);
                                         })
                                   ]),
-                              Text(
-                                'Order Count: ${orders.length}',
-                                style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-                              ),
                             ],
                           ),
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: AspectRatio(
-                          aspectRatio: 20/29,
-                          child: SingleChildScrollView(
-                            child: Container(
-                              width: double.maxFinite,
-                              child: PaginatedDataTable(
-                                actions: [
-                                  IconButton(
-                                    splashRadius: 25,
-                                    color: Colors.black,
-                                    icon: Icon(
-                                      FontAwesome.shopping_cart,
-                                    ),
-                                    onPressed: () => loadCreateOrderPage(null),
-                                  )
-                                ],
-                                sortColumnIndex: this.index,
-                                sortAscending: this.sortAscending,
-                                rowsPerPage: ROWS_PER_PAGE,
-                                header: Row(
-                                  children: [
-                                    Icon(FontAwesome.book, color: Colors.black,),
-                                    Text('ORDER RECORDS', style: TextStyle(fontStyle: FontStyle.italic),)
-                                  ],
+                    AspectRatio(
+                      aspectRatio: 10/15,
+                      child: SingleChildScrollView(
+                        child: Expanded(
+                          child: PaginatedDataTable(
+                            actions: [
+                              IconButton(
+                                splashRadius: 25,
+                                color: Colors.black,
+                                icon: Icon(
+                                  FontAwesome.shopping_cart,
                                 ),
-                                source: OrderListDataSource(orders, this),
-                                columns: List.generate(columns.length, (index) {
-                                  return DataColumn(
-                                    numeric: index == 2,
-                                    onSort: (columnIndex, ascending) =>
-                                        sortData(columnIndex, ascending, orders),
-                                    label: Text(
-                                      columns[index],
-                                      style:
-                                          TextStyle(fontStyle: FontStyle.italic),
-                                    ),
-                                  );
-                                }),
-                              ),
+                                onPressed: () => loadCreateOrderPage(null),
+                              )
+                            ],
+                            sortColumnIndex: this.index,
+                            sortAscending: this.sortAscending,
+                            rowsPerPage: ROWS_PER_PAGE,
+                            header: Row(
+                              children: [
+                                Icon(FontAwesome.book, color: Colors.black,),
+                                Text('ORDER RECORDS', style: TextStyle(fontStyle: FontStyle.italic),)
+                              ],
                             ),
+                            source: OrderListDataSource(orders, this),
+                            columns: List.generate(columns.length, (index) {
+                              return DataColumn(
+                                numeric: index == 2,
+                                onSort: (columnIndex, ascending) =>
+                                    sortData(columnIndex, ascending, orders),
+                                label: Text(
+                                  columns[index],
+                                  style:
+                                      TextStyle(fontStyle: FontStyle.italic),
+                                ),
+                              );
+                            }),
                           ),
                         ),
                       ),

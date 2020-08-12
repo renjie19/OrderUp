@@ -17,7 +17,7 @@ class OrderHistoryBloc extends Bloc<BlocEvent<List<Order>>, List<Order>>{
   }
 
   @override
-  List<Order> get initialState => getOrdersById(this.id, AccountServiceImpl.account.orders);
+  List<Order> get initialState => getOrdersByClient(this.id, AccountServiceImpl.account.orders);
 
   @override
   Stream<List<Order>> mapEventToState (BlocEvent<List<Order>> event) async* {
@@ -51,7 +51,7 @@ class OrderHistoryBloc extends Bloc<BlocEvent<List<Order>>, List<Order>>{
     }
   }
 
-  List<Order> getOrdersById(String id, orders) {
+  List<Order> getOrdersByClient(String id, orders) {
     return List.from(orders.where((order) => order.from == id || order.to == id));
   }
 
@@ -68,7 +68,7 @@ class OrderHistoryBloc extends Bloc<BlocEvent<List<Order>>, List<Order>>{
 
     _accountService.userData.listen((account) {
       if(account != null) {
-        this.add(BlocEvent(event: Event.SET, data: getOrdersById(id, account.orders)));
+        this.add(BlocEvent(event: Event.SET, data: getOrdersByClient(id, account.orders)));
       }
     });
 
